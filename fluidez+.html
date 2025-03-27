@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluidez+ - Análisis de velocidad del habla</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap');
+
+        body {
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f5f7, #dcdce3);
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #0056d2;
+        }
+
+        button:disabled {
+            background: #a5a5a5;
+            cursor: not-allowed;
+        }
+
+        #transcription {
+            border: 2px solid #007aff;
+            padding: 15px;
+            min-height: 80px;
+            border-radius: 10px;
+            background: #f0f0f5;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+
+        #wpmResult {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        select, input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        #audioContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Fluidez+</h1>
+    <p>Analiza la velocidad de tu habla con precisión.</p>
+
+    <div class="container">
+        <button id="startRecord">🎤 Iniciar Grabación</button>
+        <button id="stopRecord" disabled>⏹️ Detener</button>
+
+        <h2>Transcripción:</h2>
+        <div id="transcription">Esperando...</div>
+
+        <h2>Velocidad del Habla:</h2>
+        <p id="wpmResult">-</p>
+
+        <label for="wpmRange">Selecciona un rango de evaluación:</label>
+        <select id="wpmRange">
+            <option value="50-75">50-75 WPM</option>
+            <option value="75-100">75-100 WPM</option>
+            <option value="100-125">100-125 WPM</option>
+            <option value="125-150">125-150 WPM</option>
+            <option value="150-175">150-175 WPM</option>
+            <option value="175-200">175-200 WPM</option>
+            <option value="200-225">200-225 WPM</option>
+            <option value="225-250">225-250 WPM</option>
+            <option value="250-275">250-275 WPM</option>
+            <option value="275-300">275-300 WPM</option>
+            <option value="300-350">300-350 WPM</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <h2>Guardar grabación</h2>
+        <input type="text" id="filename" placeholder="Nombre del archivo">
+        <button id="saveRecording" disabled>💾 Guardar Audio</button>
+        <div id="audioContainer"></div>
+    </div>
+
+    <script>
+        let recognition;
+        let isRecording = false;
+        let startTime, endTime;
+        let totalWords = 0;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = "es-ES";
+
+            recognition.onstart = function () {
+                document.getElementById("transcription").innerHTML = "Escuchando...";
+                startTime = new Date();
+                totalWords = 0;
+            };
+
+            recognition.onresult = function (event) {
+                let transcript = "";
+                for (let i = 0; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript + " ";
+                }
+                document.getElementById("transcription").innerHTML = transcript;
+                totalWords = transcript.split(/\s+/).length;
+            };
+
+            recognition.onend = function () {
+                endTime = new Date();
+                let timeDiff = (endTime - startTime) / 60000;
+                let wordsPerMinute = Math.round(totalWords / timeDiff);
+                document.getElementById("wpmResult").innerText = `Velocidad: ${wordsPerMinute} palabras/min`;
+
+                let selectedRange = document.getElementById("wpmRange").value;
+                let [min, max] = selectedRange.split("-").map(Number);
+                if (wordsPerMinute < min) {
+                    document.getElementById("wpmResult").style.color = "red";
+                } else if (wordsPerMinute > max) {
+                    document.getElementById("wpmResult").style.color = "red";
+                } else {
+                    document.getElementById("wpmResult").style.color = "green";
+                }
+            };
+        }
+
+        document.getElementById("startRecord").addEventListener("click", async function () {
+            recognition.start();
+            isRecording = true;
+            document.getElementById("startRecord").disabled = true;
+            document.getElementById("stopRecord").disabled = false;
+
+            let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                let audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                let audioUrl = URL.createObjectURL(audioBlob);
+                let audioElement = document.createElement("audio");
+                audioElement.controls = true;
+                audioElement.src = audioUrl;
+
+                document.getElementById("audioContainer").innerHTML = "";
+                document.getElementById("audioContainer").appendChild(audioElement);
+
+                document.getElementById("saveRecording").disabled = false;
+                document.getElementById("saveRecording").onclick = function () {
+                    let a = document.createElement("a");
+                    a.href = audioUrl;
+                    a.download = (document.getElementById("filename").value || "grabacion") + ".wav";
+                    a.click();
+                };
+            };
+
+            mediaRecorder.start();
+        });
+
+        document.getElementById("stopRecord").addEventListener("click", function () {
+            recognition.stop();
+            mediaRecorder.stop();
+            isRecording = false;
+            document.getElementById("startRecord").disabled = false;
+            document.getElementById("stopRecord").disabled = true;
+        });
+    </script>
+
+</body>
+</html>
