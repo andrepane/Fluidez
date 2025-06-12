@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap');
+
+body {
+    font-family: 'SF Pro Display', Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f5f7, #dcdce3);
+    color: #333;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+button {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 10px;
+}
+
+button:hover {
+    background: #0056d2;
+}
+
+button:disabled {
+    background: #a5a5a5;
+    cursor: not-allowed;
+}
+
+#transcription {
+    border: 2px solid #007aff;
+    padding: 15px;
+    min-height: 80px;
+    border-radius: 10px;
+    background: #f0f0f5;
+    font-size: 16px;
+    margin: 20px 0;
+}
+
+#wpmResult {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+select,
+input {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+#audioContainer {
+    margin-top: 20px;
+}
