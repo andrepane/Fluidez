@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluidez+ - Análisis de velocidad del habla</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Fluidez+</h1>
+    <p>Analiza la velocidad de tu habla con precisión.</p>
+
+    <div class="container">
+        <button id="startRecord">🎤 Iniciar Grabación</button>
+        <button id="stopRecord" disabled>⏹️ Detener</button>
+
+        <h2>Transcripción:</h2>
+        <div id="transcription">Esperando...</div>
+
+        <h2>Velocidad del Habla:</h2>
+        <p id="wpmResult">-</p>
+
+        <label for="wpmRange">Selecciona un rango de evaluación:</label>
+        <select id="wpmRange">
+            <option value="50-75">50-75 WPM</option>
+            <option value="75-100">75-100 WPM</option>
+            <option value="100-125">100-125 WPM</option>
+            <option value="125-150">125-150 WPM</option>
+            <option value="150-175">150-175 WPM</option>
+            <option value="175-200">175-200 WPM</option>
+            <option value="200-225">200-225 WPM</option>
+            <option value="225-250">225-250 WPM</option>
+            <option value="250-275">250-275 WPM</option>
+            <option value="275-300">275-300 WPM</option>
+            <option value="300-350">300-350 WPM</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <h2>Guardar grabación</h2>
+        <input type="text" id="filename" placeholder="Nombre del archivo">
+        <button id="saveRecording" disabled>💾 Guardar Audio</button>
+        <div id="audioContainer"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
