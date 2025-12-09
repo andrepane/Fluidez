@@ -1,49 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluidez+ - Análisis de velocidad del habla</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluidez+ | Análisis de velocidad del habla</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-    <h1>Fluidez+</h1>
-    <p>Analiza la velocidad de tu habla con precisión.</p>
-
-    <div class="container">
-        <button id="startRecord">🎤 Iniciar Grabación</button>
-        <button id="stopRecord" disabled>⏹️ Detener</button>
-
-        <h2>Transcripción:</h2>
-        <div id="transcription">Esperando...</div>
-
-        <h2>Velocidad del Habla:</h2>
-        <p id="wpmResult">-</p>
-
-        <label for="wpmRange">Selecciona un rango de evaluación:</label>
-        <select id="wpmRange">
-            <option value="50-75">50-75 WPM</option>
-            <option value="75-100">75-100 WPM</option>
-            <option value="100-125">100-125 WPM</option>
-            <option value="125-150">125-150 WPM</option>
-            <option value="150-175">150-175 WPM</option>
-            <option value="175-200">175-200 WPM</option>
-            <option value="200-225">200-225 WPM</option>
-            <option value="225-250">225-250 WPM</option>
-            <option value="250-275">250-275 WPM</option>
-            <option value="275-300">275-300 WPM</option>
-            <option value="300-350">300-350 WPM</option>
-        </select>
+  <header class="app-header">
+    <div class="brand">
+      <span aria-hidden="true">🩺</span>
+      <div>
+        <p class="eyebrow">Herramienta clínica</p>
+        <h1>Fluidez+</h1>
+      </div>
     </div>
-
-    <div class="container">
-        <h2>Guardar grabación</h2>
-        <input type="text" id="filename" placeholder="Nombre del archivo">
-        <button id="saveRecording" disabled>💾 Guardar Audio</button>
-        <div id="audioContainer"></div>
+    <div class="theme-toggle">
+      <label for="themeSwitch">Tema</label>
+      <button id="themeSwitch" type="button" aria-label="Cambiar tema" title="Cambiar tema">🌗</button>
     </div>
+  </header>
 
-    <script src="script.js"></script>
+  <main>
+    <section class="panel status" aria-live="polite">
+      <p class="status-label">Estado</p>
+      <p id="statusText" class="status-value">Listo para comenzar</p>
+    </section>
+
+    <section class="panel layout-grid">
+      <div class="controls">
+        <h2>Captura de audio</h2>
+        <p class="hint">Elige grabar o subir un archivo (.wav, .mp3).</p>
+        <div class="button-row">
+          <button id="recordBtn" type="button">🎤 Grabar</button>
+          <button id="stopBtn" type="button" disabled>⏹ Detener</button>
+          <label class="file-upload">
+            <input id="fileInput" type="file" accept="audio/*" />
+            <span>⬆️ Subir audio</span>
+          </label>
+        </div>
+        <div class="waveform" aria-label="Visualización de audio">
+          <canvas id="waveCanvas" width="600" height="120"></canvas>
+        </div>
+        <div class="audio-preview">
+          <audio id="playback" controls></audio>
+        </div>
+      </div>
+
+      <div class="data-entry">
+        <h2>Datos del discurso</h2>
+        <div class="form-group">
+          <label for="transcriptInput">Transcripción (opcional)</label>
+          <textarea id="transcriptInput" rows="5" placeholder="Puedes pegar la lectura para calcular las palabras" aria-describedby="transcriptHelp"></textarea>
+          <p id="transcriptHelp" class="hint">Si no hay transcripción, puedes introducir directamente el número aproximado de palabras.</p>
+        </div>
+        <div class="form-group inline">
+          <label for="wordCountInput">Número de palabras</label>
+          <input id="wordCountInput" type="number" min="0" inputmode="numeric" placeholder="ej. 120" />
+          <label for="syllableEstimate" class="inline-label">Síl./palabra</label>
+          <input id="syllableEstimate" type="number" min="0" step="0.1" value="1.8" />
+        </div>
+        <button id="analyzeBtn" type="button" class="primary">Analizar velocidad</button>
+        <p class="tiny">Se estima la duración efectiva eliminando silencios largos.</p>
+      </div>
+    </section>
+
+    <section class="panel results" aria-live="polite">
+      <div class="results-header">
+        <h2>Resultados</h2>
+        <span class="tag" id="analysisTag">Sin análisis</span>
+      </div>
+      <div class="metrics" id="resultsContent">
+        <div class="metric">
+          <p class="label">Duración total</p>
+          <p class="value" id="totalDuration">—</p>
+        </div>
+        <div class="metric">
+          <p class="label">Duración de habla</p>
+          <p class="value" id="speechDuration">—</p>
+        </div>
+        <div class="metric">
+          <p class="label">Palabras</p>
+          <p class="value" id="wordCount">—</p>
+        </div>
+        <div class="metric">
+          <p class="label">ppm</p>
+          <p class="value" id="wpm">—</p>
+        </div>
+        <div class="metric">
+          <p class="label">Sílabas/seg</p>
+          <p class="value" id="sps">—</p>
+        </div>
+      </div>
+      <div class="ranges">
+        <div>
+          <p class="label">Rango orientación adultos</p>
+          <p class="range">120 – 200 ppm</p>
+        </div>
+        <div>
+          <p class="label">Rango orientación niños</p>
+          <p class="range">110 – 170 ppm</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="panel secondary">
+    <h2>Notas de uso</h2>
+    <ul>
+      <li>La app calcula la duración real con detección básica de silencios.</li>
+      <li>Introduce las palabras o la transcripción para obtener la velocidad.</li>
+      <li>El rango mostrado es orientativo y no constituye diagnóstico.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Desarrollado para sesiones clínicas de logopedia. Compatible con navegadores modernos.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
