@@ -83,3 +83,11 @@ export function therapySummary(bins, duration, target) {
   seconds.unknown+=Math.max(0,duration-Object.values(seconds).reduce((a,b)=>a+b,0));
   return {timeline,seconds,longest,percent:Object.fromEntries(Object.entries(seconds).map(([k,v])=>[k,duration>0?v/duration*100:0]))};
 }
+
+// Carlo (2007), Table 5, communication rate P10–P90 rounded to whole ppm.
+// Descriptive adult sample reference, NOT diagnostic limits or pediatric norms.
+export const therapyPresets = {
+  conversation:{min:120,max:187,label:'Conversación'},
+  reading:{min:120,max:161,label:'Lectura'},
+  description:{min:67,max:158,label:'Descripción de imágenes'}
+};
