@@ -190,8 +190,10 @@ function tick() {
     const gate=pauseGate.update(rms,elapsed);paused=gate.paused;
     if(gate.resumed){runStart=elapsed;lastLiveUpdate=null;}
   }
-  const recent = tracker.recent(elapsed, elapsed-runStart);
-  $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
+  // Measure at text arrival, not at each UI tick: absence of new data is not
+  // evidence of slower speech. Hold briefly, then the freshness gate hides it.
+  const recent = lastLiveUpdate===null?null:tracker.recent(lastLiveUpdate,lastLiveUpdate-runStart);
+  $('recentSpeed').textContent = liveSupported && recent !== null && lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5 && !paused ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
   const fresh=lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5;
   const value=liveSupported && tracker.entries.length && fresh && !paused?recent:null;
