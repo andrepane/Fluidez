@@ -65,3 +65,21 @@ export function sharedChartScale(results) {
 export function intervalAt(time, bins) {
   return bins?.find(b => time >= b.start && time < b.end) || null;
 }
+
+export function speedZone(wpm, target) {
+  if (!Number.isFinite(wpm)) return 'unknown';
+  return wpm < target.min ? 'slow' : wpm > target.max ? 'fast' : 'target';
+}
+export function therapySummary(bins, duration, target) {
+  const seconds = {slow:0,target:0,fast:0,unknown:0};
+  let longest=0, run=0, previousEnd=0;
+  const timeline=(bins || []).map(b=>({...b,zone:speedZone(b.wpm,target)}));
+  for (const b of timeline) {
+    const span=b.end-b.start;
+    seconds[b.zone]+=span;
+    run=b.zone==='target' ? (Math.abs(b.start-previousEnd)<.001 ? run : 0)+span : 0;
+    longest=Math.max(longest,run); previousEnd=b.end;
+  }
+  seconds.unknown+=Math.max(0,duration-Object.values(seconds).reduce((a,b)=>a+b,0));
+  return {timeline,seconds,longest,percent:Object.fromEntries(Object.entries(seconds).map(([k,v])=>[k,duration>0?v/duration*100:0]))};
+}
