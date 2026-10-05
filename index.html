@@ -1,6 +1,154 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fluidez+ · Patrón temporal del habla</title><link rel="stylesheet" href="style.css"></head>
-<body><header class="app-header"><div class="brand"><span class="brand-mark" aria-hidden="true">f+</span><div><p class="eyebrow">Practica tu ritmo</p><h1>Fluidez+</h1></div></div><button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
-<main><section class="panel therapy-panel"><p class="eyebrow">Modo Terapia · objetivo de esta tarea</p><h2 class="intro-title">Encuentra un ritmo cómodo.</h2><p class="hint">Elige la tarea, graba y sigue el marcador.</p><div class="goal-setup"><label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option><option value="child">Niño / adolescente · objetivo personalizado</option></select><label for="presetSelect">Tarea</label><select id="presetSelect"><option value="conversation">Conversación · 120–187 ppm</option><option value="reading">Lectura · 120–161 ppm</option><option value="description">Descripción de imágenes · 67–158 ppm</option><option value="custom">Personalizado</option></select><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong></div></div><details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><div class="button-row"><label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label></div><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p><a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a></details><h2 id="feedbackLabel" role="status">Preparado para practicar</h2><div id="speedMeter" class="speed-meter" role="img" aria-label="Velocidad reciente respecto al objetivo"><span>Más lento</span><span>En tu objetivo</span><span>Más rápido</span><i id="speedMarker" hidden></i></div><p id="feedbackValue">Esperando grabación</p><p class="feedback-caveat">Estimación en directo · hasta 15 s desde la última pausa probable · puede llegar con retraso</p><div class="session-controls"><p id="statusText" role="status">Listo para grabar</p><div class="button-row"><label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option><option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><button id="stopBtn" disabled>■ Terminar</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button></div><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p><details><summary>Detalles para el profesional · directo</summary><p id="liveNotice" class="hint"></p><div class="metrics"><div class="metric"><p class="label">Tiempo de grabación</p><p id="timer" class="value">00:00</p></div><div class="metric"><p class="label">Velocidad estimada · media acumulada</p><p id="liveSpeed" class="value">—</p></div><div class="metric"><p class="label">Palabras provisionales</p><p id="liveCount" class="value">—</p></div></div><div class="metric"><p class="label">Velocidad reciente estimada · últimos 15 s</p><p id="recentSpeed" class="value">—</p></div><h2>Transcripción en directo</h2><p id="liveTranscript" class="transcript">La transcripción aparecerá al hablar.</p></details></div><div id="therapySummary" hidden><h2 id="summaryTitle">Resumen de la práctica</h2><p id="summarySource">Aún no hay muestra.</p><div class="therapy-cards"><div>Dentro del objetivo<strong id="targetPercent">—</strong></div><div>Por debajo<strong id="slowPercent">—</strong></div><div>Por encima<strong id="fastPercent">—</strong></div><div>Media global · con pausas<strong id="therapyMean">—</strong></div><div>Mayor periodo en objetivo<strong id="longestTarget">—</strong></div><div>Pausas / silencio estimados<strong id="therapyPauseInfo">—</strong></div></div><p id="coverageNotice" class="hint"></p><div id="therapyTimeline" class="therapy-timeline" aria-label="Patrón temporal respecto al objetivo"></div><div class="timeline-legend"><span class="legend-slow">Más lento</span><span class="legend-target">En objetivo</span><span class="legend-fast">Más rápido</span><span class="legend-unknown">Sin datos</span></div><div class="timeline-axis"><span>Inicio</span><span id="timelineEnd">Final</span></div><p class="hint">Pulsa un tramo final para escucharlo; pasa el cursor o enfócalo para ver su tiempo.</p></div></section>
-<section class="panel"><div class="results-header"><h2>Audio y resultado final</h2><span id="analysisTag" class="tag">Sin análisis</span></div><audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a><p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p><details id="professionalDetails"><summary>Detalles para el profesional · análisis final</summary><div class="metrics"><div class="metric"><p class="label">Duración total</p><p id="totalDuration" class="value">—</p></div><div class="metric"><p class="label">Palabras reconocidas</p><p id="wordCount" class="value">—</p></div><div class="metric"><p class="label">Velocidad media · incluye pausas</p><p id="wpm" class="value">—</p></div><div class="metric"><p class="label">Actividad acústica estimada</p><p id="speechDuration" class="value">—</p></div><div class="metric"><p class="label">Silencio estimado</p><p id="silenceDuration" class="value">—</p></div><div class="metric"><p class="label">Pausas internas ≥ 0,5 s</p><p id="pauseCount" class="value">—</p></div></div><h2>Velocidad a lo largo de la muestra</h2><label for="intervalSelect">Intervalos</label> <select id="intervalSelect"><option value="15">15 segundos</option><option value="10">10 segundos</option><option value="30">30 segundos</option></select><p id="chartNotice" class="hint">Intervalos reales según marcas por palabra. Pulsa una barra o un tramo de la tabla para escucharlo.</p><canvas id="speedChart" height="260" aria-label="Gráfico temporal de velocidad" role="img"></canvas><div class="table-wrap"><table><thead><tr><th>Tramo</th><th>Palabras</th><th>Palabras/min</th></tr></thead><tbody id="segmentRows"></tbody></table></div><h2>Pausas detectadas</h2><p id="pauses" class="hint">—</p><h2>Transcripción final automática</h2><p id="finalTranscript" class="transcript">Pendiente del reprocesamiento del audio.</p><p class="tiny">Resultado final significa procesamiento terminado, no exactitud clínica validada. Las palabras y sus tiempos pueden contener errores. Las pausas se estiman por energía acústica, no identifican bloqueos ni distinguen todas las fuentes de sonido.</p></details></section>
-<details class="panel" id="comparisonPanel"><summary>Comparar dos muestras</summary><h2>Comparar muestras A y B</h2><p id="comparisonNotice" class="hint">Analiza una muestra en A y otra en B. Se conservan en esta pestaña.</p><div class="table-wrap"><table><thead><tr><th>Medida</th><th>Muestra A</th><th>Muestra B</th></tr></thead><tbody id="comparisonRows"></tbody></table></div><h3>Muestra A · azul</h3><canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3><canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2><p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></main><script type="module" src="script.js"></script></body></html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fluidez+ · Patrón temporal del habla</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header"><div class="brand">
+<span class="brand-mark" aria-hidden="true">f+</span><div>
+<p class="eyebrow">Practica tu ritmo</p>
+<h1>Fluidez+</h1>
+</div>
+</div>
+<button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
+<main><section id="patientPanel" class="panel patient-panel" hidden=""><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong>
+</div>
+<h2 id="feedbackLabel" role="status">Preparado para practicar</h2>
+<div id="speedMeter" class="speed-meter" role="img" aria-label="Velocidad reciente respecto al objetivo">
+<span>Más lento</span><span>En tu objetivo</span><span>Más rápido</span><i id="speedMarker" hidden></i>
+</div>
+<p id="feedbackValue" class="sr-only">Esperando grabación</p>
+<p class="feedback-caveat">Estimación en directo · hasta 15 s desde la última pausa probable · puede llegar con retraso</p>
+<button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><section id="therapySummary" hidden class="panel patient-summary"><h2 id="summaryTitle">Resumen de la práctica</h2>
+<p id="summarySource">Aún no hay muestra.</p>
+<div class="therapy-cards">
+<div>Dentro del objetivo<strong id="targetPercent">—</strong>
+</div>
+<div>Por debajo<strong id="slowPercent">—</strong>
+</div>
+<div>Por encima<strong id="fastPercent">—</strong>
+</div>
+<div>Mayor periodo en objetivo<strong id="longestTarget">—</strong>
+</div>
+</div>
+<p id="coverageNotice" class="hint"></p>
+<div id="therapyTimeline" class="therapy-timeline" aria-label="Patrón temporal respecto al objetivo"></div>
+<div class="timeline-legend">
+<span class="legend-slow">Más lento</span><span class="legend-target">En objetivo</span><span class="legend-fast">Más rápido</span><span class="legend-unknown">Sin datos</span>
+</div>
+<div class="timeline-axis">
+<span>Inicio</span><span id="timelineEnd">Final</span>
+</div>
+<p class="hint">Estimations de la pratique. Le gris indique les pauses probables ou les périodes sans estimation.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<div class="button-row">
+<label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
+</div>
+<p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
+<div class="button-row">
+<label for="taskSelect">Tarea</label><select id="taskSelect"><option value="conversation">Conversación</option>
+<option value="reading">Lectura</option>
+<option value="description">Descripción de imágenes</option>
+<option value="custom">Otra tarea</option></select>
+</div>
+<details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p>
+<a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a><div class="goal-setup">
+<label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option>
+<option value="child">Niño / adolescente · objetivo personalizado</option></select><label for="presetSelect">Tarea</label><select id="presetSelect"><option value="conversation">Conversación · 120–187 ppm</option>
+<option value="reading">Lectura · 120–161 ppm</option>
+<option value="description">Descripción de imágenes · 67–158 ppm</option>
+<option value="custom">Personalizado</option></select>
+</div></details><div class="button-row">
+<label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
+<option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
+</div>
+<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Detalles para el profesional · directo</summary><p id="liveNotice" class="hint"></p>
+<div class="metrics">
+<div class="metric">
+<p class="label">Tiempo de grabación</p>
+<p id="timer" class="value">00:00</p>
+</div>
+<div class="metric">
+<p class="label">Velocidad estimada · media acumulada</p>
+<p id="liveSpeed" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Palabras provisionales</p>
+<p id="liveCount" class="value">—</p>
+</div>
+</div>
+<div class="metric">
+<p class="label">Velocidad reciente estimada · últimos 15 s</p>
+<p id="recentSpeed" class="value">—</p>
+</div>
+<h2>Transcripción en directo</h2>
+<p id="liveTranscript" class="transcript">La transcripción aparecerá al hablar.</p></details><div>Media global · con pausas<strong id="therapyMean">—</strong>
+</div>
+<div>Pausas / silencio estimados<strong id="therapyPauseInfo">—</strong>
+</div>
+<section class="panel"><div class="results-header">
+<h2>Audio y resultado final</h2>
+<span id="analysisTag" class="tag">Sin análisis</span>
+</div>
+<audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a><p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p>
+<details id="professionalDetails"><summary>Detalles para el profesional · análisis final</summary><div class="metrics">
+<div class="metric">
+<p class="label">Duración total</p>
+<p id="totalDuration" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Palabras reconocidas</p>
+<p id="wordCount" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Velocidad media · incluye pausas</p>
+<p id="wpm" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Actividad acústica estimada</p>
+<p id="speechDuration" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Silencio estimado</p>
+<p id="silenceDuration" class="value">—</p>
+</div>
+<div class="metric">
+<p class="label">Pausas internas ≥ 0,5 s</p>
+<p id="pauseCount" class="value">—</p>
+</div>
+</div>
+<h2>Velocidad a lo largo de la muestra</h2>
+<label for="intervalSelect">Intervalos</label> <select id="intervalSelect"><option value="15">15 segundos</option>
+<option value="10">10 segundos</option>
+<option value="30">30 segundos</option></select><p id="chartNotice" class="hint">Intervalos reales según marcas por palabra. Pulsa una barra o un tramo de la tabla para escucharlo.</p>
+<canvas id="speedChart" height="260" aria-label="Gráfico temporal de velocidad" role="img"></canvas><div class="table-wrap"><table>
+<thead><tr>
+<th>Tramo</th>
+<th>Palabras</th>
+<th>Palabras/min</th>
+</tr></thead>
+<tbody id="segmentRows"></tbody>
+</table></div>
+<h2>Pausas detectadas</h2>
+<p id="pauses" class="hint">—</p>
+<h2>Transcripción final automática</h2>
+<p id="finalTranscript" class="transcript">Pendiente del reprocesamiento del audio.</p>
+<p class="tiny">Resultado final significa procesamiento terminado, no exactitud clínica validada. Las palabras y sus tiempos pueden contener errores. Las pausas se estiman por energía acústica, no identifican bloqueos ni distinguen todas las fuentes de sonido.</p></details></section>
+<details class="panel" id="comparisonPanel"><summary>Comparar dos muestras</summary><h2>Comparar muestras A y B</h2>
+<p id="comparisonNotice" class="hint">Analiza una muestra en A y otra en B. Se conservan en esta pestaña.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Medida</th>
+<th>Muestra A</th>
+<th>Muestra B</th>
+</tr></thead>
+<tbody id="comparisonRows"></tbody>
+</table></div>
+<h3>Muestra A · azul</h3>
+<canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
+<canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
+<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details></main><script type="module" src="script.js"></script>
+</body>
+</html>
