@@ -46,3 +46,12 @@ Al detener se conserva un resumen provisional del feedback observado mientras Wh
 Los detalles técnicos quedan en desplegables; comparación y escucha por tramos se mantienen. Las muestras y objetivos solo duran esta pestaña. No incluye diagnóstico, baremos ni eficacia clínica validada.
 
 Pruebas del flujo con adaptadores deterministas: inicio, feedback, parada, resumen antes de resolver worker, actualización final y objetivo inválido. No equivalen a prueba de micrófono, reconocimiento real o validez clínica en navegador.
+
+## Referencias seleccionables y pantalla de práctica
+Se han sustituido los límites arbitrarios iniciales por referencias descriptivas seleccionables de Carlo (2007), *Speech rate of non-stuttering Spanish-speaking adults*, tabla 5, tasa de comunicación (incluye pausas). Estudio de 60 adultos de 21–30 años de Puerto Rico. P10–P90 redondeados: conversación 120–187 ppm (119,65–187,00 originales), lectura 120–161 (119,59–160,75), descripción de imágenes 67–158 (66,53–158,04). No se usa mínimo/máximo observado como normalidad ni se inventa un intervalo diagnóstico. Estos percentiles describen el 80 % central de esa muestra, no toda el habla sana ni la población española. No se extrapolan a niños, mayores, otras tareas, articulación sin pausas o ventanas de 15 s. El estudio cuenta palabras previstas; ASR y repeticiones pueden diferir.
+Fuente: https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS
+Complemento sobre diferencias dialectales/tareas: https://www.benjamins.com/catalog/sic.20013.san (Santiago y colaboradores, 2022). No se usa para derivar límites ppm.
+
+Por defecto se precarga conversación adulta como punto de partida editable. Seleccionar niño/adolescente elimina el objetivo y desactiva las referencias adultas: exige un objetivo personalizado antes de grabar. Fuera del objetivo no significa alteración; dentro no acredita salud, inteligibilidad ni eficacia terapéutica.
+
+Controles de grabación al lado del medidor, resumen oculto hasta existir datos, comparación plegada y línea temporal sin textos solapados, con leyenda/tiempos accesibles. No se suavizan ni alteran mediciones para mejorar apariencia. Se mantienen directos/finales claramente separados.
