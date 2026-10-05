@@ -36,3 +36,13 @@ Selecciona muestra A o B antes de grabar/importar. Se conservan dos audios y sus
 Pulsa una barra o una fila para saltar y reproducir ese tramo; se detiene al alcanzar su final (limitado por la frecuencia de eventos del reproductor). Los botones de cada fila permiten hacerlo mediante teclado.
 
 Pruebas: `node --test tests/*.test.mjs`. Incluye flujo con adaptadores controlados (no sustituye prueba de micrófono/Whisper real).
+
+
+## Modo Terapia / Biofeedback
+El logopeda fija un rango objetivo para la tarea (por defecto 120–150 ppm, sin valor normativo). El medidor usa la velocidad reciente provisional del reconocimiento del navegador, no la media acumulada. Incluye pausas; recepción tardía de texto o revisiones pueden producir saltos. Si el directo no está disponible no se simula feedback.
+
+Al detener se conserva un resumen provisional del feedback observado mientras Whisper trabaja. Porcentajes sobre tiempo total, con tiempo sin estimación explícito. No se reconstruye retrospectivamente el feedback que ya vio el paciente. Al terminar Whisper, el resumen se sustituye por clasificación de los intervalos finales de 10/15/30 s, con objetivo guardado por muestra. Las dos fuentes y resoluciones son distintas y pueden discrepar. El mayor periodo en objetivo suma intervalos consecutivos clasificados: no demuestra estabilidad dentro de ellos. Sin timestamps completos no se inventan porcentajes finales ni distribución; se indica tiempo no evaluable.
+
+Los detalles técnicos quedan en desplegables; comparación y escucha por tramos se mantienen. Las muestras y objetivos solo duran esta pestaña. No incluye diagnóstico, baremos ni eficacia clínica validada.
+
+Pruebas del flujo con adaptadores deterministas: inicio, feedback, parada, resumen antes de resolver worker, actualización final y objetivo inválido. No equivalen a prueba de micrófono, reconocimiento real o validez clínica en navegador.
