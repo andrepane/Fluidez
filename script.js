@@ -1,10 +1,11 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
+let analyser=null,micSource=null,micFrame=null,pauseGate=new PauseGate(),runStart=0;
 let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null, lastLiveUpdate=null;
 const zoneLabels={slow:'LENTO',target:'OBJETIVO',fast:'RÁPIDO',unknown:'Sin estimación'};
 function readTarget() {
@@ -39,7 +40,7 @@ function renderTherapy() {
   $('therapyTimeline').replaceChildren();
   $('therapySummary').hidden=!source;
   if(!source) {
-    for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—';
+    for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget','therapyPauseInfo'])$(id).textContent='—';
     $('summarySource').textContent='Aún no hay muestra.'; $('coverageNotice').textContent=''; return;
   }
   const summary=therapySummary(source.bins,source.duration,goal);
@@ -49,7 +50,8 @@ function renderTherapy() {
   for(const [id,zone] of [['targetPercent','target'],['slowPercent','slow'],['fastPercent','fast']])$(id).textContent=`${summary.percent[zone].toFixed(1)} %`;
   $('therapyMean').textContent=Number.isFinite(source.mean)?`${Math.round(source.mean)} ppm`:'—';
   $('longestTarget').textContent=`${summary.longest.toFixed(1)} s`;
-  $('coverageNotice').textContent=`Porcentajes sobre la duración total, incluidas pausas. Sin estimación: ${summary.percent.unknown.toFixed(1)} %. El mayor periodo se calcula con la resolución de los tramos; no prueba control continuo dentro de cada tramo.`;
+  $('therapyPauseInfo').textContent=result?`${result.activity.pauses.length} pausas · ${result.activity.silence.toFixed(1)} s`:'Pendiente del audio';
+  $('coverageNotice').textContent=`${result?'':'Las pausas probables quedan neutrales/no evaluables. '}Porcentajes sobre la duración total, incluidas pausas. Sin estimación: ${summary.percent.unknown.toFixed(1)} %. El mayor periodo se calcula con la resolución de los tramos; no prueba control continuo dentro de cada tramo.`;
   const visible=[];let cursor=0;
   for(const b of summary.timeline) {
     if(b.start>cursor)visible.push({start:cursor,end:b.start,zone:'unknown'});
@@ -94,7 +96,7 @@ function resetResults() {
 }
 function clearLive() {
   completedRecognition = finalText = interimText = '';
-  tracker = new LiveWordTracker(); liveBins=[]; liveDuration=0; liveValue=null; lastLiveUpdate=null;
+  tracker = new LiveWordTracker(); liveBins=[]; liveDuration=0; liveValue=null; lastLiveUpdate=null;pauseGate=new PauseGate();runStart=0;
   feedback(null);
   for (const id of ['liveSpeed','liveCount','recentSpeed']) $(id).textContent = '—';
   $('timer').textContent = $('visibleTimer').textContent = '00:00';
@@ -122,7 +124,23 @@ function attachAudio(blob) {
     filename: blob.name || `fluidez-${selected ? 'B' : 'A'}-${Date.now()}.${extension}` };
   showAudio();
 }
-function releaseMic() { stream?.getTracks().forEach(track => track.stop()); stream = null; }
+function releaseMic() {
+  micSource?.disconnect();micSource=null;analyser=null;micFrame=null;
+  stream?.getTracks().forEach(track => track.stop()); stream = null;
+}
+async function monitorMic() {
+  try {
+    audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    await audioContext.resume();
+    analyser=audioContext.createAnalyser();analyser.fftSize=2048;
+    micFrame=new Float32Array(analyser.fftSize);
+    micSource=audioContext.createMediaStreamSource(stream);micSource.connect(analyser);
+    // Output intentionally unconnected: no microphone playback/feedback loop.
+  } catch {
+    analyser=null;micSource?.disconnect();micSource=null;
+    $('liveNotice').textContent+=' No se pudo monitorizar la energía: no hay neutralización acústica de pausas.';
+  }
+}
 function liveText() { return `${completedRecognition} ${finalText} ${interimText}`.trim(); }
 function tick() {
   const elapsed = (performance.now() - started) / 1000;
@@ -130,16 +148,29 @@ function tick() {
   $('timer').textContent = $('visibleTimer').textContent = formatTime(elapsed);
   $('liveCount').textContent = liveSupported ? String(words) : '—';
   $('liveSpeed').textContent = liveSupported && elapsed >= 3 ? `${Math.round(words * 60 / elapsed)} ppm` : '—';
-  const recent = tracker.recent(elapsed, elapsed);
+  let paused=false;
+  if(analyser && audioContext.state==='running') {
+    analyser.getFloatTimeDomainData(micFrame);
+    const rms=Math.sqrt(micFrame.reduce((sum,x)=>sum+x*x,0)/micFrame.length);
+    const gate=pauseGate.update(rms,elapsed);paused=gate.paused;
+    if(gate.resumed){runStart=elapsed;lastLiveUpdate=null;}
+  }
+  const recent = tracker.recent(elapsed, elapsed-runStart);
   $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
   const fresh=lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5;
-  const value=liveSupported && tracker.entries.length && fresh?recent:null;
+  const value=liveSupported && tracker.entries.length && fresh && !paused?recent:null;
   if(state==='recording' && elapsed>liveDuration) {
     liveBins.push({start:liveDuration,end:elapsed,wpm:liveValue});liveDuration=elapsed;
   }
   liveValue=value; feedback(value);
-  if(state==='recording' && liveSupported && !fresh && lastLiveUpdate!==null) {
+  if(state==='recording' && paused){
+    $('feedbackLabel').textContent='Pausa probable';
+    $('feedbackValue').textContent='Tómate tu tiempo. El medidor queda neutral mientras no detecta actividad suficiente.';
+  } else if(state==='recording' && runStart>0 && recent===null){
+    $('feedbackLabel').textContent='Retomando el habla';
+    $('feedbackValue').textContent='Esperando texto y al menos 3 s de muestra nueva.';
+  } else if(state==='recording' && liveSupported && !fresh && lastLiveUpdate!==null) {
     $('feedbackLabel').textContent='Esperando actualización de voz';
     $('feedbackValue').textContent='No hay texto nuevo desde hace más de 5 s. No podemos distinguir una pausa de un retraso del reconocimiento.';
   }
@@ -193,13 +224,14 @@ async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
   clearLive(); resetResults(); $('therapySummary').hidden=true; $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
-  for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
+  for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget','therapyPauseInfo'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
   $('analysisTag').textContent = 'Provisional';
-  $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de los últimos 15 s; los retrasos y revisiones pueden causar saltos.';
+  $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de hasta 15 s desde la última pausa probable; los retrasos y revisiones pueden causar saltos.';
   setStatus(`Solicitando micrófono · muestra ${selected ? 'B' : 'A'}…`);
   try {
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw Error('Necesitas un navegador compatible y HTTPS.');
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    await monitorMic();
     const mime = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t));
     const activeRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     recorder = activeRecorder; const chunks = [];
