@@ -80,8 +80,32 @@ const intervalWidth = () => Number($('intervalSelect').value);
 const setStatus = text => $('statusText').textContent = text;
 const busy = () => ['starting', 'recording', 'stopping', 'processing'].includes(state);
 
+let processingReminder=null;
+const processingPhases=['Preparando audio','Transcribiendo','Calculando velocidad y pausas','Generando resultados'];
+function showProcessing(step,detail,percent=null){
+  $('processingStep').textContent=`Paso ${step} de 4`;
+  $('processingPhase').textContent=processingPhases[step-1];
+  $('processingBar').setAttribute('aria-label',processingPhases[step-1]);
+  const known=Number.isFinite(percent);
+  $('processingBar').dataset.mode=known?'determinate':'indeterminate';
+  if(known){const value=Math.max(0,Math.min(100,percent));$('processingBar').setAttribute('aria-valuenow',String(value));$('processingFill').style.width=`${value}%`;}
+  else{$('processingBar').removeAttribute('aria-valuenow');$('processingFill').style.width='';}
+  $('processingDetail').textContent=detail;
+}
+// Yield before short synchronous calculations so the new phase can paint.
+const paintProcessing=()=>new Promise(resolve=>setTimeout(resolve,0));
 function setState(next) {
+  const wasProcessing=['stopping','processing'].includes(state);
   state = next;
+  const analyzing=['stopping','processing'].includes(next);
+  $('processingPanel').hidden=!analyzing;
+  if(analyzing&&!wasProcessing){
+    showProcessing(1,'Conservando la grabación y preparando el audio completo.');
+    $('processingReassurance').textContent='El análisis continúa en esta pestaña.';
+    processingReminder=setTimeout(()=>{$('processingReassurance').textContent='Seguimos procesando… En algunos equipos puede tardar un poco más. No cierres la pestaña.';},20000);
+  }
+  if(!analyzing){clearTimeout(processingReminder);processingReminder=null;}
+
   $('recordBtn').disabled = busy();
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
@@ -91,10 +115,11 @@ function setState(next) {
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
   $('setupPanel').hidden=practicing||next==='stopping'||next==='processing';
-  $('professionalArea').hidden=practicing;
+  $('professionalArea').hidden=practicing||analyzing;
   document.querySelector('.app-header').hidden=practicing;
   if(practicing){$('therapySummary').hidden=true;$('professionalArea').open=false;}
   if(next==='done'||next==='error')$('setupPanel').open=false;
+  if(next==='error'&&wasProcessing)$('professionalArea').open=true;
   if(next==='idle'||next==='starting')$('setupPanel').open=true;
   if(next!=='recording')feedback(null);
 }
@@ -306,6 +331,12 @@ function transcribe(audio) {
       else if (data.type === 'error') fail(Error(data.message));
       else if (data.type === 'progress') {
         const p = data.progress;
+        if(p.status==='transcribing')showProcessing(2,'Transcribiendo el audio completo en este dispositivo.');
+        else {
+          const value=Number.isFinite(p.progress)?p.progress:null;
+          const file=p.file||'archivo del modelo';
+          showProcessing(2,value===null?'Preparando el motor local. La primera vez necesita descargar el modelo.':`Descargando ${file} · ${Math.round(value)} % de este archivo (no del análisis completo).`,value);
+        }
         $('finalNotice').textContent = p.status === 'transcribing' ? 'Transcribiendo el audio completo…' :
           `Preparando modelo local${Number.isFinite(p.progress) ? ` · ${Math.round(p.progress)} %` : ''}.`;
       }
@@ -322,10 +353,13 @@ async function analyzeFinal() {
   try {
     const { samples: audio, duration } = await decodeAudio(sample.blob);
     if (!Number.isFinite(duration) || duration <= 0 || !audio.length) throw Error('El archivo no contiene audio válido.');
-    const activity = acousticActivity(audio, 16000);
+    showProcessing(2,'Preparando el motor de transcripción local.');
     // Even activity.speech === 0 must reach the independent transcription engine.
     const output = await transcribe(audio);
+    showProcessing(3,'Calculando la velocidad y las pausas del audio completo.');await paintProcessing();
+    const activity = acousticActivity(audio, 16000);
     sample.result = { duration, activity, output, ...finalMetrics(output, duration, intervalWidth()) };
+    showProcessing(4,'Preparando los gráficos y los resultados.');await paintProcessing();
     setState('done'); renderSelected(); renderComparison(); renderTherapy();
     setStatus('Análisis final completado');
   } catch (error) {
