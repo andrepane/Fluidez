@@ -104,3 +104,5 @@ export class PauseGate {
     return {paused:this.paused,resumed:was&&!this.paused};
   }
 }
+
+export {LiveAudioWindow,resampleFrame,localWindowMetrics} from './live-window.mjs';
