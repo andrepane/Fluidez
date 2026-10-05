@@ -14,7 +14,17 @@
 </div>
 </div>
 <button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
-<main><section id="patientPanel" class="panel patient-panel" hidden=""><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong>
+<main><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
+<div class="processing-orbit" aria-hidden="true"><span>f+</span></div>
+<p class="eyebrow">Análisis automático</p>
+<h2 id="processingTitle">Analizando tu muestra…</h2>
+<p class="processing-description">El tiempo depende del audio y del equipo. No cierres la pestaña.</p>
+<div class="processing-phase" role="status" aria-live="polite"><span id="processingStep">Paso 1 de 4</span><strong id="processingPhase">Preparando audio</strong></div>
+<div id="processingBar" class="processing-bar" role="progressbar" aria-label="Preparando audio" aria-valuemin="0" aria-valuemax="100" data-mode="indeterminate"><span id="processingFill"></span></div>
+<p id="processingDetail" class="hint">Conservando la grabación y preparando el audio completo.</p>
+<p id="processingReassurance" class="processing-reassurance">El análisis continúa en esta pestaña.</p>
+<ol class="processing-steps" aria-label="Fases del análisis"><li>Audio</li><li>Transcripción</li><li>Velocidad y pausas</li><li>Resultados</li></ol>
+</section><section id="patientPanel" class="panel patient-panel" hidden=""><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong>
 </div>
 <h2 id="feedbackLabel" role="status">Preparado para practicar</h2>
 <div id="speedMeter" class="speed-meter" role="img" aria-label="Velocidad reciente respecto al objetivo">
