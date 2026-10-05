@@ -21,21 +21,26 @@ function harness() {
   const elements=new Map();
   const document={getElementById:id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);},createElement:()=>new Element(),body:{dataset:{}}};
   document.getElementById('intervalSelect').value='15';
+  document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
+  let now=10000,pending=false,pendingWorker;
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
   class AudioContext {async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
   class OfflineAudioContext {createBuffer(){return {copyToChannel:noop};}createBufferSource(){return {connect:noop,start:noop};}async startRendering(){return {getChannelData:()=>new Float32Array(16000)};}}
   class Worker {
-    postMessage(data){calls++;queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
+    postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
     terminate(){}
   }
-  const window={AudioContext,devicePixelRatio:1,addEventListener:noop};
+  let recognizer;
+  class SpeechRecognition {constructor(){recognizer=this;}start(){}stop(){this.onend?.();}abort(){}}
+  class MediaRecorder {static isTypeSupported(){return true;}constructor(){this.mimeType='audio/webm';}start(){}stop(){this.ondataavailable({data:new Blob(['audio'])});this.stopped=this.onstop();}}
+  const window={AudioContext,MediaRecorder,SpeechRecognition,devicePixelRatio:1,addEventListener:noop};
   class FakeURL extends URL {static createObjectURL(){return 'blob:fixture-'+Math.random();}static revokeObjectURL(){}}
-  const context={...analysis,document,window,navigator:{},OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>10000},setTimeout,clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
+  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout,clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
   let source=readFileSync(new URL('../script.js',import.meta.url),'utf8');
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
-  source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,samples,chartLayouts,state:()=>state};';
+  source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
-  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b};
+  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
 }
 const blob=()=>new Blob([new Uint8Array(10)],{type:'audio/wav'});
 test('zero activity still invokes final worker and never reuses live text',async()=>{
@@ -62,4 +67,22 @@ test('worker failure exposes incomplete analysis and preserves audio',async()=>{
 test('incomplete word timestamps keep mean but suppress temporal graph',async()=>{
   const h=harness();h.setOutput({text:'hola sí',chunks:[{text:'hola',timestamp:[1,2]}]});h.app.attachAudio(blob());await h.app.analyzeFinal();
   assert.equal(h.app.samples[0].result.bins,null);assert.equal(h.e('wpm').textContent,'6 ppm');assert.equal(h.app.chartLayouts.has('speedChart'),false);
+});
+
+test('therapy recording shows provisional summary before final worker and replaces it',async()=>{
+  const h=harness();h.setPending(true);await h.app.startRecording();
+  assert.equal(h.app.state(),'recording');assert.equal(h.e('targetMin').disabled,true);
+  h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+  assert.equal(h.e('feedbackLabel').textContent,'OBJETIVO');assert.equal(h.e('speedMarker').hidden,false);
+  h.setTime(18000);h.app.stopRecording();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/Reconocimiento en directo/);
+  assert.ok(h.app.samples[0].provisional);assert.notEqual(h.e('targetPercent').textContent,'—');
+  h.finish();await h.app.recorder().stopped;
+  assert.equal(h.app.state(),'done');assert.match(h.e('summarySource').textContent,/Whisper/);
+  assert.equal(h.e('targetMin').disabled,false);
+});
+test('therapy refuses invalid targets before requesting microphone',async()=>{
+  const h=harness();h.e('targetMin').value='200';h.e('targetMax').value='150';await h.app.startRecording();
+  assert.equal(h.app.state(),'idle');assert.match(h.e('statusText').textContent,/rango válido/);
 });
