@@ -111,6 +111,7 @@ function setState(next) {
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
   $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
+  $('finalEngineSelect').disabled=busy();
   document.body.dataset.session=next;
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
@@ -124,6 +125,7 @@ function setState(next) {
   if(next!=='recording')feedback(null);
 }
 function resetResults() {
+  $('finalTiming').textContent='';
   for (const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount']) $(id).textContent = '—';
   $('finalTranscript').textContent = 'Pendiente del reprocesamiento del audio.';
   $('segmentRows').replaceChildren(); $('pauses').textContent = '—';
@@ -318,20 +320,40 @@ async function decodeAudio(blob) {
   const resampled = await offline.startRendering();
   return { samples: resampled.getChannelData(0), duration: decoded.duration };
 }
-function transcribe(audio) {
+let workerBackend=null,lastFinalRun=null;
+async function transcribe(audio){
+  const started=performance.now(),deadline=started+900000;
+  const preferred=$('finalEngineSelect').value==='gpu'?'gpu':'cpu';
+  let fallback=null;
+  if(preferred==='gpu'&&navigator.gpu){
+    try{return await runTranscriber(audio,'gpu',deadline,started,null);}
+    catch(error){fallback=error.message;}
+  }else if(preferred==='gpu')fallback='WebGPU no disponible en este navegador';
+  if(deadline<=performance.now())throw Error('El análisis excedió 15 minutos; el audio sigue disponible.');
+  if(fallback)showProcessing(2,'GPU no disponible o falló. Continuamos con el motor CPU actual; puede tardar más.');
+  return runTranscriber(audio,'cpu',deadline,started,fallback);
+}
+function runTranscriber(audio,backend,deadline,started,fallback) {
   return new Promise((resolve, reject) => {
     const id = ++job;
-    try { worker ||= new Worker(new URL('./transcriber.worker.js', import.meta.url), { type: 'module' }); }
+    try {
+      if(workerBackend!==backend){worker?.terminate();worker=null;workerBackend=backend;}
+      worker ||= new Worker(new URL(backend==='gpu'?'./gpu-transcriber.worker.js':'./transcriber.worker.js', import.meta.url), { type: 'module' });
+    }
     catch (error) { reject(error); return; }
     const fail = error => { clearTimeout(workerTimeout); worker?.terminate(); worker = null; reject(error); };
     worker.onerror = () => fail(Error('No se pudo cargar el motor; comprueba conexión y descarga del modelo.'));
     worker.onmessage = ({ data }) => {
       if (data.id !== id) return;
-      if (data.type === 'result') { clearTimeout(workerTimeout); resolve(data.output); }
+      if (data.type === 'result') {
+        clearTimeout(workerTimeout);
+        lastFinalRun={engine:backend,preferred:$('finalEngineSelect').value==='gpu'?'gpu':'cpu',fallback,timing:data.timing||null,totalMs:performance.now()-started};
+        resolve(data.output);
+      }
       else if (data.type === 'error') fail(Error(data.message));
       else if (data.type === 'progress') {
         const p = data.progress;
-        if(p.status==='transcribing')showProcessing(2,'Transcribiendo el audio completo en este dispositivo.');
+        if(p.status==='transcribing')showProcessing(2,`Transcribiendo el audio completo con ${backend==='gpu'?'GPU experimental':'CPU'}${fallback?' · alternativa tras fallo GPU':''}.`);
         else {
           const value=Number.isFinite(p.progress)?p.progress:null;
           const file=p.file||'archivo del modelo';
@@ -341,7 +363,7 @@ function transcribe(audio) {
           `Preparando modelo local${Number.isFinite(p.progress) ? ` · ${Math.round(p.progress)} %` : ''}.`;
       }
     };
-    workerTimeout = setTimeout(() => fail(Error('El análisis excedió 15 minutos; el audio sigue disponible.')), 900000);
+    workerTimeout = setTimeout(() => fail(Error('El análisis excedió 15 minutos; el audio sigue disponible.')), Math.max(1,deadline-performance.now()));
     const copy = audio.slice(); worker.postMessage({ id, audio: copy }, [copy.buffer]);
   });
 }
@@ -355,10 +377,10 @@ async function analyzeFinal() {
     if (!Number.isFinite(duration) || duration <= 0 || !audio.length) throw Error('El archivo no contiene audio válido.');
     showProcessing(2,'Preparando el motor de transcripción local.');
     // Even activity.speech === 0 must reach the independent transcription engine.
-    const output = await transcribe(audio);
+    lastFinalRun=null;const output = await transcribe(audio);
     showProcessing(3,'Calculando la velocidad y las pausas del audio completo.');await paintProcessing();
     const activity = acousticActivity(audio, 16000);
-    sample.result = { duration, activity, output, ...finalMetrics(output, duration, intervalWidth()) };
+    sample.result = { duration, activity, output, execution:lastFinalRun, ...finalMetrics(output, duration, intervalWidth()) };
     showProcessing(4,'Preparando los gráficos y los resultados.');await paintProcessing();
     setState('done'); renderSelected(); renderComparison(); renderTherapy();
     setStatus('Análisis final completado');
@@ -394,6 +416,13 @@ function renderSelected() {
     // The whole row is clickable; the button also provides keyboard accessibility.
     row.addEventListener('click', event => { if (event.target !== button) playInterval(selected, bin); });
     $('segmentRows').append(row);
+  }
+  const execution=result.execution;
+  if(execution){
+    const seconds=ms=>(ms/1000).toFixed(1)+' s';
+    $('finalTiming').textContent=`Motor final: ${execution.engine==='gpu'?'GPU experimental · Base FP32':'CPU · Base cuantizado'} · motor/descarga/transcripción: ${seconds(execution.totalMs)}.`;
+    if(execution.timing)$('finalTiming').textContent+=` Preparación: ${seconds(execution.timing.loadMs)} · transcripción: ${seconds(execution.timing.inferenceMs)}.`;
+    if(execution.fallback)$('finalTiming').textContent+=` Retorno a CPU: ${execution.fallback}. El total incluye el intento GPU.`;
   }
   $('analysisTag').textContent = 'Resultado final automático';
   $('finalNotice').textContent = 'Audio completo procesado con Whisper Base; palabras, tiempos y actividad acústica automáticos, no validados clínicamente.';
