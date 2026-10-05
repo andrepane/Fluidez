@@ -394,6 +394,7 @@ $('fileInput').addEventListener('change',async event=>{
 });
 $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
 window.addEventListener('resize',drawAllCharts);
+$('professionalDetails').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
   clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
