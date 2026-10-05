@@ -26,7 +26,8 @@ function harness() {
   document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
   let now=10000,pending=false,pendingWorker;
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
-  class AudioContext {async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
+  let rms=.02;
+  class AudioContext {constructor(){this.state='running';}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
   class OfflineAudioContext {createBuffer(){return {copyToChannel:noop};}createBufferSource(){return {connect:noop,start:noop};}async startRendering(){return {getChannelData:()=>new Float32Array(16000)};}}
   class Worker {
     postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
@@ -42,7 +43,7 @@ function harness() {
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
   source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
-  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
+  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
 }
 const blob=()=>new Blob([new Uint8Array(10)],{type:'audio/wav'});
 test('zero activity still invokes final worker and never reuses live text',async()=>{
@@ -120,4 +121,15 @@ test('recognition gaps become unavailable rather than a misleading slow instruct
   assert.equal(h.e('feedbackLabel').textContent,'Esperando actualización de voz');
   h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve diez once'},isFinal:true}]});
   assert.equal(h.e('speedMarker').hidden,false);h.app.stopRecording();await h.app.recorder().stopped;
+});
+
+test('long acoustic pause is neutral and resume excludes words from before pause',async()=>{
+  const h=harness();await h.app.startRecording();h.setTime(14000);
+  h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+  h.setRms(0);h.setTime(15000);h.app.tick();h.setTime(16000);h.app.tick();
+  assert.equal(h.e('feedbackLabel').textContent,'Pausa probable');assert.equal(h.e('speedMarker').hidden,true);
+  h.setTime(22000);h.app.tick();assert.equal(h.e('feedbackLabel').textContent,'Pausa probable');
+  h.setRms(.02);h.setTime(23000);h.app.tick();assert.equal(h.e('feedbackLabel').textContent,'Retomando el habla');
+  h.setTime(27000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve diez once'},isFinal:true}]});
+  assert.equal(h.e('recentSpeed').textContent,'30 ppm');h.app.stopRecording();await h.app.recorder().stopped;
 });
