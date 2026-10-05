@@ -14,14 +14,16 @@ function harness() {
     append(...nodes){this.children.push(...nodes);}
     replaceChildren(...nodes){this.children=nodes;}
     removeAttribute(name){delete this[name];}
+    setAttribute(name,value){this[name]=value;}
     load(){} pause(){this.pauseCalls++;} async play(){this.playCalls++;}
     getBoundingClientRect(){return {left:0,top:0,width:600,height:260};}
     getContext(){return new Proxy({},{get:()=>noop,set:()=>true});}
   }
   const elements=new Map();
-  const document={getElementById:id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);},createElement:()=>new Element(),body:{dataset:{}}};
+  const document={getElementById:id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);},querySelector:()=>new Element(),createElement:()=>new Element(),body:{dataset:{}}};
   document.getElementById('intervalSelect').value='15';
   document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
+  document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
   let now=10000,pending=false,pendingWorker;
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
   class AudioContext {async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
@@ -73,7 +75,7 @@ test('therapy recording shows provisional summary before final worker and replac
   const h=harness();h.setPending(true);await h.app.startRecording();
   assert.equal(h.app.state(),'recording');assert.equal(h.e('targetMin').disabled,true);
   h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
-  assert.equal(h.e('feedbackLabel').textContent,'OBJETIVO');assert.equal(h.e('speedMarker').hidden,false);
+  assert.equal(h.e('feedbackLabel').textContent,'Estás en tu objetivo');assert.equal(h.e('speedMarker').hidden,false);
   h.setTime(18000);h.app.stopRecording();
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/Reconocimiento en directo/);
@@ -85,4 +87,19 @@ test('therapy recording shows provisional summary before final worker and replac
 test('therapy refuses invalid targets before requesting microphone',async()=>{
   const h=harness();h.e('targetMin').value='200';h.e('targetMax').value='150';await h.app.startRecording();
   assert.equal(h.app.state(),'idle');assert.match(h.e('statusText').textContent,/rango válido/);
+});
+
+test('adult presets populate targets and child mode refuses automatic adult norms',async()=>{
+  const h=harness();h.e('presetSelect').value='reading';h.e('presetSelect').events.change();
+  assert.equal(h.e('targetMin').value,'120');assert.equal(h.e('targetMax').value,'161');
+  h.e('populationSelect').value='child';h.e('populationSelect').events.change();
+  assert.equal(h.e('targetMin').value,'');assert.equal(h.e('presetSelect').value,'custom');
+  assert.ok(h.e('presetSelect').options.filter(o=>o.value!=='custom').every(o=>o.disabled));
+  await h.app.startRecording();assert.equal(h.app.state(),'idle');
+});
+test('temporal stripe has accessible labels without overlapping visible text',async()=>{
+  const h=harness();h.app.attachAudio(blob());await h.app.analyzeFinal();
+  assert.equal(h.e('therapyTimeline').children[0].textContent,'');
+  assert.match(h.e('therapyTimeline').children[0]['aria-label'],/00:00/);
+  assert.equal(h.e('therapySummary').hidden,false);
 });
