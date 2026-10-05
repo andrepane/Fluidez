@@ -25,3 +25,11 @@ test('therapy percentages use full duration with unavailable time and contiguous
   assert.equal(s.longest,7);assert.equal(s.percent.target,45);assert.equal(s.percent.fast,10);assert.equal(s.percent.unknown,45);
   assert.equal(therapySummary(null,20,{min:120,max:150}).percent.unknown,100);
 });
+
+test('pause gate tolerates short gaps, stays neutral in long silence and resumes',async()=>{
+  const {PauseGate}=await import('../analysis.mjs');const gate=new PauseGate();
+  assert.equal(gate.update(.02,0).paused,false);assert.equal(gate.update(0,1).paused,false);
+  assert.equal(gate.update(.02,1.4).paused,false);gate.update(0,2);
+  assert.equal(gate.update(0,3).paused,true);assert.equal(gate.update(0,8).paused,true);
+  assert.deepEqual(gate.update(.02,9),{paused:false,resumed:true});
+});
