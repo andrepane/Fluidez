@@ -1,10 +1,74 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, LiveAudioWindow, resampleFrame, localWindowMetrics } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
+let activeEngine='browser',localWorker=null,captureNode=null,captureGain=null,localRing=null,localBusy=false,localReady=false,localTimer=null,localDeadline=null,localPpm=null,localEnd=null,lastDispatch=-Infinity,localJob=0;
+let diagnostic={processing:null,cadence:null,lastResult:null,status:'Sin iniciar',soundStart:null,soundDelay:null};
+function drawDiagnostic(){
+  $('diagEngine').textContent=activeEngine==='local'?'B · Whisper Tiny local':'A · SpeechRecognition';
+  $('diagStatus').textContent=diagnostic.status;
+  $('diagPpm').textContent=liveValue===null?'Sin datos suficientes':`${Math.round(liveValue)} ppm provisionales`;
+  $('diagProcessing').textContent=diagnostic.processing===null?'No disponible para A / pendiente para B':`${diagnostic.processing.toFixed(0)} ms`;
+  const elapsed=(performance.now()-started)/1000;
+  $('diagAge').textContent=lastLiveUpdate===null?'No medible todavía':`${Math.max(0,elapsed-lastLiveUpdate).toFixed(2)} s ${activeEngine==='local'?'desde final de ventana; las palabras más antiguas llevan hasta 8 s adicionales':'desde recepción del texto; latencia habla→texto desconocida'}`;
+  $('diagSpeechDelay').textContent=diagnostic.soundDelay===null?'Pendiente / no medible':`${diagnostic.soundDelay.toFixed(2)} s desde actividad acústica hasta primer feedback del tramo (aproximación, no latencia por palabra)`;
+  $('diagCadence').textContent=diagnostic.cadence===null?'Pendiente':`${diagnostic.cadence.toFixed(2)} s`;
+  $('diagText').textContent=liveText()||'Sin texto';
+}
+function noteResult(){const now=performance.now()/1000;if(diagnostic.lastResult!==null)diagnostic.cadence=now-diagnostic.lastResult;diagnostic.lastResult=now;}
+function stopLocal(){
+  captureGain?.disconnect();captureGain=null;captureNode?.disconnect();if(captureNode)captureNode.port.onmessage=null;captureNode=null;
+  clearInterval(localTimer);clearTimeout(localDeadline);localWorker?.terminate();localWorker=null;localReady=false;localBusy=false;localRing=null;
+}
+async function prepareLocal(token){
+  if(!window.AudioWorkletNode)throw Error('Motor B requiere AudioWorklet. Selecciona A en un navegador compatible.');
+  diagnostic.status='Descargando/preparando Tiny local';drawDiagnostic();
+  await new Promise((resolve,reject)=>{
+    localWorker=new Worker(new URL('./live-transcriber.worker.js',import.meta.url),{type:'module'});
+    localDeadline=setTimeout(()=>{stopLocal();reject(Error('Tiempo agotado preparando Tiny'));},180000);
+    localWorker.onerror=()=>{stopLocal();reject(Error('No se pudo cargar Tiny local'));};
+    localWorker.onmessage=({data})=>{
+      if(token!==session)return;
+      if(data.type==='progress'){const p=data.progress;setStatus(`Preparando Tiny local${Number.isFinite(p.progress)?` · ${Math.round(p.progress)} %`:''}`);}
+      if(data.type==='ready'){clearTimeout(localDeadline);localReady=true;resolve();}
+      if(data.type==='error'){stopLocal();reject(Error(data.message));}
+    };
+    localWorker.postMessage({type:'prepare'});
+  });
+}
+async function startLocalCapture(token){
+  if(!audioContext?.audioWorklet||!micSource)throw Error('Motor B no pudo capturar audio PCM; selecciona A.');
+  await audioContext.audioWorklet.addModule(new URL('./live-capture.worklet.js',import.meta.url));
+  captureNode=new AudioWorkletNode(audioContext,'fluidez-live-capture');micSource.connect(captureNode);
+  captureGain=audioContext.createGain();captureGain.gain.value=0;captureNode.connect(captureGain);captureGain.connect(audioContext.destination);
+  localRing=new LiveAudioWindow();localPpm=null;localEnd=null;lastDispatch=-Infinity;liveSupported=true;
+  captureNode.port.onmessage=({data})=>{if(token===session&&state==='recording')localRing.push(resampleFrame(data,audioContext.sampleRate));};
+  const fail=message=>{diagnostic.status=`Error B: ${message}. Audio conservado; no cambia a A automáticamente.`;liveSupported=false;stopLocal();drawDiagnostic();};
+  localWorker.onerror=()=>fail('fallo del worker');
+  localWorker.onmessage=({data})=>{
+    if(token!==session||state!=='recording')return;
+    if(data.type==='error'){fail(data.message);return;}
+    if(data.type!=='result'||data.id!==localJob)return;
+    clearTimeout(localDeadline);localBusy=false;
+    diagnostic.processing=Number.isFinite(data.processingMs)?data.processingMs:null;noteResult();
+    const metrics=localWindowMetrics(data.output,localWindow.start,localWindow.end,runStart);
+    localPpm=metrics?.wpm??null;localEnd=localWindow.end;lastLiveUpdate=localEnd;
+    completedRecognition='';finalText=data.output.text||'';interimText='';
+    diagnostic.status=metrics?'Ventana completada · timestamps estimados':'Sin tiempos completos / muestra insuficiente';tick();
+  };
+  let localWindow;
+  localTimer=setInterval(()=>{
+    if(state!=='recording'||localBusy||!localReady||!localRing)return;
+    const snapshot=localRing.snapshot();if(snapshot.end-snapshot.start<3||snapshot.end-lastDispatch<2||pauseGate.paused)return;
+    localWindow=snapshot;lastDispatch=snapshot.end;localBusy=true;diagnostic.status='Procesando ventana local (hasta 8 s)';drawDiagnostic();
+    localDeadline=setTimeout(()=>fail('ventana excedió 30 s'),30000);
+    localWorker.postMessage({type:'transcribe',id:++localJob,audio:snapshot.audio},[snapshot.audio.buffer]);
+  },250);
+}
+
 let analyser=null,micSource=null,micFrame=null,pauseGate=new PauseGate(),runStart=0;
 let stoppedSnapshot=null;
 let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null, lastLiveUpdate=null, lastReceivedText='';
@@ -48,7 +112,7 @@ function renderTherapy() {
   const summary=therapySummary(source.bins,source.duration,goal);
   $('timelineEnd').textContent=formatTime(source.duration);
   $('summaryTitle').textContent=isFinalSource?'Resumen del audio analizado':'Resumen de la práctica · provisional';
-  $('summarySource').textContent=isFinalSource?`Whisper · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`Feedback observado durante la práctica · objetivo ${goal.min}–${goal.max} ppm. El análisis del audio se actualiza aparte.`;
+  $('summarySource').textContent=isFinalSource?`Whisper · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`${sample?.engine==='local'?'Whisper Tiny local':'SpeechRecognition'} · feedback observado durante la práctica · objetivo ${goal.min}–${goal.max} ppm. El análisis del audio se actualiza aparte.`;
   for(const [id,zone] of [['targetPercent','target'],['slowPercent','slow'],['fastPercent','fast']])$(id).textContent=`${summary.seconds[zone].toFixed(1)} s`;
   $('therapyMean').textContent=Number.isFinite(source.mean)?`${Math.round(source.mean)} ppm`:'—';
   $('longestTarget').textContent=`${summary.longest.toFixed(1)} s`;
@@ -73,7 +137,7 @@ function renderTherapy() {
 }
 function snapshotLive() {
   const duration=(performance.now()-started)/1000;
-  return {duration,mean:liveSupported?countWords(liveText())*60/duration:null,bins:liveBins.map(b=>({...b}))};
+  return {duration,mean:activeEngine==='browser'&&liveSupported?countWords(liveText())*60/duration:null,bins:liveBins.map(b=>({...b}))};
 }
 const chartLayouts = new Map();
 const intervalWidth = () => Number($('intervalSelect').value);
@@ -86,6 +150,7 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
+  $('engineSelect').disabled=busy();
   $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
   document.body.dataset.session=next;
   const practicing=next==='recording';
@@ -135,6 +200,7 @@ function attachAudio(blob) {
   showAudio();
 }
 function releaseMic() {
+  stopLocal();
   micSource?.disconnect();micSource=null;analyser=null;micFrame=null;
   stream?.getTracks().forEach(track => track.stop()); stream = null;
 }
@@ -157,23 +223,26 @@ function tick() {
   const words = countWords(liveText());
   $('timer').textContent = $('visibleTimer').textContent = formatTime(elapsed);
   $('liveCount').textContent = liveSupported ? String(words) : '—';
-  $('liveSpeed').textContent = liveSupported && elapsed >= 3 ? `${Math.round(words * 60 / elapsed)} ppm` : '—';
+  $('liveSpeed').textContent = activeEngine==='browser' && liveSupported && elapsed >= 3 ? `${Math.round(words * 60 / elapsed)} ppm` : '—';
   let paused=false;
   if(analyser && audioContext.state==='running') {
     analyser.getFloatTimeDomainData(micFrame);
     const rms=Math.sqrt(micFrame.reduce((sum,x)=>sum+x*x,0)/micFrame.length);
     const gate=pauseGate.update(rms,elapsed);paused=gate.paused;
+    if(paused){diagnostic.soundStart=null;diagnostic.soundDelay=null;}
+    else if(rms>.009&&diagnostic.soundStart===null)diagnostic.soundStart=elapsed;
     if(gate.resumed){runStart=elapsed;lastLiveUpdate=null;}
   }
-  const recent = tracker.recent(elapsed, elapsed-runStart);
+  const recent = activeEngine==='local' ? (localEnd!==null && localEnd-runStart>=3?localPpm:null) : tracker.recent(elapsed, elapsed-runStart);
   $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
   const fresh=lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5;
-  const value=liveSupported && tracker.entries.length && fresh && !paused?recent:null;
+  const value=liveSupported && (activeEngine==='local'?localEnd!==null:tracker.entries.length) && fresh && !paused?recent:null;
   if(state==='recording' && elapsed>liveDuration) {
     liveBins.push({start:liveDuration,end:elapsed,wpm:liveValue});liveDuration=elapsed;
   }
-  liveValue=value; feedback(value);
+  if(value!==null&&diagnostic.soundStart!==null&&diagnostic.soundDelay===null)diagnostic.soundDelay=elapsed-diagnostic.soundStart;
+  liveValue=value; feedback(value);drawDiagnostic();
   if(state==='recording' && paused){
     $('feedbackLabel').textContent='Pausa probable';
     $('feedbackValue').textContent='Tómate tu tiempo. El medidor queda neutral mientras no detecta actividad suficiente.';
@@ -202,8 +271,9 @@ function startRecognition(token) {
       else interimText += result[0].transcript + ' ';
     }
     // Arrival times only; never reused for final word timestamps.
+    diagnostic.status='Texto del navegador recibido';
     const arrival=(performance.now()-started)/1000;
-    if(liveText()!==lastReceivedText){lastLiveUpdate=arrival;lastReceivedText=liveText();}
+    if(liveText()!==lastReceivedText){noteResult();lastLiveUpdate=arrival;lastReceivedText=liveText();}
     tracker.update(liveText(), arrival);
     tick();
   };
@@ -234,15 +304,18 @@ function startRecognition(token) {
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
+  activeEngine=$('engineSelect').value==='local'?'local':'browser';diagnostic={processing:null,cadence:null,lastResult:null,status:'Iniciando',soundStart:null,soundDelay:null};
   clearLive(); resetResults(); $('therapySummary').hidden=true; $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
   for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget','therapyPauseInfo'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
   $('analysisTag').textContent = 'Provisional';
   $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de hasta 15 s desde la última pausa probable; los retrasos y revisiones pueden causar saltos.';
   setStatus(`Solicitando micrófono · muestra ${selected ? 'B' : 'A'}…`);
   try {
+    if(activeEngine==='local'){setStatus('Preparando motor B antes de abrir el micrófono…');await prepareLocal(token);}
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw Error('Necesitas un navegador compatible y HTTPS.');
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     await monitorMic();
+    if(activeEngine==='local')await startLocalCapture(token);
     const mime = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t));
     const activeRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     recorder = activeRecorder; const chunks = [];
@@ -256,13 +329,15 @@ async function startRecording() {
       if (token !== session) return;
       const provisional=stoppedSnapshot||snapshotLive();
       attachAudio(new Blob(chunks, { type: activeRecorder.mimeType }));
-      samples[selected].provisional=provisional; samples[selected].target={...target};
+      samples[selected].provisional=provisional; samples[selected].target={...target};samples[selected].engine=activeEngine;
       renderTherapy(); await analyzeFinal();
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
-    clock = setInterval(tick, 250); startRecognition(token); tick();
+    clock = setInterval(tick, 250);
+    if(activeEngine==='browser')startRecognition(token);else $('liveNotice').textContent='B local: ventanas solapadas de hasta 8 s, objetivo cada 2 s sin cola. Texto/recuento corresponden solo a la última ventana, no son acumulados. Tiempos de palabra automáticos experimentales.';tick();
   } catch (error) {
+    clearInterval(clock);recognition?.abort();recorder?.state==='recording'&&recorder.stop();
     releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
     setStatus(`No se pudo grabar: ${error.message}`);
   }
@@ -463,6 +538,7 @@ $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=docum
 window.addEventListener('resize',drawAllCharts);
 $('professionalDetails').addEventListener('toggle',drawAllCharts);
 $('professionalArea').addEventListener('toggle',drawAllCharts);
+$('engineSelect').addEventListener('change',()=>{activeEngine=$('engineSelect').value;diagnostic.status='Motor seleccionado · aún sin probar';drawDiagnostic();});
 $('comparisonPanel').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
   clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
