@@ -76,13 +76,13 @@ test('therapy recording shows provisional summary before final worker and replac
   const h=harness();h.setPending(true);await h.app.startRecording();
   assert.equal(h.app.state(),'recording');assert.equal(h.e('targetMin').disabled,true);
   h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
-  assert.equal(h.e('feedbackLabel').textContent,'Estás en tu objetivo');assert.equal(h.e('speedMarker').hidden,false);
+  assert.equal(h.e('feedbackLabel').textContent,'Buen ritmo');assert.equal(h.e('speedMarker').hidden,false);
   h.setTime(18000);h.app.stopRecording();
   await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/Reconocimiento en directo/);
+  assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/Feedback observado/);
   assert.ok(h.app.samples[0].provisional);assert.notEqual(h.e('targetPercent').textContent,'—');
   h.finish();await h.app.recorder().stopped;
-  assert.equal(h.app.state(),'done');assert.match(h.e('summarySource').textContent,/Whisper/);
+  assert.equal(h.app.state(),'done');assert.match(h.e('summarySource').textContent,/Feedback observado/);
   assert.equal(h.e('targetMin').disabled,false);
 });
 test('therapy refuses invalid targets before requesting microphone',async()=>{
@@ -132,4 +132,16 @@ test('long acoustic pause is neutral and resume excludes words from before pause
   h.setRms(.02);h.setTime(23000);h.app.tick();assert.equal(h.e('feedbackLabel').textContent,'Retomando el habla');
   h.setTime(27000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve diez once'},isFinal:true}]});
   assert.equal(h.e('recentSpeed').textContent,'30 ppm');h.app.stopRecording();await h.app.recorder().stopped;
+});
+
+test('patient view hides setup and professionals; stop summary survives final completion',async()=>{
+  const h=harness();h.setPending(true);await h.app.startRecording();
+  assert.equal(h.e('patientPanel').hidden,false);assert.equal(h.e('setupPanel').hidden,true);assert.equal(h.e('professionalArea').hidden,true);
+  h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+  h.setTime(18000);h.app.stopRecording();
+  assert.equal(h.e('patientPanel').hidden,true);assert.equal(h.e('therapySummary').hidden,false);
+  const observed=h.e('targetPercent').textContent;assert.match(observed,/s$/);
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(h.app.state(),'processing');
+  assert.equal(h.e('targetPercent').textContent,observed);h.finish();await h.app.recorder().stopped;
+  assert.equal(h.e('targetPercent').textContent,observed);assert.equal(h.e('wordCount').textContent,'1');
 });
