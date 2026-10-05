@@ -44,6 +44,10 @@
 </div>
 <p class="hint">Estimations de la pratique. Le gris indique les pauses probables ou les périodes sans estimation.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
 <div class="button-row">
+<label for="engineSelect">Motor de directo · experimento</label><select id="engineSelect"><option value="browser">Motor A · SpeechRecognition actual</option>
+<option value="local">Motor B · Whisper Tiny local (experimental)</option></select>
+</div>
+<div class="button-row">
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
 <p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
@@ -149,6 +153,14 @@
 <h3>Muestra A · azul</h3>
 <canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
 <canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details></main><script type="module" src="script.js"></script>
+<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico experimental · mostrar durante la prueba</summary><p class="hint">Vista opcional para comparar motores. Edad del audio/recepción no equivale a latencia exacta de cada palabra. Prueba A y B por separado con la misma tarea.</p>
+<p><strong>Motor: </strong><span id="diagEngine">—</span></p>
+<p><strong>Estado: </strong><span id="diagStatus">—</span></p>
+<p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
+<p><strong>Procesamiento por ventana: </strong><span id="diagProcessing">—</span></p>
+<p><strong>Antigüedad de datos al marcador: </strong><span id="diagAge">—</span></p>
+<p><strong>Intervalo entre resultados: </strong><span id="diagCadence">—</span></p>
+<p><strong>Texto provisional: </strong><span id="diagText">—</span></p>
+<p><strong>Actividad → primer marcador (aprox.): </strong><span id="diagSpeechDelay">—</span></p></details></main><script type="module" src="script.js"></script>
 </body>
 </html>
