@@ -1,10 +1,64 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
+let target = {min:120,max:150}, liveBins=[], liveDuration=0, liveValue=null;
+const zoneLabels={slow:'LENTO',target:'OBJETIVO',fast:'RÁPIDO',unknown:'Sin estimación'};
+function readTarget() {
+  const min=Number($('targetMin').value),max=Number($('targetMax').value);
+  if(!Number.isFinite(min)||!Number.isFinite(max)||min<=0||max<=min||max>1000) {
+    setStatus('Elige un rango válido: mínimo mayor que cero y máximo mayor que mínimo (hasta 1000 ppm).'); return null;
+  }
+  return {min,max};
+}
+function feedback(recent) {
+  const zone=speedZone(recent,target);
+  $('feedbackLabel').textContent=zone==='unknown'?'Esperando palabras reconocidas…':zoneLabels[zone];
+  $('feedbackValue').textContent=zone==='unknown'?'Sin estimación disponible':`${Math.round(recent)} ppm estimadas · objetivo ${target.min}–${target.max}`;
+  $('speedMarker').hidden=zone==='unknown';
+  const position=recent<target.min?recent/target.min/3:recent<=target.max?1/3+(recent-target.min)/(target.max-target.min)/3:2/3+(recent-target.max)/target.max/3;
+  $('speedMarker').style.left=`${Math.max(1,Math.min(99,position*100))}%`;
+}
+function renderTherapy() {
+  const sample=samples[selected], result=sample?.result, provisional=sample?.provisional;
+  const source=result||provisional;
+  const goal=sample?.target||target;
+  $('therapyTimeline').replaceChildren();
+  if(!source) {
+    for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—';
+    $('summarySource').textContent='Aún no hay muestra.'; $('coverageNotice').textContent=''; return;
+  }
+  const summary=therapySummary(source.bins,source.duration,goal);
+  $('summaryTitle').textContent=result?'Resumen del análisis final':'Resumen provisional disponible';
+  $('summarySource').textContent=result?`Whisper · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`Reconocimiento en directo · velocidad reciente registrada · objetivo ${goal.min}–${goal.max} ppm. Whisper está pendiente.`;
+  for(const [id,zone] of [['targetPercent','target'],['slowPercent','slow'],['fastPercent','fast']])$(id).textContent=`${summary.percent[zone].toFixed(1)} %`;
+  $('therapyMean').textContent=Number.isFinite(source.mean)?`${Math.round(source.mean)} ppm`:'—';
+  $('longestTarget').textContent=`${summary.longest.toFixed(1)} s`;
+  $('coverageNotice').textContent=`Porcentajes sobre la duración total, incluidas pausas. Sin estimación: ${summary.percent.unknown.toFixed(1)} %. El mayor periodo se calcula con la resolución de los tramos; no prueba control continuo dentro de cada tramo.`;
+  const visible=[];let cursor=0;
+  for(const b of summary.timeline) {
+    if(b.start>cursor)visible.push({start:cursor,end:b.start,zone:'unknown'});
+    const last=visible.at(-1);
+    if(!result && last?.zone===b.zone && Math.abs(last.end-b.start)<.001)last.end=b.end;
+    else visible.push({...b});
+    cursor=b.end;
+  }
+  if(cursor<source.duration)visible.push({start:cursor,end:source.duration,zone:'unknown'});
+  for(const b of visible) {
+    const button=document.createElement('button');button.className=`zone-${b.zone}`;
+    button.style.flex=String(b.end-b.start);button.textContent=`${zoneLabels[b.zone]} ${formatTime(b.start)}`;
+    button.title=`${formatTime(b.start)}–${formatTime(b.end)} · ${zoneLabels[b.zone]}`;
+    button.disabled=!result||b.zone==='unknown';
+    button.addEventListener('click',()=>playInterval(selected,b));$('therapyTimeline').append(button);
+  }
+}
+function snapshotLive() {
+  const duration=(performance.now()-started)/1000;
+  return {duration,mean:liveSupported?countWords(liveText())*60/duration:null,bins:liveBins.map(b=>({...b}))};
+}
 const chartLayouts = new Map();
 const intervalWidth = () => Number($('intervalSelect').value);
 const setStatus = text => $('statusText').textContent = text;
@@ -16,6 +70,7 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
+  $('targetMin').disabled = $('targetMax').disabled = busy();
 }
 function resetResults() {
   for (const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount']) $(id).textContent = '—';
@@ -25,9 +80,10 @@ function resetResults() {
 }
 function clearLive() {
   completedRecognition = finalText = interimText = '';
-  tracker = new LiveWordTracker();
+  tracker = new LiveWordTracker(); liveBins=[]; liveDuration=0; liveValue=null;
+  feedback(null);
   for (const id of ['liveSpeed','liveCount','recentSpeed']) $(id).textContent = '—';
-  $('timer').textContent = '00:00';
+  $('timer').textContent = $('visibleTimer').textContent = '00:00';
   $('liveTranscript').textContent = 'La transcripción aparecerá al hablar.';
 }
 function stopPlayback() { $('playback').pause(); playbackEnd = null; }
@@ -57,12 +113,17 @@ function liveText() { return `${completedRecognition} ${finalText} ${interimText
 function tick() {
   const elapsed = (performance.now() - started) / 1000;
   const words = countWords(liveText());
-  $('timer').textContent = formatTime(elapsed);
+  $('timer').textContent = $('visibleTimer').textContent = formatTime(elapsed);
   $('liveCount').textContent = liveSupported ? String(words) : '—';
   $('liveSpeed').textContent = liveSupported && elapsed >= 3 ? `${Math.round(words * 60 / elapsed)} ppm` : '—';
   const recent = tracker.recent(elapsed, elapsed);
   $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
+  const value=liveSupported && tracker.entries.length?recent:null;
+  if(state==='recording' && elapsed>liveDuration) {
+    liveBins.push({start:liveDuration,end:elapsed,wpm:liveValue});liveDuration=elapsed;
+  }
+  liveValue=value; feedback(value);
 }
 function startRecognition(token) {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -109,8 +170,10 @@ function startRecognition(token) {
   }
 }
 async function startRecording() {
+  const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
-  clearLive(); resetResults(); $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
+  clearLive(); resetResults(); $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
+  for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
   $('analysisTag').textContent = 'Provisional';
   $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de los últimos 15 s; los retrasos y revisiones pueden causar saltos.';
   setStatus(`Solicitando micrófono · muestra ${selected ? 'B' : 'A'}…`);
@@ -128,8 +191,10 @@ async function startRecording() {
     activeRecorder.onstop = async () => {
       clearInterval(clock); releaseMic();
       if (token !== session) return;
+      const provisional=snapshotLive();
       attachAudio(new Blob(chunks, { type: activeRecorder.mimeType }));
-      await analyzeFinal();
+      samples[selected].provisional=provisional; samples[selected].target={...target};
+      renderTherapy(); await analyzeFinal();
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
@@ -184,7 +249,7 @@ function transcribe(audio) {
 }
 async function analyzeFinal() {
   const sample = samples[selected]; if (!sample) return;
-  stopPlayback(); setState('processing'); resetResults(); sample.result = null; drawAllCharts();
+  stopPlayback(); setState('processing'); resetResults(); sample.result = null; renderTherapy(); drawAllCharts();
   $('analysisTag').textContent = 'Procesando audio completo';
   setStatus('Reprocesando · resultado final pendiente');
   try {
@@ -194,16 +259,16 @@ async function analyzeFinal() {
     // Even activity.speech === 0 must reach the independent transcription engine.
     const output = await transcribe(audio);
     sample.result = { duration, activity, output, ...finalMetrics(output, duration, intervalWidth()) };
-    setState('done'); renderSelected(); renderComparison();
+    setState('done'); renderSelected(); renderComparison(); renderTherapy();
     setStatus('Análisis final completado');
   } catch (error) {
     setState('error'); $('analysisTag').textContent = 'Análisis final incompleto';
     $('finalNotice').textContent = `No se completó: ${error.message}. Audio conservado; puedes reintentar. Los datos provisionales no sustituyen al final.`;
-    setStatus('Audio conservado · análisis final incompleto'); renderComparison();
+    setStatus('Audio conservado · análisis final incompleto'); renderComparison(); renderTherapy();
   }
 }
 function renderSelected() {
-  resetResults(); const result = samples[selected]?.result;
+  resetResults(); renderTherapy(); const result = samples[selected]?.result;
   if (!result) {
     $('analysisTag').textContent = samples[selected] ? 'Sin resultado final' : 'Sin análisis';
     $('finalNotice').textContent = 'El audio se conserva temporalmente en esta pestaña.';
@@ -323,7 +388,8 @@ $('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventLis
 $('retryBtn').addEventListener('click',analyzeFinal);
 $('fileInput').addEventListener('change',async event=>{
   const file=event.target.files[0];if(!file||busy())return;
-  ++session;clearLive();attachAudio(file);$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
+  const goal=readTarget();if(!goal){event.target.value='';return;}target=goal;
+  ++session;clearLive();attachAudio(file);samples[selected].target={...target};$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
   await analyzeFinal();event.target.value='';
 });
 $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
@@ -332,4 +398,4 @@ window.addEventListener('beforeunload',()=>{
   clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
 });
-setState('idle');renderComparison();drawAllCharts();
+setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
