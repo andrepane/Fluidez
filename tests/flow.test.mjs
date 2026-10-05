@@ -103,3 +103,21 @@ test('temporal stripe has accessible labels without overlapping visible text',as
   assert.match(h.e('therapyTimeline').children[0]['aria-label'],/00:00/);
   assert.equal(h.e('therapySummary').hidden,false);
 });
+
+test('stopping and final completion never leave a live speed on the main meter',async()=>{
+  const h=harness();h.setPending(true);await h.app.startRecording();h.setTime(14000);
+  h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+  assert.equal(h.e('speedMarker').hidden,false);h.app.stopRecording();
+  assert.equal(h.e('speedMarker').hidden,true);assert.equal(h.e('feedbackLabel').textContent,'Grabación terminada');
+  await new Promise(resolve=>setImmediate(resolve));h.finish();await h.app.recorder().stopped;
+  assert.equal(h.e('speedMarker').hidden,true);assert.equal(h.e('feedbackLabel').textContent,'Práctica terminada');
+  assert.doesNotMatch(h.e('feedbackValue').textContent,/ppm estimadas/);
+});
+test('recognition gaps become unavailable rather than a misleading slow instruction',async()=>{
+  const h=harness();await h.app.startRecording();h.setTime(14000);
+  h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+  h.setTime(20000);h.app.tick();assert.equal(h.e('speedMarker').hidden,true);
+  assert.equal(h.e('feedbackLabel').textContent,'Esperando actualización de voz');
+  h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve diez once'},isFinal:true}]});
+  assert.equal(h.e('speedMarker').hidden,false);h.app.stopRecording();await h.app.recorder().stopped;
+});

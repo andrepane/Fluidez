@@ -5,7 +5,7 @@ let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, 
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
-let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null;
+let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null, lastLiveUpdate=null;
 const zoneLabels={slow:'LENTO',target:'OBJETIVO',fast:'RÁPIDO',unknown:'Sin estimación'};
 function readTarget() {
   const min=Number($('targetMin').value),max=Number($('targetMax').value);
@@ -15,6 +15,14 @@ function readTarget() {
   return {min,max};
 }
 function feedback(recent) {
+  if(state!=='recording') {
+    $('speedMarker').hidden=true;$('speedMeter').dataset.zone='unknown';
+    const processing=['stopping','processing'].includes(state);
+    const labels={done:'Práctica terminada',error:'Práctica detenida',starting:'Preparando micrófono…'};
+    $('feedbackLabel').textContent=processing?'Grabación terminada':labels[state]||'Habla y sigue tu ritmo';
+    $('feedbackValue').textContent=processing?'Resumen provisional abajo · análisis final pendiente':state==='done'?'Consulta el resumen final y escucha los tramos abajo.':'El medidor funciona durante la grabación.';
+    $('speedMeter').setAttribute('aria-label','Medidor en directo inactivo');return;
+  }
   const zone=speedZone(recent,target);
   $('speedMeter').dataset.zone=zone;
   $('speedMeter').setAttribute('aria-label', `${zoneLabels[zone]} respecto al objetivo ${target.min}–${target.max} ppm`);
@@ -76,6 +84,7 @@ function setState(next) {
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
   $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
   document.body.dataset.session=next;
+  if(next!=='recording')feedback(null);
 }
 function resetResults() {
   for (const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount']) $(id).textContent = '—';
@@ -85,7 +94,7 @@ function resetResults() {
 }
 function clearLive() {
   completedRecognition = finalText = interimText = '';
-  tracker = new LiveWordTracker(); liveBins=[]; liveDuration=0; liveValue=null;
+  tracker = new LiveWordTracker(); liveBins=[]; liveDuration=0; liveValue=null; lastLiveUpdate=null;
   feedback(null);
   for (const id of ['liveSpeed','liveCount','recentSpeed']) $(id).textContent = '—';
   $('timer').textContent = $('visibleTimer').textContent = '00:00';
@@ -124,11 +133,16 @@ function tick() {
   const recent = tracker.recent(elapsed, elapsed);
   $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
-  const value=liveSupported && tracker.entries.length?recent:null;
+  const fresh=lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5;
+  const value=liveSupported && tracker.entries.length && fresh?recent:null;
   if(state==='recording' && elapsed>liveDuration) {
     liveBins.push({start:liveDuration,end:elapsed,wpm:liveValue});liveDuration=elapsed;
   }
   liveValue=value; feedback(value);
+  if(state==='recording' && liveSupported && !fresh && lastLiveUpdate!==null) {
+    $('feedbackLabel').textContent='Esperando actualización de voz';
+    $('feedbackValue').textContent='No hay texto nuevo desde hace más de 5 s. No podemos distinguir una pausa de un retraso del reconocimiento.';
+  }
 }
 function startRecognition(token) {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -147,7 +161,8 @@ function startRecognition(token) {
       else interimText += result[0].transcript + ' ';
     }
     // Arrival times only; never reused for final word timestamps.
-    tracker.update(liveText(), (performance.now() - started) / 1000);
+    lastLiveUpdate=(performance.now()-started)/1000;
+    tracker.update(liveText(), lastLiveUpdate);
     tick();
   };
   let blocked = false;
@@ -203,7 +218,7 @@ async function startRecording() {
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
-    clock = setInterval(tick, 250); startRecognition(token);
+    clock = setInterval(tick, 250); startRecognition(token); tick();
   } catch (error) {
     releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
     setStatus(`No se pudo grabar: ${error.message}`);
