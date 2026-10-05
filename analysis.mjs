@@ -45,7 +45,7 @@ export class LiveWordTracker {
   recent(time, elapsed, window = 15) {
     const span = Math.min(window, elapsed);
     if (span < 3) return null;
-    const words = this.entries.filter(e => e.time > time - window && e.time <= time).length;
+    const words = this.entries.filter(e => e.time > Math.max(time - window, time - elapsed) && e.time <= time).length;
     return words * 60 / span;
   }
 }
@@ -91,3 +91,16 @@ export const therapyPresets = {
   reading:{min:120,max:161,label:'Lectura'},
   description:{min:67,max:158,label:'Descripción de imágenes'}
 };
+
+// Conservative low-energy gate, not a validated voice activity detector.
+// It only suppresses instructions; never supplies an articulation-rate denominator.
+export class PauseGate {
+  constructor(){this.lowSince=null;this.paused=false;}
+  update(rms,time){
+    if(!Number.isFinite(rms)||!Number.isFinite(time))return {paused:false,resumed:false};
+    const was=this.paused;
+    if(rms<.006){this.lowSince ??= time;if(time-this.lowSince>=.8)this.paused=true;}
+    else if(rms>.009){this.lowSince=null;this.paused=false;}
+    return {paused:this.paused,resumed:was&&!this.paused};
+  }
+}
