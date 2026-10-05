@@ -24,26 +24,28 @@ function harness() {
   document.getElementById('intervalSelect').value='15';
   document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
   document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
-  let now=10000,pending=false,pendingWorker;
+  let now=10000,pending=false,pendingWorker,capture,liveCalls=0;const intervals=new Set();
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
   let rms=.02;
-  class AudioContext {constructor(){this.state='running';}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
+  class AudioContext {constructor(){this.state='running';this.sampleRate=16000;this.audioWorklet={addModule:async()=>{}};}createGain(){return {gain:{value:0},connect:noop,disconnect:noop};}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
   class OfflineAudioContext {createBuffer(){return {copyToChannel:noop};}createBufferSource(){return {connect:noop,start:noop};}async startRendering(){return {getChannelData:()=>new Float32Array(16000)};}}
+  class AudioWorkletNode {constructor(){capture=this;this.port={onmessage:null};}connect(){}disconnect(){}}
   class Worker {
-    postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
+    constructor(url){this.local=String(url).includes('live-transcriber');}
+    postMessage(data){if(data.type==='prepare'){queueMicrotask(()=>this.onmessage({data:{type:'ready'}}));return;}if(this.local)liveCalls++;else calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output,processingMs:125}}));}
     terminate(){}
   }
   let recognizer;
   class SpeechRecognition {constructor(){recognizer=this;}start(){}stop(){this.onend?.();}abort(){}}
   class MediaRecorder {static isTypeSupported(){return true;}constructor(){this.mimeType='audio/webm';}start(){}stop(){this.ondataavailable({data:new Blob(['audio'])});this.stopped=this.onstop();}}
-  const window={AudioContext,MediaRecorder,SpeechRecognition,devicePixelRatio:1,addEventListener:noop};
+  const window={AudioWorkletNode,AudioContext,MediaRecorder,SpeechRecognition,devicePixelRatio:1,addEventListener:noop};
   class FakeURL extends URL {static createObjectURL(){return 'blob:fixture-'+Math.random();}static revokeObjectURL(){}}
-  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout,clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
+  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,AudioWorkletNode,OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout,clearTimeout,setInterval:fn=>{intervals.add(fn);return fn;},clearInterval:fn=>intervals.delete(fn),Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
   let source=readFileSync(new URL('../script.js',import.meta.url),'utf8');
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
   source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
-  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
+  return {pump:()=>{for(const fn of [...intervals])fn();},feed:n=>capture.port.onmessage({data:new Float32Array(n).fill(.02)}),liveCalls:()=>liveCalls,app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output,processingMs:125}});}};
 }
 const blob=()=>new Blob([new Uint8Array(10)],{type:'audio/wav'});
 test('zero activity still invokes final worker and never reuses live text',async()=>{
@@ -79,10 +81,10 @@ test('therapy recording shows provisional summary before final worker and replac
   assert.equal(h.e('feedbackLabel').textContent,'Buen ritmo');assert.equal(h.e('speedMarker').hidden,false);
   h.setTime(18000);h.app.stopRecording();
   await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/Feedback observado/);
+  assert.equal(h.app.state(),'processing');assert.match(h.e('summarySource').textContent,/feedback observado/i);
   assert.ok(h.app.samples[0].provisional);assert.notEqual(h.e('targetPercent').textContent,'—');
   h.finish();await h.app.recorder().stopped;
-  assert.equal(h.app.state(),'done');assert.match(h.e('summarySource').textContent,/Feedback observado/);
+  assert.equal(h.app.state(),'done');assert.match(h.e('summarySource').textContent,/feedback observado/i);
   assert.equal(h.e('targetMin').disabled,false);
 });
 test('therapy refuses invalid targets before requesting microphone',async()=>{
@@ -144,4 +146,21 @@ test('patient view hides setup and professionals; stop summary survives final co
   await new Promise(resolve=>setImmediate(resolve));assert.equal(h.app.state(),'processing');
   assert.equal(h.e('targetPercent').textContent,observed);h.finish();await h.app.recorder().stopped;
   assert.equal(h.e('targetPercent').textContent,observed);assert.equal(h.e('wordCount').textContent,'1');
+});
+
+test('local engine prepares, runs bounded windows without concurrent inference and preserves final analysis',async()=>{
+  const h=harness();h.e('engineSelect').value='local';await h.app.startRecording();
+  assert.equal(h.recognition(),undefined);h.setPending(true);h.setTime(14000);h.feed(64000);h.pump();
+  assert.equal(h.liveCalls(),1);h.feed(32000);h.pump();assert.equal(h.liveCalls(),1);
+  h.setOutput({text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]});h.finish();
+  assert.match(h.e('diagEngine').textContent,/Whisper Tiny/);assert.match(h.e('diagPpm').textContent,/15 ppm/);
+  h.setPending(false);h.setTime(16000);h.app.stopRecording();
+  assert.match(h.e('summaryTitle').textContent,/provisional/i);await h.app.recorder().stopped;
+  assert.equal(h.calls(),1);assert.equal(h.app.samples[0].engine,'local');
+});
+test('local incomplete timestamps do not fabricate recent speed',async()=>{
+  const h=harness();h.e('engineSelect').value='local';await h.app.startRecording();
+  h.setOutput({text:'hola',chunks:[]});h.setTime(14000);h.feed(64000);h.pump();await Promise.resolve();
+  assert.match(h.e('diagPpm').textContent,/Sin datos suficientes/);
+  h.app.stopRecording();await h.app.recorder().stopped;
 });
