@@ -74,6 +74,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
+<details><summary>Motor del análisis final</summary><label for="finalEngineSelect">Procesamiento local</label> <select id="finalEngineSelect"><option value="cpu">CPU · motor actual</option><option value="gpu">Probar GPU · experimental, vuelve a CPU si falla</option></select><p class="hint">GPU puede acelerar según tu equipo, pero no está demostrado. Primera descarga adicional de unos 292 MB de pesos. Conserva español y tiempos por palabra. No cambia el reconocimiento en directo.</p></details>
 <p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Detalles para el profesional · directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
@@ -102,7 +103,7 @@
 <h2>Audio y resultado final</h2>
 <span id="analysisTag" class="tag">Sin análisis</span>
 </div>
-<audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a><p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p>
+<audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a><p id="finalTiming" class="hint"></p><p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p>
 <details id="professionalDetails"><summary>Detalles para el profesional · análisis final</summary><div class="metrics">
 <div class="metric">
 <p class="label">Duración total</p>
