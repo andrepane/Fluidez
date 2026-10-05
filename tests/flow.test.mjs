@@ -24,7 +24,7 @@ function harness() {
   document.getElementById('intervalSelect').value='15';
   document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
   document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
-  let now=10000,pending=false,pendingWorker;
+  let now=10000,pending=false,pendingWorker,reminder;
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
   let rms=.02;
   class AudioContext {constructor(){this.state='running';}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
@@ -38,12 +38,12 @@ function harness() {
   class MediaRecorder {static isTypeSupported(){return true;}constructor(){this.mimeType='audio/webm';}start(){}stop(){this.ondataavailable({data:new Blob(['audio'])});this.stopped=this.onstop();}}
   const window={AudioContext,MediaRecorder,SpeechRecognition,devicePixelRatio:1,addEventListener:noop};
   class FakeURL extends URL {static createObjectURL(){return 'blob:fixture-'+Math.random();}static revokeObjectURL(){}}
-  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout,clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
+  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout:(fn,ms)=>{if(ms===20000)reminder=fn;return setTimeout(fn,ms);},clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
   let source=readFileSync(new URL('../script.js',import.meta.url),'utf8');
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
   source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
-  return {app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
+  return {remind:()=>reminder(),progress:p=>pendingWorker.worker.onmessage({data:{id:pendingWorker.data.id,type:'progress',progress:p}}),app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
 }
 const blob=()=>new Blob([new Uint8Array(10)],{type:'audio/wav'});
 test('zero activity still invokes final worker and never reuses live text',async()=>{
@@ -144,4 +144,23 @@ test('patient view hides setup and professionals; stop summary survives final co
   await new Promise(resolve=>setImmediate(resolve));assert.equal(h.app.state(),'processing');
   assert.equal(h.e('targetPercent').textContent,observed);h.finish();await h.app.recorder().stopped;
   assert.equal(h.e('targetPercent').textContent,observed);assert.equal(h.e('wordCount').textContent,'1');
+});
+
+test('processing card is immediate, reports only file percentages and returns to results',async()=>{
+ const h=harness();h.setPending(true);await h.app.startRecording();h.app.stopRecording();
+ assert.equal(h.e('processingPanel').hidden,false);assert.equal(h.e('processingPhase').textContent,'Preparando audio');
+ assert.equal(h.e('professionalArea').hidden,true);assert.equal(h.e('processingBar')['aria-valuenow'],undefined);
+ await new Promise(resolve=>setImmediate(resolve));
+ h.progress({status:'progress',file:'encoder.onnx',progress:42});
+ assert.equal(h.e('processingBar')['aria-valuenow'],'42');assert.match(h.e('processingDetail').textContent,/no del análisis completo/);
+ h.progress({status:'transcribing'});assert.equal(h.e('processingBar')['aria-valuenow'],undefined);
+ assert.equal(h.e('processingBar').dataset.mode,'indeterminate');h.remind();
+ assert.match(h.e('processingReassurance').textContent,/Seguimos procesando/);
+ h.finish();await h.app.recorder().stopped;assert.equal(h.e('processingPanel').hidden,true);
+ assert.equal(h.e('professionalArea').hidden,false);assert.equal(h.e('therapySummary').hidden,false);
+});
+test('analysis failure leaves processing card and keeps retry available',async()=>{
+ const h=harness();h.setFailure(true);h.app.attachAudio(blob());await h.app.analyzeFinal();
+ assert.equal(h.e('processingPanel').hidden,true);assert.equal(h.e('professionalArea').hidden,false);
+ assert.equal(h.e('retryBtn').disabled,false);assert.match(h.e('finalNotice').textContent,/Audio conservado/);
 });
