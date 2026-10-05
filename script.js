@@ -1,11 +1,11 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
-let target = {min:120,max:150}, liveBins=[], liveDuration=0, liveValue=null;
+let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null;
 const zoneLabels={slow:'LENTO',target:'OBJETIVO',fast:'RÁPIDO',unknown:'Sin estimación'};
 function readTarget() {
   const min=Number($('targetMin').value),max=Number($('targetMax').value);
@@ -16,7 +16,9 @@ function readTarget() {
 }
 function feedback(recent) {
   const zone=speedZone(recent,target);
-  $('feedbackLabel').textContent=zone==='unknown'?'Esperando palabras reconocidas…':zoneLabels[zone];
+  $('speedMeter').dataset.zone=zone;
+  $('speedMeter').setAttribute('aria-label', `${zoneLabels[zone]} respecto al objetivo ${target.min}–${target.max} ppm`);
+  $('feedbackLabel').textContent=zone==='unknown'?'Habla y sigue tu ritmo':({slow:'Por debajo de tu objetivo',target:'Estás en tu objetivo',fast:'Por encima de tu objetivo'})[zone];
   $('feedbackValue').textContent=zone==='unknown'?'Sin estimación disponible':`${Math.round(recent)} ppm estimadas · objetivo ${target.min}–${target.max}`;
   $('speedMarker').hidden=zone==='unknown';
   const position=recent<target.min?recent/target.min/3:recent<=target.max?1/3+(recent-target.min)/(target.max-target.min)/3:2/3+(recent-target.max)/target.max/3;
@@ -27,11 +29,13 @@ function renderTherapy() {
   const source=result||provisional;
   const goal=sample?.target||target;
   $('therapyTimeline').replaceChildren();
+  $('therapySummary').hidden=!source;
   if(!source) {
     for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—';
     $('summarySource').textContent='Aún no hay muestra.'; $('coverageNotice').textContent=''; return;
   }
   const summary=therapySummary(source.bins,source.duration,goal);
+  $('timelineEnd').textContent=formatTime(source.duration);
   $('summaryTitle').textContent=result?'Resumen del análisis final':'Resumen provisional disponible';
   $('summarySource').textContent=result?`Whisper · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`Reconocimiento en directo · velocidad reciente registrada · objetivo ${goal.min}–${goal.max} ppm. Whisper está pendiente.`;
   for(const [id,zone] of [['targetPercent','target'],['slowPercent','slow'],['fastPercent','fast']])$(id).textContent=`${summary.percent[zone].toFixed(1)} %`;
@@ -49,8 +53,8 @@ function renderTherapy() {
   if(cursor<source.duration)visible.push({start:cursor,end:source.duration,zone:'unknown'});
   for(const b of visible) {
     const button=document.createElement('button');button.className=`zone-${b.zone}`;
-    button.style.flex=String(b.end-b.start);button.textContent=`${zoneLabels[b.zone]} ${formatTime(b.start)}`;
-    button.title=`${formatTime(b.start)}–${formatTime(b.end)} · ${zoneLabels[b.zone]}`;
+    button.style.flex=String(b.end-b.start);button.textContent='';
+    button.title=`${formatTime(b.start)}–${formatTime(b.end)} · ${zoneLabels[b.zone]}`;button.setAttribute('aria-label',button.title);
     button.disabled=!result||b.zone==='unknown';
     button.addEventListener('click',()=>playInterval(selected,b));$('therapyTimeline').append(button);
   }
@@ -70,7 +74,8 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
-  $('targetMin').disabled = $('targetMax').disabled = busy();
+  $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
+  document.body.dataset.session=next;
 }
 function resetResults() {
   for (const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount']) $(id).textContent = '—';
@@ -172,7 +177,7 @@ function startRecognition(token) {
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
-  clearLive(); resetResults(); $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
+  clearLive(); resetResults(); $('therapySummary').hidden=true; $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
   for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
   $('analysisTag').textContent = 'Provisional';
   $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de los últimos 15 s; los retrasos y revisiones pueden causar saltos.';
@@ -395,8 +400,29 @@ $('fileInput').addEventListener('change',async event=>{
 $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
 window.addEventListener('resize',drawAllCharts);
 $('professionalDetails').addEventListener('toggle',drawAllCharts);
+$('comparisonPanel').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
   clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
 });
+function updateGoalDisplay() {
+  const min=Number($('targetMin').value),max=Number($('targetMax').value);
+  $('goalDisplay').textContent=min>0&&max>min?`${min}–${max} ppm`:'Elige un objetivo';
+}
+function applyPreset() {
+  const preset=therapyPresets[$('presetSelect').value];
+  if(preset){$('targetMin').value=String(preset.min);$('targetMax').value=String(preset.max);}
+  updateGoalDisplay();
+}
+$('presetSelect').addEventListener('change',applyPreset);
+$('populationSelect').addEventListener('change',()=>{
+  const child=$('populationSelect').value==='child';
+  for(const option of $('presetSelect').options)option.disabled=child&&option.value!=='custom';
+  $('presetSelect').value=child?'custom':'conversation';
+  if(child){$('targetMin').value='';$('targetMax').value='';document.querySelector('.goal-details').open=true;}
+  $('referenceNotice').textContent=child?'No se aplica una referencia adulta. Define el objetivo de esta tarea con el logopeda.':'Referencia descriptiva P10–P90: 60 adultos de 21–30 años de Puerto Rico. Incluye pausas; no son límites diagnósticos ni referencias para España, niños o ventanas de 15 s.';
+  applyPreset();
+});
+for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',()=>{$('presetSelect').value='custom';updateGoalDisplay();});
+updateGoalDisplay();
 setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
