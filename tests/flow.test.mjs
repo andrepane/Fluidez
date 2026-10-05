@@ -25,12 +25,14 @@ function harness() {
   document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
   document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
   let now=10000,pending=false,pendingWorker,reminder;
+  let gpuFailure=false;const usedWorkers=[];
   let duration=20,calls=0,output={text:'hola',chunks:[{text:'hola',timestamp:[1,2]}]},failure=false;
   let rms=.02;
   class AudioContext {constructor(){this.state='running';}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
   class OfflineAudioContext {createBuffer(){return {copyToChannel:noop};}createBufferSource(){return {connect:noop,start:noop};}async startRendering(){return {getChannelData:()=>new Float32Array(16000)};}}
   class Worker {
-    postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
+    constructor(url){this.gpu=String(url).includes('gpu-transcriber');usedWorkers.push(this.gpu?'gpu':'cpu');}
+    postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:(failure||(this.gpu&&gpuFailure))?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
     terminate(){}
   }
   let recognizer;
@@ -43,7 +45,7 @@ function harness() {
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
   source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
-  return {remind:()=>reminder(),progress:p=>pendingWorker.worker.onmessage({data:{id:pendingWorker.data.id,type:'progress',progress:p}}),app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
+  return {gpu:()=>context.navigator.gpu={},gpuFail:()=>gpuFailure=true,usedWorkers,remind:()=>reminder(),progress:p=>pendingWorker.worker.onmessage({data:{id:pendingWorker.data.id,type:'progress',progress:p}}),app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
 }
 const blob=()=>new Blob([new Uint8Array(10)],{type:'audio/wav'});
 test('zero activity still invokes final worker and never reuses live text',async()=>{
@@ -163,4 +165,20 @@ test('analysis failure leaves processing card and keeps retry available',async()
  const h=harness();h.setFailure(true);h.app.attachAudio(blob());await h.app.analyzeFinal();
  assert.equal(h.e('processingPanel').hidden,true);assert.equal(h.e('professionalArea').hidden,false);
  assert.equal(h.e('retryBtn').disabled,false);assert.match(h.e('finalNotice').textContent,/Audio conservado/);
+});
+
+test('GPU opt-in without browser support uses established CPU and records fallback',async()=>{
+ const h=harness();h.e('finalEngineSelect').value='gpu';h.app.attachAudio(blob());await h.app.analyzeFinal();
+ assert.deepEqual(h.usedWorkers,['cpu']);assert.equal(h.app.samples[0].result.execution.engine,'cpu');
+ assert.match(h.e('finalTiming').textContent,/WebGPU no disponible/);
+});
+test('GPU failure retries complete audio on CPU and preserves playback',async()=>{
+ const h=harness();h.gpu();h.gpuFail();h.e('finalEngineSelect').value='gpu';h.app.attachAudio(blob());await h.app.analyzeFinal();
+ assert.deepEqual(h.usedWorkers,['gpu','cpu']);assert.equal(h.app.state(),'done');assert.equal(h.calls(),2);
+ assert.equal(h.app.samples[0].result.execution.engine,'cpu');assert.ok(h.app.samples[0].blob);
+});
+test('successful GPU selection and later CPU selection use distinct workers',async()=>{
+ const h=harness();h.gpu();h.e('finalEngineSelect').value='gpu';h.app.attachAudio(blob());await h.app.analyzeFinal();
+ assert.equal(h.app.samples[0].result.execution.engine,'gpu');h.e('finalEngineSelect').value='cpu';await h.app.analyzeFinal();
+ assert.deepEqual(h.usedWorkers,['gpu','cpu']);assert.equal(h.app.samples[0].result.execution.engine,'cpu');
 });
