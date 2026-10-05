@@ -1,31 +1,335 @@
-import {countWords,formatTime,wordSegments,acousticActivity} from './analysis.mjs';
-const $=id=>document.getElementById(id);
-let state='idle',recorder,stream,recognition,clock,audioContext,blob,url,worker,job=0,workerTimeout;
-let started=0,session=0,finalText='',interimText='',completedRecognition='',liveSupported=true;
-let currentBins=[],currentMean=0;
-const setStatus=text=>$('statusText').textContent=text;
-function setState(next){state=next;$('recordBtn').disabled=['starting','recording','stopping','processing'].includes(next);$('stopBtn').disabled=next!=='recording';$('fileInput').disabled=['starting','recording','stopping','processing'].includes(next);$('retryBtn').disabled=!blob||['starting','recording','stopping','processing'].includes(next);}
-function resetResults(){for(const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount'])$(id).textContent='—';$('finalTranscript').textContent='Pendiente del reprocesamiento del audio.';$('segmentRows').replaceChildren();$('pauses').textContent='—';$('chartNotice').textContent='Resultado final por intervalos de 30 segundos, a partir de marcas por palabra.';currentBins=[];currentMean=0;drawChart();}
-function attachAudio(value){blob=value;if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);$('playback').src=url;$('downloadAudio').href=url;$('downloadAudio').download=`fluidez-${Date.now()}.${blob.type.includes('mp4')?'m4a':blob.type.includes('wav')?'wav':blob.type.includes('mpeg')?'mp3':'webm'}`;$('downloadAudio').hidden=false;}
-function releaseMic(){if(stream)stream.getTracks().forEach(track=>track.stop());stream=null;}
-function tick(){const elapsed=(performance.now()-started)/1000;$('timer').textContent=formatTime(elapsed);const words=countWords(`${completedRecognition} ${finalText} ${interimText}`);$('liveCount').textContent=liveSupported?String(words):'—';$('liveSpeed').textContent=liveSupported&&elapsed>=3?`${Math.round(words*60/elapsed)} ppm`:'—';$('liveTranscript').textContent=`${completedRecognition} ${finalText} ${interimText}`.trim()||'Esperando voz…';}
-function startRecognition(token){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;liveSupported=!!Recognition;if(!Recognition){$('liveNotice').textContent='Este navegador no ofrece transcripción en directo. Puedes grabar y obtener el análisis final; para el directo, prueba Chrome o Edge.';return;}
-  const instance=new Recognition();recognition=instance;instance.lang='es-ES';instance.continuous=true;instance.interimResults=true;
-  instance.onresult=event=>{if(token!==session||!['recording','stopping'].includes(state))return;finalText='';interimText='';for(const result of event.results){if(result.isFinal)finalText+=result[0].transcript+' ';else interimText+=result[0].transcript+' ';}tick();};
-  let blocked=false;
-  instance.onerror=event=>{if(token!==session)return;$('liveNotice').textContent=`Transcripción en directo: ${event.error}. El audio sigue grabándose.`;if(['not-allowed','service-not-allowed','audio-capture','network'].includes(event.error)){blocked=true;liveSupported=false;$('liveSpeed').textContent='—';}};
-  instance.onend=()=>{if(token!==session)return;completedRecognition+=finalText;finalText='';interimText='';if(state==='recording'&&!blocked){try{instance.start();}catch{liveSupported=false;$('liveNotice').textContent='El reconocimiento en directo se ha detenido; el audio continúa grabándose.';}}};
-  try{instance.start();}catch(error){liveSupported=false;$('liveNotice').textContent='No se inició la transcripción en directo. Se conserva la grabación para el análisis final.';}
+import { countWords, formatTime, acousticActivity, LiveWordTracker,
+  finalMetrics, sharedChartScale, intervalAt } from './analysis.mjs';
+const $ = id => document.getElementById(id);
+let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
+let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
+let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
+const samples = [null, null];
+const chartLayouts = new Map();
+const intervalWidth = () => Number($('intervalSelect').value);
+const setStatus = text => $('statusText').textContent = text;
+const busy = () => ['starting', 'recording', 'stopping', 'processing'].includes(state);
+
+function setState(next) {
+  state = next;
+  $('recordBtn').disabled = busy();
+  $('stopBtn').disabled = next !== 'recording';
+  $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
+  $('retryBtn').disabled = !samples[selected]?.blob || busy();
 }
-async function startRecording(){setState('starting');const token=++session;resetResults();$('analysisTag').textContent='Provisional';$('liveNotice').textContent='Velocidad estimada sobre el tiempo transcurrido, incluyendo pausas; puede actualizarse con retraso.';$('finalNotice').textContent='El audio se conserva temporalmente en esta pestaña.';completedRecognition=finalText=interimText='';$('liveTranscript').textContent='Esperando voz…';$('timer').textContent='00:00';$('liveCount').textContent='—';$('liveSpeed').textContent='—';setStatus('Solicitando micrófono…');
- try{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw Error('Necesitas un navegador compatible y una conexión HTTPS.');stream=await navigator.mediaDevices.getUserMedia({audio:true});const types=['audio/webm;codecs=opus','audio/mp4','audio/webm'];const mime=types.find(t=>MediaRecorder.isTypeSupported(t));recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];recorder.ondataavailable=event=>{if(event.data.size)chunks.push(event.data);};recorder.onerror=()=>{clearInterval(clock);recognition?.abort();releaseMic();setState('error');setStatus('La grabación falló. Inicia una nueva muestra.');};recorder.onstop=async()=>{clearInterval(clock);releaseMic();if(token!==session)return;attachAudio(new Blob(chunks,{type:recorder.mimeType}));await analyzeFinal();};recorder.start(1000);started=performance.now();setState('recording');setStatus('Grabando · datos provisionales');clock=setInterval(tick,250);startRecognition(token);
- }catch(error){releaseMic();setState('error');$('analysisTag').textContent='Error';setStatus(`No se pudo grabar: ${error.message}`);}}
-function stopRecording(){if(state!=='recording')return;tick();clearInterval(clock);setState('stopping');setStatus('Finalizando grabación…');recognition?.stop();recorder.stop();}
-async function decodeAudio(value){audioContext ||=new(window.AudioContext||window.webkitAudioContext)();const decoded=await audioContext.decodeAudioData(await value.arrayBuffer());const mono=new Float32Array(decoded.length);for(let c=0;c<decoded.numberOfChannels;c++){const channel=decoded.getChannelData(c);for(let i=0;i<mono.length;i++)mono[i]+=channel[i]/decoded.numberOfChannels;}const offline=new OfflineAudioContext(1,Math.ceil(decoded.duration*16000),16000);const buffer=offline.createBuffer(1,mono.length,decoded.sampleRate);buffer.copyToChannel(mono,0);const source=offline.createBufferSource();source.buffer=buffer;source.connect(offline.destination);source.start();const resampled=await offline.startRendering();return {samples:resampled.getChannelData(0),duration:decoded.duration};}
-function transcribe(samples){return new Promise((resolve,reject)=>{const id=++job;try{worker ||=new Worker(new URL('./transcriber.worker.js',import.meta.url),{type:'module'});}catch(error){reject(error);return;}const fail=error=>{clearTimeout(workerTimeout);worker?.terminate();worker=null;reject(error);};worker.onerror=()=>fail(Error('No se pudo cargar el motor. Comprueba la conexión y que el navegador permita descargar el modelo.'));worker.onmessage=({data})=>{if(data.id!==id)return;if(data.type==='result'){clearTimeout(workerTimeout);resolve(data.output);}else if(data.type==='error')fail(Error(data.message));else if(data.type==='progress'){const p=data.progress;$('finalNotice').textContent=p.status==='transcribing'?'Transcribiendo el audio completo en este dispositivo… Puede tardar varios minutos.':`Preparando modelo local${Number.isFinite(p.progress)?` · ${Math.round(p.progress)} %`:''}. Primera descarga necesaria.`;}};workerTimeout=setTimeout(()=>fail(Error('El análisis excedió 15 minutos. El audio sigue disponible para descargar o reintentar.')),900000);const copy=samples.slice();worker.postMessage({id,audio:copy},[copy.buffer]);});}
-async function analyzeFinal(){if(!blob)return;setState('processing');resetResults();$('analysisTag').textContent='Procesando audio completo';setStatus('Reprocesando · resultados finales pendientes');try{const {samples,duration}=await decodeAudio(blob);if(!duration||!samples.length)throw Error('El archivo no contiene audio.');const activity=acousticActivity(samples,16000);$('totalDuration').textContent=`${formatTime(duration)} · ${duration.toFixed(1)} s`;$('speechDuration').textContent=`${activity.speech.toFixed(1)} s`;$('silenceDuration').textContent=`${activity.silence.toFixed(1)} s`;$('pauseCount').textContent=String(activity.pauses.length);$('pauses').textContent=activity.pauses.length?activity.pauses.map(p=>`${formatTime(p.start)}–${formatTime(p.end)} (${p.duration.toFixed(2)} s)`).join(' · '):'No se detectaron pausas internas de 0,5 s o más.';
- let output;if(activity.speech===0){output={text:'',chunks:[]};}else output=await transcribe(samples);
- const words=countWords(output.text||'');const mean=words*60/duration;$('wordCount').textContent=String(words);$('wpm').textContent=`${Math.round(mean)} ppm`;$('finalTranscript').textContent=output.text?.trim()||'No se reconocieron palabras.';const temporal=wordSegments(output.chunks,duration);const assigned=temporal.bins.reduce((n,b)=>n+b.words,0);if(temporal.untimed||assigned!==words){$('chartNotice').textContent='Velocidad por tramos no disponible: faltan marcas temporales válidas para algunas palabras. No se reparte el recuento artificialmente.';currentBins=[];}else{currentBins=temporal.bins;for(const bin of currentBins){const row=document.createElement('tr');for(const text of [`${formatTime(bin.start)}–${formatTime(bin.end)}`,String(bin.words),bin.wpm.toFixed(1)]){const cell=document.createElement('td');cell.textContent=text;row.append(cell);}$('segmentRows').append(row);}}currentMean=mean;drawChart();$('analysisTag').textContent='Resultado final automático';$('finalNotice').textContent='Audio completo reprocesado con Whisper Base · marcas temporales automáticas · no validado clínicamente.';setState('done');setStatus('Análisis final completado');
- }catch(error){$('analysisTag').textContent='Análisis final incompleto';$('finalNotice').textContent=`No se completó la transcripción final: ${error.message}. El audio sigue disponible. Los datos en directo no se presentan como resultado final.`;setState('error');setStatus('Audio conservado · puedes reintentar el análisis');}}
-function drawChart(){const canvas=$('speedChart'),ctx=canvas.getContext('2d');const w=canvas.clientWidth||600,h=260,dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const color=getComputedStyle(document.body).getPropertyValue('--text');ctx.fillStyle=color;ctx.font='12px system-ui';if(!currentBins.length){ctx.fillText('Gráfico pendiente del análisis temporal final',20,40);return;}const left=45,right=w-15,top=25,bottom=h-40,max=Math.max(60,currentMean,...currentBins.map(b=>b.wpm))*1.2;const step=(right-left)/currentBins.length;for(let i=0;i<=4;i++){const y=bottom-(bottom-top)*i/4;ctx.strokeStyle='#94a3b855';ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.fillStyle=color;ctx.fillText(String(Math.round(max*i/4)),2,y+4);}currentBins.forEach((b,i)=>{const height=b.wpm/max*(bottom-top);ctx.fillStyle='#2d7ff9';ctx.fillRect(left+i*step+step*.15,bottom-height,step*.7,height);ctx.fillStyle=color;ctx.fillText(b.wpm.toFixed(0),left+i*step+step*.3,bottom-height-7);ctx.fillText(formatTime(b.start),left+i*step,bottom+20);});const y=bottom-currentMean/max*(bottom-top);ctx.strokeStyle='#c27616';ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.fillText('ppm · línea discontinua = media global',left,14);}
-$('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventListener('click',stopRecording);$('retryBtn').addEventListener('click',analyzeFinal);$('fileInput').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;++session;attachAudio(file);$('liveTranscript').textContent='Archivo importado: no hay transcripción en directo.';$('liveSpeed').textContent=$('liveCount').textContent='—';await analyzeFinal();event.target.value='';});$('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawChart();});window.addEventListener('resize',drawChart);window.addEventListener('beforeunload',()=>{clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();if(url)URL.revokeObjectURL(url);});setState('idle');drawChart();
+function resetResults() {
+  for (const id of ['totalDuration','wordCount','wpm','speechDuration','silenceDuration','pauseCount']) $(id).textContent = '—';
+  $('finalTranscript').textContent = 'Pendiente del reprocesamiento del audio.';
+  $('segmentRows').replaceChildren(); $('pauses').textContent = '—';
+  $('chartNotice').textContent = 'Intervalos reales según marcas por palabra. Pulsa una barra o un tramo para escucharlo.';
+}
+function clearLive() {
+  completedRecognition = finalText = interimText = '';
+  tracker = new LiveWordTracker();
+  for (const id of ['liveSpeed','liveCount','recentSpeed']) $(id).textContent = '—';
+  $('timer').textContent = '00:00';
+  $('liveTranscript').textContent = 'La transcripción aparecerá al hablar.';
+}
+function stopPlayback() { $('playback').pause(); playbackEnd = null; }
+function showAudio() {
+  stopPlayback();
+  const sample = samples[selected];
+  if (sample) {
+    $('playback').src = sample.url;
+    $('downloadAudio').href = sample.url;
+    $('downloadAudio').download = sample.filename;
+    $('downloadAudio').hidden = false;
+  } else {
+    $('playback').removeAttribute('src'); $('playback').load();
+    $('downloadAudio').hidden = true;
+  }
+}
+function attachAudio(blob) {
+  const old = samples[selected];
+  if (old) URL.revokeObjectURL(old.url);
+  const extension = blob.type.includes('mp4') ? 'm4a' : blob.type.includes('wav') ? 'wav' : blob.type.includes('mpeg') ? 'mp3' : 'webm';
+  samples[selected] = { blob, url: URL.createObjectURL(blob), result: null,
+    filename: blob.name || `fluidez-${selected ? 'B' : 'A'}-${Date.now()}.${extension}` };
+  showAudio();
+}
+function releaseMic() { stream?.getTracks().forEach(track => track.stop()); stream = null; }
+function liveText() { return `${completedRecognition} ${finalText} ${interimText}`.trim(); }
+function tick() {
+  const elapsed = (performance.now() - started) / 1000;
+  const words = countWords(liveText());
+  $('timer').textContent = formatTime(elapsed);
+  $('liveCount').textContent = liveSupported ? String(words) : '—';
+  $('liveSpeed').textContent = liveSupported && elapsed >= 3 ? `${Math.round(words * 60 / elapsed)} ppm` : '—';
+  const recent = tracker.recent(elapsed, elapsed);
+  $('recentSpeed').textContent = liveSupported && recent !== null ? `${Math.round(recent)} ppm` : '—';
+  $('liveTranscript').textContent = liveText() || 'Esperando voz…';
+}
+function startRecognition(token) {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  liveSupported = !!Recognition;
+  if (!Recognition) {
+    $('liveNotice').textContent = 'Sin reconocimiento en directo en este navegador. Puedes grabar y obtener el análisis final; prueba Chrome o Edge para el directo.';
+    return;
+  }
+  const instance = new Recognition(); recognition = instance;
+  instance.lang = 'es-ES'; instance.continuous = true; instance.interimResults = true;
+  instance.onresult = event => {
+    if (token !== session || !['recording','stopping'].includes(state)) return;
+    finalText = ''; interimText = '';
+    for (const result of event.results) {
+      if (result.isFinal) finalText += result[0].transcript + ' ';
+      else interimText += result[0].transcript + ' ';
+    }
+    // Arrival times only; never reused for final word timestamps.
+    tracker.update(liveText(), (performance.now() - started) / 1000);
+    tick();
+  };
+  let blocked = false;
+  instance.onerror = event => {
+    if (token !== session) return;
+    $('liveNotice').textContent = `Reconocimiento en directo: ${event.error}. El audio sigue grabándose.`;
+    if (['not-allowed','service-not-allowed','audio-capture','network'].includes(event.error)) {
+      blocked = true; liveSupported = false; tick();
+    }
+  };
+  instance.onend = () => {
+    if (token !== session) return;
+    completedRecognition += finalText; finalText = ''; interimText = '';
+    tracker.update(liveText(), (performance.now() - started) / 1000);
+    if (state === 'recording' && !blocked) {
+      try { instance.start(); } catch {
+        liveSupported = false; tick();
+        $('liveNotice').textContent = 'El reconocimiento se ha detenido; el audio continúa grabándose.';
+      }
+    }
+  };
+  try { instance.start(); } catch {
+    liveSupported = false;
+    $('liveNotice').textContent = 'No se inició el reconocimiento. El análisis final utilizará el audio grabado.';
+  }
+}
+async function startRecording() {
+  stopPlayback(); setState('starting'); const token = ++session;
+  clearLive(); resetResults(); $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
+  $('analysisTag').textContent = 'Provisional';
+  $('liveNotice').textContent = 'Ambas velocidades son provisionales. La reciente usa la llegada del texto de los últimos 15 s; los retrasos y revisiones pueden causar saltos.';
+  setStatus(`Solicitando micrófono · muestra ${selected ? 'B' : 'A'}…`);
+  try {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw Error('Necesitas un navegador compatible y HTTPS.');
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mime = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t));
+    const activeRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    recorder = activeRecorder; const chunks = [];
+    activeRecorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+    activeRecorder.onerror = () => {
+      clearInterval(clock); recognition?.abort(); releaseMic();
+      setState('error'); setStatus('La grabación falló.');
+    };
+    activeRecorder.onstop = async () => {
+      clearInterval(clock); releaseMic();
+      if (token !== session) return;
+      attachAudio(new Blob(chunks, { type: activeRecorder.mimeType }));
+      await analyzeFinal();
+    };
+    activeRecorder.start(1000); started = performance.now();
+    setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
+    clock = setInterval(tick, 250); startRecognition(token);
+  } catch (error) {
+    releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
+    setStatus(`No se pudo grabar: ${error.message}`);
+  }
+}
+function stopRecording() {
+  if (state !== 'recording') return;
+  tick(); clearInterval(clock); setState('stopping'); setStatus('Finalizando grabación…');
+  try { recognition?.stop(); } catch { /* Recording must stop even if recognition fails. */ }
+  recorder.stop();
+}
+async function decodeAudio(blob) {
+  audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+  const decoded = await audioContext.decodeAudioData(await blob.arrayBuffer());
+  const mono = new Float32Array(decoded.length);
+  for (let c = 0; c < decoded.numberOfChannels; c++) {
+    const channel = decoded.getChannelData(c);
+    for (let i = 0; i < mono.length; i++) mono[i] += channel[i] / decoded.numberOfChannels;
+  }
+  const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * 16000), 16000);
+  const buffer = offline.createBuffer(1, mono.length, decoded.sampleRate);
+  buffer.copyToChannel(mono, 0);
+  const source = offline.createBufferSource(); source.buffer = buffer;
+  source.connect(offline.destination); source.start();
+  const resampled = await offline.startRendering();
+  return { samples: resampled.getChannelData(0), duration: decoded.duration };
+}
+function transcribe(audio) {
+  return new Promise((resolve, reject) => {
+    const id = ++job;
+    try { worker ||= new Worker(new URL('./transcriber.worker.js', import.meta.url), { type: 'module' }); }
+    catch (error) { reject(error); return; }
+    const fail = error => { clearTimeout(workerTimeout); worker?.terminate(); worker = null; reject(error); };
+    worker.onerror = () => fail(Error('No se pudo cargar el motor; comprueba conexión y descarga del modelo.'));
+    worker.onmessage = ({ data }) => {
+      if (data.id !== id) return;
+      if (data.type === 'result') { clearTimeout(workerTimeout); resolve(data.output); }
+      else if (data.type === 'error') fail(Error(data.message));
+      else if (data.type === 'progress') {
+        const p = data.progress;
+        $('finalNotice').textContent = p.status === 'transcribing' ? 'Transcribiendo el audio completo…' :
+          `Preparando modelo local${Number.isFinite(p.progress) ? ` · ${Math.round(p.progress)} %` : ''}.`;
+      }
+    };
+    workerTimeout = setTimeout(() => fail(Error('El análisis excedió 15 minutos; el audio sigue disponible.')), 900000);
+    const copy = audio.slice(); worker.postMessage({ id, audio: copy }, [copy.buffer]);
+  });
+}
+async function analyzeFinal() {
+  const sample = samples[selected]; if (!sample) return;
+  stopPlayback(); setState('processing'); resetResults(); sample.result = null; drawAllCharts();
+  $('analysisTag').textContent = 'Procesando audio completo';
+  setStatus('Reprocesando · resultado final pendiente');
+  try {
+    const { samples: audio, duration } = await decodeAudio(sample.blob);
+    if (!Number.isFinite(duration) || duration <= 0 || !audio.length) throw Error('El archivo no contiene audio válido.');
+    const activity = acousticActivity(audio, 16000);
+    // Even activity.speech === 0 must reach the independent transcription engine.
+    const output = await transcribe(audio);
+    sample.result = { duration, activity, output, ...finalMetrics(output, duration, intervalWidth()) };
+    setState('done'); renderSelected(); renderComparison();
+    setStatus('Análisis final completado');
+  } catch (error) {
+    setState('error'); $('analysisTag').textContent = 'Análisis final incompleto';
+    $('finalNotice').textContent = `No se completó: ${error.message}. Audio conservado; puedes reintentar. Los datos provisionales no sustituyen al final.`;
+    setStatus('Audio conservado · análisis final incompleto'); renderComparison();
+  }
+}
+function renderSelected() {
+  resetResults(); const result = samples[selected]?.result;
+  if (!result) {
+    $('analysisTag').textContent = samples[selected] ? 'Sin resultado final' : 'Sin análisis';
+    $('finalNotice').textContent = 'El audio se conserva temporalmente en esta pestaña.';
+    drawAllCharts(); return;
+  }
+  const { duration, activity, words, mean, bins, output } = result;
+  $('totalDuration').textContent = `${formatTime(duration)} · ${duration.toFixed(1)} s`;
+  $('wordCount').textContent = String(words); $('wpm').textContent = `${Math.round(mean)} ppm`;
+  $('speechDuration').textContent = `${activity.speech.toFixed(1)} s`;
+  $('silenceDuration').textContent = `${activity.silence.toFixed(1)} s`;
+  $('pauseCount').textContent = String(activity.pauses.length);
+  $('pauses').textContent = activity.pauses.length ? activity.pauses.map(p =>
+    `${formatTime(p.start)}–${formatTime(p.end)} (${p.duration.toFixed(2)} s)`).join(' · ') : 'Sin pausas internas detectadas de 0,5 s o más.';
+  $('finalTranscript').textContent = output.text?.trim() || 'No se reconocieron palabras.';
+  if (!bins) $('chartNotice').textContent = 'Sin gráfico temporal: faltan tiempos válidos para algunas palabras o no concuerda el recuento. No se inventa su distribución.';
+  else for (const bin of bins) {
+    const row = document.createElement('tr'); row.dataset.start = String(bin.start); row.dataset.end = String(bin.end);
+    const cell = document.createElement('td'), button = document.createElement('button');
+    button.className = 'segment-button'; button.textContent = `▶ ${formatTime(bin.start)}–${formatTime(bin.end)}`;
+    button.addEventListener('click', () => playInterval(selected, bin)); cell.append(button); row.append(cell);
+    for (const text of [String(bin.words), bin.wpm.toFixed(1)]) { const td = document.createElement('td'); td.textContent = text; row.append(td); }
+    // The whole row is clickable; the button also provides keyboard accessibility.
+    row.addEventListener('click', event => { if (event.target !== button) playInterval(selected, bin); });
+    $('segmentRows').append(row);
+  }
+  $('analysisTag').textContent = 'Resultado final automático';
+  $('finalNotice').textContent = 'Audio completo procesado con Whisper Base; palabras, tiempos y actividad acústica automáticos, no validados clínicamente.';
+  if (activity.speech === 0 && words > 0) $('finalNotice').textContent += ' El detector acústico no encontró actividad, pero Whisper reconoció palabras: habla/silencio requieren cautela.';
+  if (activity.speech === 0 && words === 0) $('finalNotice').textContent += ' Whisper intentó transcribir el audio y no devolvió palabras.';
+  drawAllCharts();
+}
+function renderComparison() {
+  const results = samples.map(s => s?.result); $('comparisonRows').replaceChildren();
+  $('comparisonNotice').textContent = results.every(Boolean) ?
+    'Comparación automática con los mismos ejes e intervalos. Diferencias descriptivas, sin interpretación clínica.' :
+    'Analiza una muestra en A y otra en B. Ambas se conservan temporalmente en esta pestaña.';
+  const rows = [
+    ['Duración', r => `${r.duration.toFixed(1)} s`], ['Velocidad media', r => `${r.mean.toFixed(1)} ppm`],
+    ['Palabras', r => String(r.words)], ['Pausas internas ≥ 0,5 s', r => String(r.activity.pauses.length)],
+    ['Actividad acústica estimada', r => `${r.activity.speech.toFixed(1)} s`],
+    ['Silencio estimado', r => `${r.activity.silence.toFixed(1)} s (${(r.activity.silence/r.duration*100).toFixed(1)} %)`],
+    ['Tiempos por palabra', r => r.bins ? 'Disponibles' : 'Incompletos; gráfico no disponible']
+  ];
+  for (const [name, getter] of rows) {
+    const row = document.createElement('tr');
+    for (const text of [name, ...results.map(r => r ? getter(r) : '—')]) {
+      const cell = document.createElement('td'); cell.textContent = text; row.append(cell);
+    }
+    $('comparisonRows').append(row);
+  }
+  drawAllCharts();
+}
+function drawChart(id, result, scale, color, slot) {
+  const canvas = $(id), ctx = canvas.getContext('2d'), w = canvas.clientWidth || 600, h = 260;
+  const dpr = window.devicePixelRatio || 1; canvas.width = w*dpr; canvas.height = h*dpr; ctx.scale(dpr,dpr);
+  const textColor = getComputedStyle(document.body).getPropertyValue('--text');
+  ctx.fillStyle = textColor; ctx.font = '12px system-ui'; chartLayouts.delete(id);
+  if (!result?.bins) { ctx.fillText(result ? 'Marcas temporales incompletas' : 'Pendiente del análisis final', 20, 40); return; }
+  const left = 45, right = w-15, top = 25, bottom = h-40;
+  chartLayouts.set(id, { left, right, top, bottom, duration: scale.duration, bins: result.bins, slot });
+  for (let i=0;i<=4;i++) {
+    const y=bottom-(bottom-top)*i/4; ctx.strokeStyle='#94a3b855'; ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();
+    ctx.fillStyle=textColor;ctx.fillText(String(Math.round(scale.max*i/4)),2,y+4);
+    const t=scale.duration*i/4;ctx.fillText(formatTime(t),left+(right-left)*i/4-12,bottom+22);
+  }
+  const activeTime = slot === selected ? $('playback').currentTime : -1;
+  for (const b of result.bins) {
+    const x=left+b.start/scale.duration*(right-left), width=(b.end-b.start)/scale.duration*(right-left);
+    const height=b.wpm/scale.max*(bottom-top);
+    ctx.fillStyle=color;ctx.fillRect(x+width*.08,bottom-height,width*.84,height);
+    if (activeTime>=b.start && activeTime<b.end) {ctx.strokeStyle=textColor;ctx.lineWidth=2;ctx.strokeRect(x+width*.08,top,width*.84,bottom-top);ctx.lineWidth=1;}
+  }
+  const y=bottom-result.mean/scale.max*(bottom-top);ctx.strokeStyle='#c27616';ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=textColor;ctx.fillText('ppm · línea discontinua = media',left,14);
+}
+function drawAllCharts() {
+  const results=samples.map(s=>s?.result), shared=sharedChartScale(results);
+  const current=['starting','recording','stopping'].includes(state)?null:results[selected];
+  drawChart('speedChart',current,sharedChartScale([current]),selected?'#8757cc':'#2d7ff9',selected);
+  drawChart('chartA',results[0],shared,'#2d7ff9',0);drawChart('chartB',results[1],shared,'#8757cc',1);
+}
+function selectSample(slot) {
+  if (busy()) return;
+  selected=slot;$('sampleSelect').value=String(slot);clearLive();showAudio();
+  setState(samples[slot]?.result?'done':'idle');renderSelected();renderComparison();
+  setStatus(`Muestra ${slot?'B':'A'} seleccionada`);
+}
+async function playInterval(slot, bin) {
+  if (busy() || !samples[slot]?.result) return;
+  if (slot!==selected) selectSample(slot);
+  stopPlayback();playbackEnd=bin.end;
+  const audio=$('playback');audio.currentTime=bin.start;
+  try { await audio.play(); } catch {
+    playbackEnd=null;setStatus('No se pudo iniciar la reproducción; utiliza el reproductor.');
+  }
+}
+for (const id of ['speedChart','chartA','chartB']) $(id).addEventListener('click',event=>{
+  if (busy()) return;
+  const layout=chartLayouts.get(id);if(!layout)return;
+  const rect=$(id).getBoundingClientRect();const x=(event.clientX-rect.left)*($(id).clientWidth/rect.width),y=event.clientY-rect.top;
+  if(x<layout.left||x>=layout.right||y<layout.top||y>layout.bottom)return;
+  const time=(x-layout.left)/(layout.right-layout.left)*layout.duration;
+  const bin=intervalAt(time,layout.bins);if(bin)playInterval(layout.slot,bin);
+});
+$('playback').addEventListener('timeupdate',()=>{
+  const audio=$('playback');if(playbackEnd!==null&&audio.currentTime>=playbackEnd){audio.pause();playbackEnd=null;}
+  for(const row of $('segmentRows').children)row.classList.toggle('active-segment',audio.currentTime>=Number(row.dataset.start)&&audio.currentTime<Number(row.dataset.end));
+  drawAllCharts();
+});
+$('playback').addEventListener('ended',()=>{playbackEnd=null;});
+$('intervalSelect').addEventListener('change',()=>{
+  stopPlayback();for(const sample of samples)if(sample?.result)Object.assign(sample.result,finalMetrics(sample.result.output,sample.result.duration,intervalWidth()));
+  renderSelected();renderComparison();
+});
+$('sampleSelect').addEventListener('change',()=>selectSample(Number($('sampleSelect').value)));
+$('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventListener('click',stopRecording);
+$('retryBtn').addEventListener('click',analyzeFinal);
+$('fileInput').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file||busy())return;
+  ++session;clearLive();attachAudio(file);$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
+  await analyzeFinal();event.target.value='';
+});
+$('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
+window.addEventListener('resize',drawAllCharts);
+window.addEventListener('beforeunload',()=>{
+  clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
+  for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
+});
+setState('idle');renderComparison();drawAllCharts();

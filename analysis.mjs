@@ -1,6 +1,7 @@
 export const countWords = text => (text.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || []).length;
 export const formatTime = seconds => { const n = Math.max(0, Math.round(seconds)); return `${Math.floor(n/60).toString().padStart(2,'0')}:${(n%60).toString().padStart(2,'0')}`; };
-export function wordSegments(chunks, duration, width=30) {
+export function wordSegments(chunks, duration, width=15) {
+  if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(width) || width <= 0) throw new Error('Duración o intervalo inválido');
   const bins = Array.from({length:Math.ceil(duration/width)},(_,i)=>({start:i*width,end:Math.min(duration,(i+1)*width),words:0}));
   let untimed=0;
   for (const chunk of chunks || []) {
@@ -27,4 +28,40 @@ export function acousticActivity(samples, sampleRate) {
   let speech=0;const pauses=[];
   for(let i=0;i<frames.length;){if(active[i]){speech+=frames[i].end-frames[i].start;i++;continue;}const start=i;while(i<frames.length&&!active[i])i++;const end=frames[i-1].end;const begin=frames[start].start;if(start>0&&i<frames.length&&end-begin>=.5-1e-8)pauses.push({start:begin,end,duration:end-begin});}
   return {speech,silence:samples.length/sampleRate-speech,pauses,threshold};
+}
+
+// SpeechRecognition supplies no acoustic word timestamps. These are receipt times,
+// used only for provisional recent speed; revisions retain the unchanged prefix.
+export class LiveWordTracker {
+  constructor() { this.entries = []; }
+  update(text, time) {
+    const tokens = text.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) || [];
+    let prefix = 0;
+    while (prefix < tokens.length && prefix < this.entries.length &&
+      tokens[prefix].toLowerCase() === this.entries[prefix].word.toLowerCase()) prefix++;
+    this.entries.length = prefix;
+    for (const word of tokens.slice(prefix)) this.entries.push({ word, time });
+  }
+  recent(time, elapsed, window = 15) {
+    const span = Math.min(window, elapsed);
+    if (span < 3) return null;
+    const words = this.entries.filter(e => e.time > time - window && e.time <= time).length;
+    return words * 60 / span;
+  }
+}
+export function finalMetrics(output, duration, interval = 15) {
+  const words = countWords(output.text || '');
+  const temporal = wordSegments(output.chunks, duration, interval);
+  const assigned = temporal.bins.reduce((sum, b) => sum + b.words, 0);
+  // Missing chunks for a nonempty transcript must never become zero-speed bins.
+  return { words, mean: words * 60 / duration,
+    bins: !temporal.untimed && assigned === words ? temporal.bins : null };
+}
+export function sharedChartScale(results) {
+  const valid = results.filter(Boolean);
+  return { duration: Math.max(1, ...valid.map(r => r.duration)),
+    max: Math.max(60, ...valid.flatMap(r => [r.mean, ...(r.bins || []).map(b => b.wpm)])) * 1.2 };
+}
+export function intervalAt(time, bins) {
+  return bins?.find(b => time >= b.start && time < b.end) || null;
 }
