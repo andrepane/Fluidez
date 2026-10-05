@@ -14,3 +14,14 @@ test('missing timestamps never invent a temporal graph',()=>{assert.equal(finalM
 test('valid timestamps produce final mean independent of intervals',()=>{const o={text:'hola sí',chunks:[{text:'hola',timestamp:[1,2]},{text:'sí',timestamp:[20,21]}]};assert.equal(finalMetrics(o,30,10).mean,4);assert.equal(finalMetrics(o,30,15).mean,4);});
 test('shared comparison scale does not pad short sample with silence',()=>{const a={duration:20,mean:60,bins:[{start:0,end:20,wpm:60}]};const b={duration:60,mean:120,bins:[{start:0,end:15,wpm:180}]};assert.deepEqual(sharedChartScale([a,b]),{duration:60,max:216});assert.equal(intervalAt(25,a.bins),null);assert.equal(intervalAt(10,a.bins),a.bins[0]);});
 test('invalid interval input is rejected',()=>assert.throws(()=>wordSegments([],30,0)));
+
+test('therapy zones include boundaries without claiming normality', async () => {
+  const {speedZone}=await import('../analysis.mjs');const goal={min:120,max:150};
+  assert.equal(speedZone(119,goal),'slow');assert.equal(speedZone(120,goal),'target');assert.equal(speedZone(150,goal),'target');assert.equal(speedZone(151,goal),'fast');assert.equal(speedZone(null,goal),'unknown');
+});
+test('therapy percentages use full duration with unavailable time and contiguous runs',async()=>{
+  const {therapySummary}=await import('../analysis.mjs');
+  const s=therapySummary([{start:3,end:8,wpm:130},{start:8,end:10,wpm:140},{start:10,end:12,wpm:170},{start:14,end:16,wpm:130}],20,{min:120,max:150});
+  assert.equal(s.longest,7);assert.equal(s.percent.target,45);assert.equal(s.percent.fast,10);assert.equal(s.percent.unknown,45);
+  assert.equal(therapySummary(null,20,{min:120,max:150}).percent.unknown,100);
+});
