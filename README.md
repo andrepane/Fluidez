@@ -89,3 +89,48 @@ Validación: 32 pruebas automáticas de cálculo/flujo, incluidas aparición inm
 La velocidad reciente se calcula en el instante de llegada del último texto diferente, usando la misma ventana/recuento, y se conserva entre callbacks hasta el límite de frescura existente de 5 s. El reloj de UI ya no aumenta el denominador ni expulsa palabras de la ventana mientras espera ASR. Pausa probable neutraliza igualmente; al retomar exige datos nuevos. Texto idéntico no renueva frescura y, al caducar, se ocultan marcador y ppm reciente. La interfaz identifica el dato como última estimación recibida, no velocidad instantánea continua. El resumen provisional registra el feedback mostrado, incluida esa retención breve.
 
 Esto corrige un mecanismo reproducible de descenso del medidor sin nueva información; no demuestra que sea la única causa de una bajada observada. Si ASR omite palabras, la siguiente estimación seguirá siendo baja. Persiste el sesgo por recepción en bloques, revisiones y reinicios del navegador; no se infiere recuento acústico ni se inventan palabras. Análisis final y referencias intactos. 34 pruebas pasan, incluidas esperas sin caída, caducidad, callbacks idénticos, pausa/reanudación y entrega por bloques durante 40 s. Tests controlados, no validación con micrófono real.
+
+## Experimento de directo A/B con Deepgram
+
+**Motor A** conserva SpeechRecognition y sigue predeterminado. **Motor B** usa Deepgram Nova-3 con español explícito (`language=es`) y streaming WebSocket real. Elegir antes de grabar en «Motor de directo · experimento A/B». No sustituye producción ni modifica Whisper, modelos finales, fórmulas finales o objetivos. A/B de motores es independiente de muestra A/B. En GitHub Pages B informa de proxy ausente; A continúa disponible.
+
+### Configuración local (sin clave en frontend)
+1. Instalar Node.js 22 o posterior y descargar/clonar esta rama del repositorio.
+2. En la carpeta del repositorio ejecutar `npm ci --prefix experimental-proxy`.
+3. Configurar `DEEPGRAM_API_KEY` solo en el entorno del proceso servidor. No añadirla a archivos del repo, URL, HTML ni almacenamiento del navegador.
+   - PowerShell: `$env:DEEPGRAM_API_KEY = [System.Net.NetworkCredential]::new('', (Read-Host 'Clave Deepgram' -AsSecureString)).Password`
+   - Bash: `read -sr DEEPGRAM_API_KEY; export DEEPGRAM_API_KEY` (introducir la clave sin eco).
+4. Ejecutar `npm start --prefix experimental-proxy` y abrir **http://127.0.0.1:8787** en Chrome/Edge con micrófono permitido.
+5. Elegir B. Sin clave/credito/conexión o AudioWorklet se informa del error; volver a A antes de iniciar otra práctica. No hay sustitución de motor silenciosa ni reconexión que cambie el origen de los timestamps.
+
+El proxy Node/ws sirve solo los assets públicos permitidos, escucha exclusivamente en loopback, valida Host/Origin, admite una conexión a la vez y limita la sesión a cinco minutos. La clave solo viaja en el header Authorization proxy→Deepgram sobre WSS; no se devuelve al navegador, no se registra audio/transcripción/clave. `/experimental/config` devuelve solo un booleano. .env/node_modules ignorados. No es un backend público de producción: no exponer el puerto mediante túnel ni cambiar el bind. Para uso remoto harían falta HTTPS/WSS, autenticación de usuarios y control de coste por usuario en un despliegue separado; GitHub Pages no puede ejecutar este servidor.
+
+### Audio, respuestas y ppm
+Web Audio/AudioWorklet captura mono PCM linear16 a la frecuencia real del AudioContext; bloques ~100 ms, sin remuestreo ni audio por altavoces. El servidor negocia `sample_rate` con Deepgram (16/22,05/24/32/44,1/48/96 kHz). MediaRecorder conserva el audio completo como antes para Whisper. Al detener se intenta vaciar el último bloque PCM (máximo 300 ms para el flush, sin bloquear Whisper) y enviar CloseStream; cierre local forzado tras dos segundos si el servicio no cierra. La instantánea del feedback ya visto se conserva: resultados tardíos no la reescriben.
+
+Streaming v1: `model=nova-3`, `language=es`, `encoding=linear16`, `channels=1`, `interim_results=true`, `endpointing=300`, `utterance_end_ms=1000`, `vad_events=true`, `punctuate=true`, `smart_format=false`. Sin diarización/redacción/add-ons ni formato de números que fusione palabras. Endpointing es un ajuste técnico, no un umbral clínico. Modelo de servicio actualizado por Deepgram, no revisión de pesos fijada por nosotros.
+
+Results incluye `start`, `duration`, `is_final`, `speech_final`, transcript y words (`word`, `start`, `end`, confidence…). SpeechStarted/UtteranceEnd aportan eventos de actividad/final probable. Para cada rango, el parcial se reemplaza; al finalizar se conserva una sola copia indexada por comienzo del rango. El siguiente parcial se agrega tras los tramos finalizados, sin sumar cada callback como nuevas palabras. Duplicados finales del mismo rango no aumentan recuento. Palabras provisionales y timestamps pueden cambiar. Recuento aplica la misma separación lexical de la app a texto/palabras; no cuenta sílabas.
+
+PPM recientes: palabras con punto medio temporal dentro de los últimos hasta 15 s, divididas por duración real de la ventana ×60, cortada por la última reanudación acústica; mínimo tres segundos. Origen temporal = final del rango procesado `start+duration`, no hora de llegada ni velocidad articulatoria. Incluye pausas breves. Sin timestamps válidos/concordancia de texto no ofrece ppm. Se mantiene hasta nueva respuesta, se neutraliza si audio analizado tiene más de 5 s de antigüedad; el gate acústico existente neutraliza pausas. Eventos de pausa Deepgram SOLO en diagnóstico: no alteran métricas clínicas ni detector final. Si la cola en navegador/proxy supera ~1 s de PCM, B cierra/desactiva feedback con error visible, manteniendo grabación; no descarta fragmentos silenciosamente ni acumula una cola ilimitada. No garantiza latencia máxima de 1 s del servicio: buffering interno/red/ASR pueden retrasar resultados sin incrementar bufferedAmount.
+
+### Diagnóstico y comparación
+Desplegable opcional accesible durante práctica: motor, conexión/estado, ppm, texto, recuento, intervalo entre resultados aceptados, errores y eventos de pausa. Actividad→primer marcador se aproxima desde gate RMS hasta primera estimación del tramo; no mide demora por palabra y puede confundir ruido con habla. En B también mide recepción menos fin del rango de audio; no es la antigüedad de todas las palabras ni separa red/captura/ASR. En A no hay timestamps acústicos. Reloj UI ~250 ms impone su propia resolución. Estados: conectando, conectado/escuchando, parcial/final del directo, esperando habla, error y desconectado. “Final del directo” no es análisis final Whisper ni validación.
+
+Para comparar: misma tarea/texto conocido, duración, rango, micrófono y equipo; grabar una repetición con A y otra con B, abrir diagnóstico y observar cambios deliberados de ritmo y pausas. Anotar demora, cadencia, saltos/estabilidad del marcador, texto omitido/repetido y eventos de pausa. Repeticiones no son idéntico audio ni ensayo controlado. El conteo automático no es referencia de exactitud. No se afirma ventaja de Deepgram hasta prueba real con micrófono y muestras de referencia.
+
+### Coste y privacidad
+Verificado 6/10/2026: Nova-3 streaming monolingüe Pay As You Go anuncia **US$0,0048/min** promocional (precio regular publicado US$0,0077/min), sin add-ons. Aproximadamente US$0,048 por 10 min o US$0,48 por 100 min a tarifa promocional; facturación real según cuenta, audio transmitido, reglas/cambios de precio. El crédito inicial anunciado de US$200 es de bienvenida, **no una cuota gratis mensual**. Consultar dashboard antes de probar. Fuente: https://deepgram.com/pricing
+
+B envía voz al proxy local y a `api.deepgram.com` (servicio externo, no procesamiento local ni endpoint europeo en esta PR). Probar inicialmente con tu propia voz o material autorizado; no se activa B sin elección explícita. Clave no incluida: hace falta crear cuenta, crédito y configurarla en tu proceso local para probar servicio real.
+
+### Validación realizada
+`node --test tests/*.test.mjs` (41 pruebas sin dependencias del proxy).
+`npm ci --prefix experimental-proxy` y `node --test tests/*.test.mjs experimental-proxy/proxy.test.mjs` (43 pruebas en total).
+Incluyen revisión parcial/final, duplicados, tiempos ausentes, pausa/reanudación, transmisión PCM/flush tras transferencia, falta de clave y vuelta a A, backpressure, Whisper final independiente, origen rechazado, archivos privados inaccesibles y relay local con upstream simulado. Sintaxis y git diff --check pasan. **No hay prueba de Deepgram real ni de navegador/micrófono real:** no se proporcionó clave; Playwright no encontró Chromium instalado. No se inventan benchmarks ni latencia observada del servicio.
+
+Fuentes de protocolo/modelo:
+https://developers.deepgram.com/reference/speech-to-text/listen-streaming
+https://developers.deepgram.com/docs/understand-endpointing-interim-results/
+https://developers.deepgram.com/docs/models-languages-overview
+https://developers.deepgram.com/docs/encoding

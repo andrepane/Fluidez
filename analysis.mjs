@@ -104,3 +104,5 @@ export class PauseGate {
     return {paused:this.paused,resumed:was&&!this.paused};
   }
 }
+
+export {DeepgramWords} from './deepgram-live.mjs';
