@@ -74,6 +74,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
+<details><summary>Motor de directo · experimento A/B</summary><label for="liveEngineSelect">Motor</label> <select id="liveEngineSelect"><option value="browser">A · SpeechRecognition actual</option><option value="deepgram">B · Deepgram Nova-3 español</option></select><p class="hint">B envía audio a Deepgram y consume crédito. Requiere proxy local con clave en el servidor. A sigue disponible sin configurar Deepgram.</p></details>
 <p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Detalles para el profesional · directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
@@ -159,6 +160,16 @@
 <h3>Muestra A · azul</h3>
 <canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
 <canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details></main><script type="module" src="script.js"></script>
+<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico experimental · abrir durante la prueba</summary><p class="hint">Compara A y B en repeticiones separadas de la misma tarea. Aproximaciones técnicas, no precisión clínica ni latencia exacta por palabra.</p>
+<p><strong>Motor: </strong><span id="diagEngine">A · SpeechRecognition</span></p>
+<p><strong>Conexión/estado: </strong><span id="diagState">Sin iniciar</span></p>
+<p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
+<p><strong>Palabras detectadas: </strong><span id="diagWords">0</span></p>
+<p><strong>Actividad → primer marcador: </strong><span id="diagDelay">—</span></p>
+<p><strong>Antigüedad del audio al recibir resultado: </strong><span id="diagAge">—</span></p>
+<p><strong>Intervalo entre resultados: </strong><span id="diagCadence">—</span></p>
+<p><strong>Pausas del servicio: </strong><span id="diagPause">—</span></p>
+<p><strong>Errores: </strong><span id="diagError">Sin errores</span></p>
+<div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
 </body>
 </html>
