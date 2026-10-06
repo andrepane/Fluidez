@@ -5,11 +5,11 @@ let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, 
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
-let activeEngine='browser',dgWords=new DeepgramWords(),dgSocket=null,dgCapture=null,dgGain=null,dgStopTimer=null;
+let activeEngine='deepgram',dgWords=new DeepgramWords(),dgSocket=null,dgCapture=null,dgGain=null,dgStopTimer=null;
 let diagnostic={status:'Sin iniciar',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
 function drawDiagnostic(){
-  $('diagEngine').textContent=activeEngine==='deepgram'?'B · Deepgram Nova-3 español':'A · SpeechRecognition';
-  $('diagState').textContent=(activeEngine==='deepgram'&&dgSocket?.readyState===1?'Conectado · ':'')+diagnostic.status;$('diagError').textContent=diagnostic.error||'Sin errores';
+  $('diagEngine').textContent='Deepgram Nova-3 español';
+  $('diagState').textContent=(dgSocket?.readyState===1?'Conectado · ':'')+diagnostic.status;$('diagError').textContent=diagnostic.error||'Sin errores';
   $('diagPpm').textContent=liveValue===null?'Sin estimación':`${Math.round(liveValue)} ppm provisionales`;
   $('diagWords').textContent=String(countWords(liveText()));$('diagText').textContent=liveText()||'Sin texto';
   $('diagCadence').textContent=diagnostic.cadence===null?'Pendiente':`${diagnostic.cadence.toFixed(2)} s`;
@@ -33,7 +33,7 @@ function stopDeepgram(graceful=false){
   }else{cleanup();socket?.close();}
 }
 async function startDeepgram(token){
-  if(!window.AudioWorkletNode||!audioContext?.audioWorklet||!micSource)throw Error('Deepgram necesita AudioWorklet/Web Audio. Usa el motor A.');
+  if(!window.AudioWorkletNode||!audioContext?.audioWorklet||!micSource)throw Error('El biofeedback en directo necesita AudioWorklet/Web Audio.');
   diagnostic.status='Solicitando acceso temporal a Deepgram';drawDiagnostic();
   let accessToken;
   try{
@@ -51,7 +51,7 @@ async function startDeepgram(token){
       if(!ready){clearTimeout(timeout);reject(Error(message));}else{stopDeepgram();if(state==='recording')tick();}
     };
     socket.onopen=()=>{ready=true;clearTimeout(timeout);diagnostic.status='Conectado · escuchando';drawDiagnostic();resolve();};
-    socket.onerror=()=>fail('Fallo de conexión con Deepgram. Audio conservado; selecciona A en la siguiente práctica.');
+    socket.onerror=()=>fail('Fallo de conexión con el reconocimiento en directo. El audio se conserva para el análisis final.');
     socket.onclose=()=>{
       if(token!==session)return;clearTimeout(dgStopTimer);
       if(!ready){clearTimeout(timeout);reject(Error('Deepgram desconectado antes de empezar'));}
@@ -189,7 +189,6 @@ function setState(next) {
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
   $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
-  $('liveEngineSelect').disabled=busy();
   document.body.dataset.session=next;
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
@@ -346,7 +345,7 @@ function startRecognition(token) {
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
-  stopDeepgram();activeEngine=$('liveEngineSelect').value==='deepgram'?'deepgram':'browser';dgWords=new DeepgramWords();liveSupported=true;
+  stopDeepgram();activeEngine='deepgram';dgWords=new DeepgramWords();liveSupported=true;
   diagnostic={status:'Iniciando',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
   clearLive(); resetResults(); $('therapySummary').hidden=true; $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
   for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget','therapyPauseInfo'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
@@ -357,7 +356,7 @@ async function startRecording() {
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw Error('Necesitas un navegador compatible y HTTPS.');
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     await monitorMic();
-    if(activeEngine==='deepgram')await startDeepgram(token);
+    await startDeepgram(token);
     const mime = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t));
     const activeRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     recorder = activeRecorder; const chunks = [];
@@ -376,7 +375,7 @@ async function startRecording() {
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
-    clock = setInterval(tick, 250);if(activeEngine==='browser')startRecognition(token);else $('liveNotice').textContent='Deepgram experimental: audio enviado al servicio. Palabras/tiempos provisionales del directo; final con Whisper independiente. Pausas del servicio solo en diagnóstico.';tick();
+    clock = setInterval(tick, 250);$('liveNotice').textContent='Biofeedback en directo mediante reconocimiento automático. El análisis final se calcula de forma independiente con Whisper.';tick();
   } catch (error) {
     stopDeepgram();diagnostic.status='Error';diagnostic.error=error.message;drawDiagnostic();releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
     setStatus(`No se pudo grabar: ${error.message}`);
@@ -575,7 +574,6 @@ $('intervalSelect').addEventListener('change',()=>{
   renderSelected();renderComparison();
 });
 $('sampleSelect').addEventListener('change',()=>selectSample(Number($('sampleSelect').value)));
-$('liveEngineSelect').addEventListener('change',()=>{activeEngine=$('liveEngineSelect').value;diagnostic.status='Motor seleccionado · sin grabación';drawDiagnostic();});
 $('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventListener('click',stopRecording);
 $('retryBtn').addEventListener('click',analyzeFinal);
 $('fileInput').addEventListener('change',async event=>{
