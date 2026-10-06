@@ -164,3 +164,24 @@ test('analysis failure leaves processing card and keeps retry available',async()
  assert.equal(h.e('processingPanel').hidden,true);assert.equal(h.e('professionalArea').hidden,false);
  assert.equal(h.e('retryBtn').disabled,false);assert.match(h.e('finalNotice').textContent,/Audio conservado/);
 });
+
+test('UI ticks do not lower recent speed while waiting for recognition',async()=>{
+ const h=harness();await h.app.startRecording();h.setTime(14000);
+ h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+ const measured=h.e('recentSpeed').textContent;assert.equal(measured,'135 ppm');
+ h.setTime(17000);h.app.tick();assert.equal(h.e('recentSpeed').textContent,measured);assert.equal(h.e('feedbackLabel').textContent,'Buen ritmo');
+ h.setTime(18000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
+ assert.equal(h.e('recentSpeed').textContent,measured);
+ h.setTime(20000);h.app.tick();assert.equal(h.e('recentSpeed').textContent,'—');assert.equal(h.e('speedMarker').hidden,true);
+ h.app.stopRecording();await h.app.recorder().stopped;
+});
+test('new word batches update rate over time without cumulative decline',async()=>{
+ const h=harness();await h.app.startRecording();let text='';
+ for(let elapsed=4;elapsed<=40;elapsed+=4){
+  text+=' uno dos tres cuatro cinco seis siete ocho nueve';h.setTime(10000+elapsed*1000);
+  h.recognition().onresult({results:[{0:{transcript:text},isFinal:true}]});
+  const measured=h.e('recentSpeed').textContent;h.setTime(10000+(elapsed+2)*1000);h.app.tick();
+  assert.equal(h.e('recentSpeed').textContent,measured);assert.ok(parseInt(measured)>=135);
+ }
+ h.app.stopRecording();await h.app.recorder().stopped;
+});
