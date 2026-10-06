@@ -8,12 +8,12 @@ const samples = [null, null];
 let activeEngine='deepgram',dgWords=new DeepgramWords(),dgSocket=null,dgCapture=null,dgGain=null,dgStopTimer=null;
 let diagnostic={status:'Sin iniciar',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
 function drawDiagnostic(){
-  $('diagEngine').textContent='Deepgram Nova-3 español';
+  $('diagEngine').textContent='Disponible';
   $('diagState').textContent=(dgSocket?.readyState===1?'Conectado · ':'')+diagnostic.status;$('diagError').textContent=diagnostic.error||'Sin errores';
   $('diagPpm').textContent=liveValue===null?'Sin estimación':`${Math.round(liveValue)} ppm provisionales`;
   $('diagWords').textContent=String(countWords(liveText()));$('diagText').textContent=liveText()||'Sin texto';
   $('diagCadence').textContent=diagnostic.cadence===null?'Pendiente':`${diagnostic.cadence.toFixed(2)} s`;
-  $('diagAge').textContent=diagnostic.age===null?'No disponible en A':`${diagnostic.age.toFixed(2)} s desde fin del audio analizado hasta recepción (no latencia por palabra)`;
+  $('diagAge').textContent=diagnostic.age===null?'Pendiente':`${diagnostic.age.toFixed(2)} s desde fin del audio analizado hasta recepción (no latencia por palabra)`;
   $('diagDelay').textContent=diagnostic.delay===null?'Pendiente':`${diagnostic.delay.toFixed(2)} s actividad acústica → primer feedback del tramo (aproximación)`;
   $('diagPause').textContent=diagnostic.pause;
 }
@@ -34,18 +34,18 @@ function stopDeepgram(graceful=false){
 }
 async function startDeepgram(token){
   if(!window.AudioWorkletNode||!audioContext?.audioWorklet||!micSource)throw Error('El biofeedback en directo necesita AudioWorklet/Web Audio.');
-  diagnostic.status='Solicitando acceso temporal a Deepgram';drawDiagnostic();
+  diagnostic.status='Preparando reconocimiento en directo';drawDiagnostic();
   let accessToken;
   try{
     const response=await fetch('/api/deepgram-token',{method:'POST',headers:{'Accept':'application/json'},cache:'no-store',signal:AbortSignal.timeout(5000)});
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.access_token)throw Error(data.error||'No se pudo obtener acceso temporal');
     accessToken=data.access_token;
-  }catch(error){throw Error(`Deepgram no disponible: ${error.message||'falló la autorización'}`);}
+  }catch(error){throw Error(`Reconocimiento en directo no disponible: ${error.message||'falló la autorización'}`);}
   const params=new URLSearchParams({model:'nova-3',language:'es',encoding:'linear16',sample_rate:String(audioContext.sampleRate),channels:'1',interim_results:'true',endpointing:'300',utterance_end_ms:'1000',vad_events:'true',punctuate:'true',smart_format:'false'});
   await new Promise((resolve,reject)=>{
     const socket=new WebSocket('wss://api.deepgram.com/v1/listen?'+params,['bearer',accessToken]);dgSocket=socket;let ready=false;
-    const timeout=setTimeout(()=>{socket.close();reject(Error('Deepgram no conectó en 12 s'));},12000);
+    const timeout=setTimeout(()=>{socket.close();reject(Error('El reconocimiento en directo no conectó en 12 s'));},12000);
     const fail=message=>{
       diagnostic.status='Error / desconectado';diagnostic.error=message;liveSupported=false;
       if(!ready){clearTimeout(timeout);reject(Error(message));}else{stopDeepgram();if(state==='recording')tick();}
@@ -54,7 +54,7 @@ async function startDeepgram(token){
     socket.onerror=()=>fail('Fallo de conexión con el reconocimiento en directo. El audio se conserva para el análisis final.');
     socket.onclose=()=>{
       if(token!==session)return;clearTimeout(dgStopTimer);
-      if(!ready){clearTimeout(timeout);reject(Error('Deepgram desconectado antes de empezar'));}
+      if(!ready){clearTimeout(timeout);reject(Error('El reconocimiento en directo se desconectó antes de empezar'));}
       diagnostic.status='Desconectado';if(state==='recording'){liveSupported=false;diagnostic.error||='Conexión interrumpida; el audio continúa grabándose';tick();}else drawDiagnostic();
     };
     socket.onmessage=({data})=>{
@@ -72,7 +72,7 @@ async function startDeepgram(token){
     };
   });
   await audioContext.audioWorklet.addModule(new URL('./deepgram-capture.worklet.js',import.meta.url));
-  if(dgSocket?.readyState!==1)throw Error('La conexión Deepgram se perdió al preparar el audio');
+  if(dgSocket?.readyState!==1)throw Error('La conexión del reconocimiento en directo se perdió al preparar el audio');
   dgCapture=new AudioWorkletNode(audioContext,'fluidez-deepgram',{processorOptions:{frameSize:Math.round(audioContext.sampleRate*.1)}});
   dgCapture.port.onmessage=({data})=>{
     if(token!==session||state!=='recording')return;
@@ -375,7 +375,7 @@ async function startRecording() {
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
-    clock = setInterval(tick, 250);$('liveNotice').textContent='Biofeedback en directo mediante reconocimiento automático. El análisis final se calcula de forma independiente con Whisper.';tick();
+    clock = setInterval(tick, 250);$('liveNotice').textContent='Biofeedback en directo mediante reconocimiento automático. El análisis final se calcula de forma independiente al terminar.';tick();
   } catch (error) {
     stopDeepgram();diagnostic.status='Error';diagnostic.error=error.message;drawDiagnostic();releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
     setStatus(`No se pudo grabar: ${error.message}`);
@@ -485,9 +485,9 @@ function renderSelected() {
     $('segmentRows').append(row);
   }
   $('analysisTag').textContent = 'Resultado final automático';
-  $('finalNotice').textContent = 'Audio completo procesado con Whisper Base; palabras, tiempos y actividad acústica automáticos, no validados clínicamente.';
-  if (activity.speech === 0 && words > 0) $('finalNotice').textContent += ' El detector acústico no encontró actividad, pero Whisper reconoció palabras: habla/silencio requieren cautela.';
-  if (activity.speech === 0 && words === 0) $('finalNotice').textContent += ' Whisper intentó transcribir el audio y no devolvió palabras.';
+  $('finalNotice').textContent = 'Audio completo analizado automáticamente; palabras, tiempos y actividad acústica requieren interpretación profesional.';
+  if (activity.speech === 0 && words > 0) $('finalNotice').textContent += ' El detector acústico no encontró actividad, aunque se reconocieron palabras: habla/silencio requieren cautela.';
+  if (activity.speech === 0 && words === 0) $('finalNotice').textContent += ' El análisis no devolvió palabras reconocidas.';
   drawAllCharts();
 }
 function renderComparison() {
