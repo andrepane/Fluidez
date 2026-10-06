@@ -14,7 +14,42 @@
 </div>
 </div>
 <button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
-<main><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
+<main><section id="analysisHome" class="analysis-home panel">
+<p class="eyebrow">Elige qué quieres observar</p>
+<h2 class="analysis-home-title">¿Qué quieres analizar?</h2>
+<p class="analysis-home-copy">Usa una única grabación y muestra solo la información relevante para la sesión.</p>
+<div class="analysis-mode-grid">
+<button class="analysis-mode-card" type="button" data-analysis-mode="speed">
+<span class="analysis-mode-icon" aria-hidden="true">↔</span>
+<strong>Velocidad y ritmo</strong>
+<small>Palabras por minuto, evolución temporal, pausas y biofeedback en directo.</small>
+</button>
+<button class="analysis-mode-card" type="button" data-analysis-mode="prosody">
+<span class="analysis-mode-icon" aria-hidden="true">⌁</span>
+<strong>Prosodia y entonación</strong>
+<small>Curva melódica, frecuencia fundamental, rango tonal y variabilidad.</small>
+<span class="analysis-mode-badge">Prototipo</span>
+</button>
+<button class="analysis-mode-card" type="button" data-analysis-mode="voice">
+<span class="analysis-mode-icon" aria-hidden="true">◌</span>
+<strong>Voz</strong>
+<small>Intensidad y, más adelante, parámetros acústicos de calidad vocal.</small>
+<span class="analysis-mode-badge">Prototipo</span>
+</button>
+</div>
+<button id="fullAnalysisBtn" class="analysis-full-button" type="button">
+<span><strong>Análisis completo</strong><small>Una grabación para velocidad, prosodia y voz.</small></span><span aria-hidden="true">→</span>
+</button>
+</section>
+<section id="analysisPreview" class="analysis-preview panel" hidden>
+<button id="backToAnalysisHome" class="analysis-back" type="button">← Volver</button>
+<p class="eyebrow">Vista de concepto</p>
+<h2 id="analysisPreviewTitle">Prosodia y entonación</h2>
+<p id="analysisPreviewText" class="analysis-home-copy"></p>
+<div id="analysisPreviewMetrics" class="analysis-preview-metrics"></div>
+<div class="analysis-placeholder-chart" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<p class="hint">Esta pantalla es solo una propuesta visual. Todavía no calcula estos parámetros.</p>
+</section><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
 <div class="processing-orbit" aria-hidden="true"><span>f+</span></div>
 <p class="eyebrow">Análisis automático</p>
 <h2 id="processingTitle">Analizando tu muestra…</h2>
@@ -52,7 +87,7 @@
 <div class="timeline-axis">
 <span>Inicio</span><span id="timelineEnd">Final</span>
 </div>
-<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel analysis-speed-section" open="" hidden><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
 <div class="button-row">
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
@@ -74,7 +109,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
-<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
+<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel analysis-speed-section" hidden><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
 <p class="label">Tiempo de grabación</p>
@@ -159,7 +194,7 @@
 <h3>Muestra A · azul</h3>
 <canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
 <canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
+<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel analysis-speed-section" hidden><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
 <p><strong>Servicio de directo: </strong><span id="diagEngine">Disponible</span></p>
 <p><strong>Conexión/estado: </strong><span id="diagState">Sin iniciar</span></p>
 <p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
