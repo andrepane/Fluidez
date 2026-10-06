@@ -34,20 +34,24 @@ function stopDeepgram(graceful=false){
 }
 async function startDeepgram(token){
   if(!window.AudioWorkletNode||!audioContext?.audioWorklet||!micSource)throw Error('Deepgram necesita AudioWorklet/Web Audio. Usa el motor A.');
-  diagnostic.status='Conectando al proxy local';drawDiagnostic();
-  let config;
-  try{const response=await fetch('/experimental/config',{signal:AbortSignal.timeout(5000)});if(!response.ok)throw Error();config=await response.json();}catch{throw Error('Proxy local no disponible. Abre http://127.0.0.1:8787 o usa A.');}
-  if(!config.configured)throw Error('Falta DEEPGRAM_API_KEY en el servidor. Puedes seleccionar A.');
-  const url=new URL('/experimental/deepgram',window.location.href);url.protocol=url.protocol==='https:'?'wss:':'ws:';
+  diagnostic.status='Solicitando acceso temporal a Deepgram';drawDiagnostic();
+  let accessToken;
+  try{
+    const response=await fetch('/api/deepgram-token',{method:'POST',headers:{'Accept':'application/json'},cache:'no-store',signal:AbortSignal.timeout(5000)});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.access_token)throw Error(data.error||'No se pudo obtener acceso temporal');
+    accessToken=data.access_token;
+  }catch(error){throw Error(`Deepgram no disponible: ${error.message||'falló la autorización'}`);}
+  const params=new URLSearchParams({model:'nova-3',language:'es',encoding:'linear16',sample_rate:String(audioContext.sampleRate),channels:'1',interim_results:'true',endpointing:'300',utterance_end_ms:'1000',vad_events:'true',punctuate:'true',smart_format:'false'});
   await new Promise((resolve,reject)=>{
-    const socket=new WebSocket(url);dgSocket=socket;let ready=false;
+    const socket=new WebSocket('wss://api.deepgram.com/v1/listen?'+params,['bearer',accessToken]);dgSocket=socket;let ready=false;
     const timeout=setTimeout(()=>{socket.close();reject(Error('Deepgram no conectó en 12 s'));},12000);
     const fail=message=>{
       diagnostic.status='Error / desconectado';diagnostic.error=message;liveSupported=false;
       if(!ready){clearTimeout(timeout);reject(Error(message));}else{stopDeepgram();if(state==='recording')tick();}
     };
-    socket.onopen=()=>socket.send(JSON.stringify({type:'Start',sampleRate:audioContext.sampleRate}));
-    socket.onerror=()=>fail('Fallo del proxy o servicio. Audio conservado; selecciona A en la siguiente práctica.');
+    socket.onopen=()=>{ready=true;clearTimeout(timeout);diagnostic.status='Conectado · escuchando';drawDiagnostic();resolve();};
+    socket.onerror=()=>fail('Fallo de conexión con Deepgram. Audio conservado; selecciona A en la siguiente práctica.');
     socket.onclose=()=>{
       if(token!==session)return;clearTimeout(dgStopTimer);
       if(!ready){clearTimeout(timeout);reject(Error('Deepgram desconectado antes de empezar'));}
@@ -55,9 +59,6 @@ async function startDeepgram(token){
     };
     socket.onmessage=({data})=>{
       if(token!==session)return;let message;try{message=JSON.parse(data);}catch{return;}
-      if(message.type==='ProxyReady'){ready=true;clearTimeout(timeout);diagnostic.status='Conectado · escuchando';resolve();return;}
-      if(message.type==='ProxyError'){fail(message.message);return;}
-      if(message.type==='ProxyDisconnected'){diagnostic.status='Desconectado';return;}
       if(state!=='recording')return;
       if(message.type==='SpeechStarted'){diagnostic.pause='SpeechStarted · actividad detectada';diagnostic.status='Escuchando';}
       if(message.type==='UtteranceEnd'){diagnostic.pause='UtteranceEnd · pausa probable del servicio';diagnostic.status='Esperando habla';}
