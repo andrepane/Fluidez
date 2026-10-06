@@ -30,7 +30,7 @@ function harness() {
   class AudioContext {constructor(){this.state='running';this.sampleRate=48000;this.audioWorklet={addModule:async()=>{}};}createGain(){return {gain:{value:0},connect:noop,disconnect:noop};}async resume(){}createAnalyser(){return {fftSize:2048,getFloatTimeDomainData:array=>array.fill(rms)};}createMediaStreamSource(){return {connect:noop,disconnect:noop};}async decodeAudioData(){return {duration,length:16000,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(16000)};}}
   class OfflineAudioContext {createBuffer(){return {copyToChannel:noop};}createBufferSource(){return {connect:noop,start:noop};}async startRendering(){return {getChannelData:()=>new Float32Array(16000)};}}
   class AudioWorkletNode {constructor(){capture=this;this.port={postMessage:()=>queueMicrotask(()=>this.port.onmessage?.({data:{type:'flushed',audio:new ArrayBuffer(0)}}))};}connect(){}disconnect(){}}
-  class WebSocket {constructor(){dgClient=this;this.readyState=1;this.bufferedAmount=0;this.sent=[];queueMicrotask(()=>this.onopen?.());}send(data){this.sent.push(data);if(typeof data==='string'){const type=JSON.parse(data).type;if(type==='Start')queueMicrotask(()=>this.onmessage({data:JSON.stringify({type:'ProxyReady'})}));if(type==='CloseStream')queueMicrotask(()=>this.close());}}close(){this.readyState=3;this.onclose?.();}}
+  class WebSocket {constructor(){dgClient=this;this.readyState=1;this.bufferedAmount=0;this.sent=[];queueMicrotask(()=>this.onopen?.());}send(data){this.sent.push(data);if(typeof data==='string'){try{if(JSON.parse(data).type==='CloseStream')queueMicrotask(()=>this.close());}catch{}}}close(){this.readyState=3;this.onclose?.();}}
   class Worker {
     postMessage(data){calls++;if(pending){pendingWorker={worker:this,data};return;}queueMicrotask(()=>this.onmessage({data:failure?{id:data.id,type:'error',message:'test failure'}:{id:data.id,type:'result',output}}));}
     terminate(){}
@@ -40,7 +40,7 @@ function harness() {
   class MediaRecorder {static isTypeSupported(){return true;}constructor(){this.mimeType='audio/webm';}start(){}stop(){this.ondataavailable({data:new Blob(['audio'])});this.stopped=this.onstop();}}
   const window={location:{href:'http://127.0.0.1:8787/'},AudioWorkletNode,AudioContext,MediaRecorder,SpeechRecognition,devicePixelRatio:1,addEventListener:noop};
   class FakeURL extends URL {static createObjectURL(){return 'blob:fixture-'+Math.random();}static revokeObjectURL(){}}
-  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,AudioWorkletNode,WebSocket,AbortSignal,ArrayBuffer,fetch:async()=>({ok:true,json:async()=>({configured:proxyConfigured})}),OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout:(fn,ms)=>{if(ms===20000)reminder=fn;return setTimeout(fn,ms);},clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
+  const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,AudioWorkletNode,WebSocket,AbortSignal,ArrayBuffer,fetch:async()=>proxyConfigured?({ok:true,json:async()=>({access_token:'test-token',expires_in:60})}):({ok:false,json:async()=>({error:'Deepgram no está configurado en el servidor'})}),OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout:(fn,ms)=>{if(ms===20000)reminder=fn;return setTimeout(fn,ms);},clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
   let source=readFileSync(new URL('../script.js',import.meta.url),'utf8');
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
   source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
@@ -75,7 +75,7 @@ test('incomplete word timestamps keep mean but suppress temporal graph',async()=
 });
 
 test('therapy recording shows provisional summary before final worker and replaces it',async()=>{
-  const h=harness();h.setPending(true);await h.app.startRecording();
+  const h=harness();h.configureProxy();h.setPending(true);await h.app.startRecording();
   assert.equal(h.app.state(),'recording');assert.equal(h.e('targetMin').disabled,true);
   h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
   assert.equal(h.e('feedbackLabel').textContent,'Buen ritmo');assert.equal(h.e('speedMarker').hidden,false);
@@ -88,7 +88,7 @@ test('therapy recording shows provisional summary before final worker and replac
   assert.equal(h.e('targetMin').disabled,false);
 });
 test('therapy refuses invalid targets before requesting microphone',async()=>{
-  const h=harness();h.e('targetMin').value='200';h.e('targetMax').value='150';await h.app.startRecording();
+  const h=harness();h.configureProxy();h.e('targetMin').value='200';h.e('targetMax').value='150';await h.app.startRecording();
   assert.equal(h.app.state(),'idle');assert.match(h.e('statusText').textContent,/rango válido/);
 });
 
@@ -108,7 +108,7 @@ test('temporal stripe has accessible labels without overlapping visible text',as
 });
 
 test('stopping and final completion never leave a live speed on the main meter',async()=>{
-  const h=harness();h.setPending(true);await h.app.startRecording();h.setTime(14000);
+  const h=harness();h.configureProxy();h.setPending(true);await h.app.startRecording();h.setTime(14000);
   h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
   assert.equal(h.e('speedMarker').hidden,false);h.app.stopRecording();
   assert.equal(h.e('speedMarker').hidden,true);assert.equal(h.e('feedbackLabel').textContent,'Grabación terminada');
@@ -117,7 +117,7 @@ test('stopping and final completion never leave a live speed on the main meter',
   assert.doesNotMatch(h.e('feedbackValue').textContent,/ppm estimadas/);
 });
 test('recognition gaps become unavailable rather than a misleading slow instruction',async()=>{
-  const h=harness();await h.app.startRecording();h.setTime(14000);
+  const h=harness();h.configureProxy();await h.app.startRecording();h.setTime(14000);
   h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
   h.setTime(20000);h.app.tick();assert.equal(h.e('speedMarker').hidden,true);
   assert.equal(h.e('feedbackLabel').textContent,'Esperando actualización de voz');
@@ -126,7 +126,7 @@ test('recognition gaps become unavailable rather than a misleading slow instruct
 });
 
 test('long acoustic pause is neutral and resume excludes words from before pause',async()=>{
-  const h=harness();await h.app.startRecording();h.setTime(14000);
+  const h=harness();h.configureProxy();await h.app.startRecording();h.setTime(14000);
   h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
   h.setRms(0);h.setTime(15000);h.app.tick();h.setTime(16000);h.app.tick();
   assert.equal(h.e('feedbackLabel').textContent,'Pausa probable');assert.equal(h.e('speedMarker').hidden,true);
@@ -137,7 +137,7 @@ test('long acoustic pause is neutral and resume excludes words from before pause
 });
 
 test('patient view hides setup and professionals; stop summary survives final completion',async()=>{
-  const h=harness();h.setPending(true);await h.app.startRecording();
+  const h=harness();h.configureProxy();h.setPending(true);await h.app.startRecording();
   assert.equal(h.e('patientPanel').hidden,false);assert.equal(h.e('setupPanel').hidden,true);assert.equal(h.e('professionalArea').hidden,true);
   h.setTime(14000);h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
   h.setTime(18000);h.app.stopRecording();
@@ -149,7 +149,7 @@ test('patient view hides setup and professionals; stop summary survives final co
 });
 
 test('processing card is immediate, reports only file percentages and returns to results',async()=>{
- const h=harness();h.setPending(true);await h.app.startRecording();h.app.stopRecording();
+ const h=harness();h.configureProxy();h.setPending(true);await h.app.startRecording();h.app.stopRecording();
  assert.equal(h.e('processingPanel').hidden,false);assert.equal(h.e('processingPhase').textContent,'Preparando audio');
  assert.equal(h.e('professionalArea').hidden,true);assert.equal(h.e('processingBar')['aria-valuenow'],undefined);
  await new Promise(resolve=>setImmediate(resolve));
@@ -168,7 +168,7 @@ test('analysis failure leaves processing card and keeps retry available',async()
 });
 
 test('UI ticks do not lower recent speed while waiting for recognition',async()=>{
- const h=harness();await h.app.startRecording();h.setTime(14000);
+ const h=harness();h.configureProxy();await h.app.startRecording();h.setTime(14000);
  h.recognition().onresult({results:[{0:{transcript:'uno dos tres cuatro cinco seis siete ocho nueve'},isFinal:true}]});
  const measured=h.e('recentSpeed').textContent;assert.equal(measured,'135 ppm');
  h.setTime(17000);h.app.tick();assert.equal(h.e('recentSpeed').textContent,measured);assert.equal(h.e('feedbackLabel').textContent,'Buen ritmo');
@@ -178,7 +178,7 @@ test('UI ticks do not lower recent speed while waiting for recognition',async()=
  h.app.stopRecording();await h.app.recorder().stopped;
 });
 test('new word batches update rate over time without cumulative decline',async()=>{
- const h=harness();await h.app.startRecording();let text='';
+ const h=harness();h.configureProxy();await h.app.startRecording();let text='';
  for(let elapsed=4;elapsed<=40;elapsed+=4){
   text+=' uno dos tres cuatro cinco seis siete ocho nueve';h.setTime(10000+elapsed*1000);
   h.recognition().onresult({results:[{0:{transcript:text},isFinal:true}]});
@@ -188,20 +188,19 @@ test('new word batches update rate over time without cumulative decline',async()
  h.app.stopRecording();await h.app.recorder().stopped;
 });
 
-test('missing server key is clear and user can start motor A afterwards',async()=>{
- const h=harness();h.e('liveEngineSelect').value='deepgram';await h.app.startRecording();
- assert.equal(h.app.state(),'error');assert.match(h.e('diagError').textContent,/DEEPGRAM_API_KEY/);
- h.e('liveEngineSelect').value='browser';await h.app.startRecording();assert.equal(h.app.state(),'recording');h.app.stopRecording();await h.app.recorder().stopped;
+test('missing Deepgram server configuration stops live practice clearly without exposing a motor choice',async()=>{
+ const h=harness();await h.app.startRecording();
+ assert.equal(h.app.state(),'error');assert.match(h.e('diagError').textContent,/Deepgram no está configurado/);
 });
 test('Deepgram partial revisions feed marker without duplicate counting and Whisper remains final',async()=>{
- const h=harness();h.configureProxy();h.e('liveEngineSelect').value='deepgram';await h.app.startRecording();h.setTime(14000);
+ const h=harness();h.configureProxy();await h.app.startRecording();h.setTime(14000);
  const result=text=>({type:'Results',start:0,duration:4,is_final:false,channel:{alternatives:[{transcript:text,words:text.split(' ').map((word,i)=>({word,start:i*.3,end:i*.3+.2}))}]}});
  h.dgEmit(result('uno dos tres cuatro cinco seis siete ocho nueve'));assert.equal(h.e('diagWords').textContent,'9');assert.equal(h.e('recentSpeed').textContent,'135 ppm');
  h.dgEmit(result('uno dos tres cuatro cinco seis siete ocho diez'));assert.equal(h.e('diagWords').textContent,'9');
  h.setTime(18000);h.app.stopRecording();await h.app.recorder().stopped;assert.equal(h.calls(),1);assert.equal(h.e('finalTranscript').textContent,'hola');
 });
 test('Deepgram backlog disables feedback without abandoning recording',async()=>{
- const h=harness();h.configureProxy();h.e('liveEngineSelect').value='deepgram';await h.app.startRecording();h.dgBackpressure();
+ const h=harness();h.configureProxy();await h.app.startRecording();h.dgBackpressure();
  assert.equal(h.app.state(),'recording');assert.equal(h.e('speedMarker').hidden,true);assert.match(h.e('diagError').textContent,/Conexión lenta/);
  h.app.stopRecording();await h.app.recorder().stopped;assert.ok(h.app.samples[0].blob);
 });
