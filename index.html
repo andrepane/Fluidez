@@ -14,7 +14,26 @@
 </div>
 </div>
 <button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
-<main><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
+<main><section id="modeHome" class="panel mode-home">
+<p class="eyebrow">Fluidez+</p>
+<h2 class="mode-home-title">¿Qué quieres trabajar?</h2>
+<p class="mode-home-copy">Elige el objetivo principal de la sesión. Cada modo adapta el biofeedback en directo y el análisis posterior.</p>
+<div class="mode-grid">
+<button class="mode-card" type="button" data-mode-open="speed"><span class="mode-icon" aria-hidden="true">↔</span><strong>Velocidad y ritmo</strong><small>Biofeedback de velocidad en tiempo real y análisis de ritmo, pausas y evolución temporal.</small><span class="mode-status mode-status-ready">Disponible</span></button>
+<button class="mode-card" type="button" data-mode-open="prosody"><span class="mode-icon" aria-hidden="true">⌁</span><strong>Prosodia y entonación</strong><small>Trabajo sobre variación tonal, rango melódico y curva de entonación durante la muestra.</small><span class="mode-status">Prototipo visual</span></button>
+<button class="mode-card" type="button" data-mode-open="voice"><span class="mode-icon" aria-hidden="true">◌</span><strong>Calidad vocal</strong><small>Biofeedback y análisis acústico de la voz con parámetros adecuados a la tarea.</small><span class="mode-status">Prototipo visual</span></button>
+<button class="mode-card mode-card-full" type="button" data-mode-open="full"><span class="mode-icon" aria-hidden="true">＋</span><strong>Análisis completo</strong><small>Registra todos los módulos y permite elegir qué dimensión utilizar como biofeedback principal.</small><span class="mode-status">Prototipo visual</span></button>
+</div>
+</section>
+<section id="modulePrototype" class="panel module-prototype" hidden>
+<div class="module-topbar"><button id="prototypeBack" class="module-back" type="button">← Volver</button><span class="mode-status">Prototipo visual</span></div>
+<p id="prototypeEyebrow" class="eyebrow">Módulo</p><h2 id="prototypeTitle" class="mode-home-title"></h2><p id="prototypeIntro" class="mode-home-copy"></p>
+<div id="prototypeConfig" class="prototype-stage"><h3>Configurar sesión</h3><div id="prototypeConfigFields" class="prototype-config-grid"></div>
+<div id="prototypeFeedbackChoice" class="prototype-feedback-choice" hidden><label for="prototypeFeedbackSelect">Biofeedback principal</label><select id="prototypeFeedbackSelect"><option>Velocidad y ritmo</option><option>Prosodia y entonación</option><option>Calidad vocal</option></select><p class="hint">El resto de módulos se analizarían igualmente al terminar.</p></div>
+<button id="prototypeStart" class="prototype-primary" type="button">● Empezar grabación</button><p class="tiny">Vista de diseño: todavía no calcula estos parámetros.</p></div>
+<div id="prototypeLive" class="prototype-stage" hidden><p class="eyebrow">Durante la grabación</p><h3 id="prototypeLiveTitle">Biofeedback en directo</h3><div id="prototypeLiveVisual" class="prototype-live-visual"></div><div id="prototypeLiveCards" class="prototype-live-cards"></div><button id="prototypeStop" type="button">■ Terminar</button><p class="tiny">Los indicadores son una maqueta de interfaz; no representan mediciones reales.</p></div>
+<div id="prototypeResults" class="prototype-stage" hidden><div class="module-topbar"><div><p class="eyebrow">Después de la grabación</p><h3 id="prototypeResultsTitle">Análisis de la muestra</h3></div><button id="prototypeAgain" type="button">Nueva muestra</button></div><div id="prototypeResultTabs" class="prototype-tabs"></div><div id="prototypeResultCards" class="prototype-result-cards"></div><div class="prototype-chart" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><p id="prototypeResultNote" class="hint"></p></div>
+</section><div id="speedNav" class="speed-nav" hidden><button id="speedBack" class="module-back" type="button">← Modos de trabajo</button><strong>Velocidad y ritmo</strong></div><section id="processingPanel" class="panel processing-panel speed-module" aria-labelledby="processingTitle" hidden>
 <div class="processing-orbit" aria-hidden="true"><span>f+</span></div>
 <p class="eyebrow">Análisis automático</p>
 <h2 id="processingTitle">Analizando tu muestra…</h2>
@@ -24,7 +43,7 @@
 <p id="processingDetail" class="hint">Conservando la grabación y preparando el audio completo.</p>
 <p id="processingReassurance" class="processing-reassurance">El análisis continúa en esta pestaña.</p>
 <ol class="processing-steps" aria-label="Fases del análisis"><li>Audio</li><li>Transcripción</li><li>Velocidad y pausas</li><li>Resultados</li></ol>
-</section><section id="patientPanel" class="panel patient-panel" hidden=""><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong>
+</section><section id="patientPanel" class="panel patient-panel speed-module" hidden=""><div class="target-display">Objetivo de la práctica <strong id="goalDisplay">120–187 <small>ppm</small></strong>
 </div>
 <h2 id="feedbackLabel" role="status">Preparado para practicar</h2>
 <div id="speedMeter" class="speed-meter" role="img" aria-label="Velocidad reciente respecto al objetivo">
@@ -32,7 +51,7 @@
 </div>
 <p id="feedbackValue" class="sr-only">Esperando grabación</p>
 <p class="feedback-caveat">Estimación reciente del ritmo · puede actualizarse con un pequeño retraso</p>
-<button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><section id="therapySummary" hidden class="panel patient-summary"><h2 id="summaryTitle">Resumen de la práctica</h2>
+<button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><section id="therapySummary" hidden class="panel patient-summary speed-module"><h2 id="summaryTitle">Resumen de la práctica</h2>
 <p id="summarySource">Aún no hay muestra.</p>
 <div class="therapy-cards">
 <div>Dentro del objetivo<strong id="targetPercent">—</strong>
@@ -52,7 +71,7 @@
 <div class="timeline-axis">
 <span>Inicio</span><span id="timelineEnd">Final</span>
 </div>
-<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel speed-module" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
 <div class="button-row">
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
@@ -74,7 +93,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
-<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
+<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel speed-module"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
 <p class="label">Tiempo de grabación</p>
@@ -159,7 +178,7 @@
 <h3>Muestra A · azul</h3>
 <canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
 <canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
+<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel speed-module"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
 <p><strong>Servicio de directo: </strong><span id="diagEngine">Disponible</span></p>
 <p><strong>Conexión/estado: </strong><span id="diagState">Sin iniciar</span></p>
 <p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
