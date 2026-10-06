@@ -35,3 +35,16 @@ body[data-session=stopping] .patient-summary,body[data-session=processing] .pati
 .analysis-placeholder-chart span{height:3px;flex:1;background:var(--accent);transform-origin:center;border-radius:9px}
 .analysis-placeholder-chart span:nth-child(1){transform:translateY(24px) rotate(-8deg)}.analysis-placeholder-chart span:nth-child(2){transform:translateY(5px) rotate(-12deg)}.analysis-placeholder-chart span:nth-child(3){transform:translateY(-18px) rotate(16deg)}.analysis-placeholder-chart span:nth-child(4){transform:translateY(-2px) rotate(8deg)}.analysis-placeholder-chart span:nth-child(5){transform:translateY(10px) rotate(-14deg)}.analysis-placeholder-chart span:nth-child(6){transform:translateY(-12px) rotate(10deg)}.analysis-placeholder-chart span:nth-child(7){transform:translateY(-24px) rotate(-6deg)}
 @media(max-width:760px){.analysis-home{padding:30px 18px}.analysis-mode-grid{grid-template-columns:1fr}.analysis-mode-card{min-height:150px}.analysis-preview-metrics{grid-template-columns:1fr}.analysis-preview{padding:26px 18px}}
+
+.analysis-start-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:30px auto 0}
+.analysis-start-card{min-height:250px;padding:28px;text-align:left;border-radius:22px;background:var(--panel);border:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.analysis-start-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.analysis-start-card strong{font-size:22px}.analysis-start-card small{font-size:14px;line-height:1.55;color:var(--muted);font-weight:400}
+.analysis-start-action{margin-top:auto;color:var(--accent);font-size:13px;font-weight:700}
+.analysis-capture{text-align:center;max-width:820px;margin:auto;padding:48px 40px}
+.capture-actions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:30px 0 18px}
+.analysis-primary-action{background:var(--primary);color:var(--panel);border-color:var(--primary);min-width:180px}
+.analysis-upload{display:inline-flex}.sample-capture-time{font-size:16px}.sample-capture-time strong{font-size:25px;font-variant-numeric:tabular-nums}
+.analysis-speed-nav{max-width:1080px;width:100%;margin:0 auto -8px}
+#analysisChooser audio{max-width:720px;margin:4px auto 18px;display:block}
+@media(max-width:760px){.analysis-start-grid{grid-template-columns:1fr}.analysis-start-card{min-height:190px}.analysis-capture{padding:30px 18px}}
