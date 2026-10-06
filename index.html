@@ -15,40 +15,77 @@
 </div>
 <button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
 <main><section id="analysisHome" class="analysis-home panel">
-<p class="eyebrow">Elige qué quieres observar</p>
-<h2 class="analysis-home-title">¿Qué quieres analizar?</h2>
-<p class="analysis-home-copy">Usa una única grabación y muestra solo la información relevante para la sesión.</p>
+<p class="eyebrow">Fluidez+</p>
+<h2 class="analysis-home-title">¿Qué quieres hacer?</h2>
+<p class="analysis-home-copy">Separa la práctica con biofeedback del análisis de una muestra de voz.</p>
+<div class="analysis-start-grid">
+<button id="practiceSpeedBtn" class="analysis-start-card" type="button">
+<span class="analysis-mode-icon" aria-hidden="true">↔</span>
+<strong>Practicar velocidad</strong>
+<small>Biofeedback en tiempo real para trabajar un objetivo de ritmo durante la sesión.</small>
+<span class="analysis-start-action">Empezar práctica →</span>
+</button>
+<button id="analyzeSampleBtn" class="analysis-start-card" type="button">
+<span class="analysis-mode-icon" aria-hidden="true">◉</span>
+<strong>Analizar una muestra</strong>
+<small>Graba o sube un audio. Después decide qué aspectos quieres analizar.</small>
+<span class="analysis-start-action">Preparar muestra →</span>
+</button>
+</div>
+</section>
+
+<section id="analysisCapture" class="analysis-capture panel" hidden>
+<button id="backFromCapture" class="analysis-back" type="button">← Inicio</button>
+<p class="eyebrow">Paso 1 · obtener la muestra</p>
+<h2 class="analysis-home-title">Graba o sube un audio</h2>
+<p class="analysis-home-copy">Todavía no tienes que elegir ningún tipo de análisis. La misma muestra podrá utilizarse después.</p>
+<div class="capture-actions">
+<button id="sampleRecordBtn" class="analysis-primary-action" type="button">● Grabar muestra</button>
+<button id="sampleStopBtn" type="button" disabled>■ Terminar</button>
+<label class="file-upload analysis-upload"><input id="sampleFileInput" type="file" accept="audio/*"><span>Subir audio</span></label>
+</div>
+<p id="sampleCaptureStatus" class="hint" role="status">Listo para obtener una muestra.</p>
+<p class="sample-capture-time">Tiempo: <strong id="sampleCaptureTimer">00:00</strong></p>
+</section>
+
+<section id="analysisChooser" class="analysis-home panel" hidden>
+<button id="backFromChooser" class="analysis-back" type="button">← Cambiar muestra</button>
+<p class="eyebrow">Paso 2 · elegir análisis</p>
+<h2 class="analysis-home-title">¿Qué quieres analizar de esta muestra?</h2>
+<p class="analysis-home-copy">El audio ya está preparado. Puedes analizar un área concreta o solicitar un análisis completo.</p>
+<audio id="samplePreviewAudio" controls></audio>
 <div class="analysis-mode-grid">
-<button class="analysis-mode-card" type="button" data-analysis-mode="speed">
+<button class="analysis-mode-card" type="button" data-sample-analysis="speed">
 <span class="analysis-mode-icon" aria-hidden="true">↔</span>
 <strong>Velocidad y ritmo</strong>
-<small>Palabras por minuto, evolución temporal, pausas y biofeedback en directo.</small>
+<small>Palabras por minuto, evolución temporal, pausas y distribución del ritmo.</small>
 </button>
-<button class="analysis-mode-card" type="button" data-analysis-mode="prosody">
+<button class="analysis-mode-card" type="button" data-sample-analysis="prosody">
 <span class="analysis-mode-icon" aria-hidden="true">⌁</span>
 <strong>Prosodia y entonación</strong>
 <small>Curva melódica, frecuencia fundamental, rango tonal y variabilidad.</small>
 <span class="analysis-mode-badge">Prototipo</span>
 </button>
-<button class="analysis-mode-card" type="button" data-analysis-mode="voice">
+<button class="analysis-mode-card" type="button" data-sample-analysis="voice">
 <span class="analysis-mode-icon" aria-hidden="true">◌</span>
 <strong>Voz</strong>
-<small>Intensidad y, más adelante, parámetros acústicos de calidad vocal.</small>
+<small>Intensidad y futuros parámetros acústicos de calidad vocal.</small>
 <span class="analysis-mode-badge">Prototipo</span>
 </button>
 </div>
 <button id="fullAnalysisBtn" class="analysis-full-button" type="button">
-<span><strong>Análisis completo</strong><small>Una grabación para velocidad, prosodia y voz.</small></span><span aria-hidden="true">→</span>
+<span><strong>Análisis completo</strong><small>Aplica todos los módulos disponibles sobre esta misma muestra.</small></span><span aria-hidden="true">→</span>
 </button>
 </section>
+
 <section id="analysisPreview" class="analysis-preview panel" hidden>
-<button id="backToAnalysisHome" class="analysis-back" type="button">← Volver</button>
+<button id="backToAnalysisChooser" class="analysis-back" type="button">← Elegir otro análisis</button>
 <p class="eyebrow">Vista de concepto</p>
 <h2 id="analysisPreviewTitle">Prosodia y entonación</h2>
 <p id="analysisPreviewText" class="analysis-home-copy"></p>
 <div id="analysisPreviewMetrics" class="analysis-preview-metrics"></div>
 <div class="analysis-placeholder-chart" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<p class="hint">Esta pantalla es solo una propuesta visual. Todavía no calcula estos parámetros.</p>
+<p class="hint">Esta pantalla es una propuesta visual. Los nuevos parámetros todavía no se calculan.</p>
 </section><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
 <div class="processing-orbit" aria-hidden="true"><span>f+</span></div>
 <p class="eyebrow">Análisis automático</p>
@@ -87,7 +124,7 @@
 <div class="timeline-axis">
 <span>Inicio</span><span id="timelineEnd">Final</span>
 </div>
-<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel analysis-speed-section" open="" hidden><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><div id="speedNav" class="analysis-speed-section analysis-speed-nav" hidden><button id="backFromSpeed" class="analysis-back" type="button">← Inicio</button></div><details id="setupPanel" class="panel analysis-speed-section" open="" hidden><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
 <div class="button-row">
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
