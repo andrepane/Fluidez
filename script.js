@@ -1,6 +1,37 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
   finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
 const $ = id => document.getElementById(id);
+
+const modeHome=$('modeHome'),modulePrototype=$('modulePrototype'),speedNav=$('speedNav');
+const prototypeData={
+  prosody:{eyebrow:'Prosodia y entonación',title:'Prosodia y entonación',intro:'Configura la tarea, utiliza un biofeedback centrado en la melodía del habla y revisa después el perfil prosódico completo.',fields:[['Tarea','Lectura'],['Objetivo','Variación tonal'],['Referencia','Personalizada']],liveTitle:'Sigue la melodía de tu voz',liveCards:[['Tono actual','— Hz'],['Variación reciente','—'],['Rango utilizado','—']],tabs:['Resumen','Entonación','Curva tonal'],results:[['F0 media','— Hz'],['F0 mínima / máxima','—'],['Rango tonal','—'],['Variabilidad','—']],note:'La implementación real necesitará extracción fiable de F0 y referencias adecuadas a edad, sexo, tarea y condiciones de grabación.'},
+  voice:{eyebrow:'Calidad vocal',title:'Calidad vocal',intro:'Configura una tarea vocal y muestra durante la grabación solo indicadores útiles para el objetivo seleccionado.',fields:[['Tarea','Vocal sostenida / habla'],['Perfil','Adulto'],['Objetivo','Calidad vocal']],liveTitle:'Biofeedback de voz',liveCards:[['Intensidad','— dB'],['Estabilidad','—'],['Calidad','—']],tabs:['Resumen','Calidad vocal','Señal'],results:[['Intensidad media','— dB'],['Jitter','— %'],['Shimmer','— %'],['HNR','— dB']],note:'Los rangos clínicos no deben considerarse universales: dependerán de la tarea, la persona, el micrófono y la evidencia disponible.'},
+  full:{eyebrow:'Análisis completo',title:'Análisis completo',intro:'Una sola grabación para obtener todos los análisis disponibles. Antes de empezar eliges qué biofeedback quieres priorizar para el paciente.',fields:[['Tarea','Conversación'],['Perfil','Adulto'],['Análisis','Todos los módulos']],liveTitle:'Biofeedback principal',liveCards:[['Indicador principal','—'],['Estado','Esperando voz'],['Tiempo','00:00']],tabs:['Resumen','Velocidad','Prosodia','Voz'],results:[['Velocidad media','— ppm'],['Rango tonal','—'],['Intensidad media','— dB'],['Pausas','—']],note:'El análisis completo reutilizaría la misma grabación para los distintos módulos, manteniendo un solo biofeedback principal durante la sesión.'}
+};
+function hideModes(){modeHome.hidden=true;modulePrototype.hidden=true;speedNav.hidden=true;for(const el of document.querySelectorAll('.speed-module'))el.hidden=true;}
+function showModeHome(){if(typeof busy==='function'&&busy())return;hideModes();modeHome.hidden=false;document.querySelector('.app-header').hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function openSpeedMode(){hideModes();speedNav.hidden=false;setState('idle');$('setupPanel').hidden=false;$('professionalArea').hidden=false;$('liveDiagnostic').hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function renderPrototype(mode){
+  const data=prototypeData[mode];if(!data)return;hideModes();modulePrototype.hidden=false;modulePrototype.dataset.mode=mode;
+  $('prototypeEyebrow').textContent=data.eyebrow;$('prototypeTitle').textContent=data.title;$('prototypeIntro').textContent=data.intro;
+  $('prototypeConfigFields').replaceChildren(...data.fields.map(([label,value])=>{const box=document.createElement('label'),span=document.createElement('span'),select=document.createElement('select'),option=document.createElement('option');span.textContent=label;option.textContent=value;select.append(option);box.append(span,select);return box;}));
+  $('prototypeFeedbackChoice').hidden=mode!=='full';$('prototypeConfig').hidden=false;$('prototypeLive').hidden=true;$('prototypeResults').hidden=true;window.scrollTo({top:0,behavior:'smooth'});
+}
+function startPrototype(){
+  const mode=modulePrototype.dataset.mode,data=prototypeData[mode];$('prototypeConfig').hidden=true;$('prototypeResults').hidden=true;$('prototypeLive').hidden=false;
+  const chosen=mode==='full'?$('prototypeFeedbackSelect').value:data.title;$('prototypeLiveTitle').textContent=mode==='full'?'Biofeedback principal · '+chosen:data.liveTitle;
+  $('prototypeLiveVisual').innerHTML=mode==='prosody'?'<div class="pitch-line"><i></i><i></i><i></i><i></i><i></i><i></i></div>':mode==='voice'?'<div class="voice-orb"><span>voz</span></div>':'<div class="full-feedback-ring"><span>principal</span></div>';
+  $('prototypeLiveCards').replaceChildren(...data.liveCards.map(([label,value])=>{const box=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;box.append(small,strong);return box;}));
+}
+function finishPrototype(){
+  const mode=modulePrototype.dataset.mode,data=prototypeData[mode];$('prototypeLive').hidden=true;$('prototypeConfig').hidden=true;$('prototypeResults').hidden=false;
+  $('prototypeResultsTitle').textContent=mode==='full'?'Resultados · análisis completo':'Resultados · '+data.title;
+  $('prototypeResultTabs').replaceChildren(...data.tabs.map((tab,i)=>{const b=document.createElement('button');b.type='button';b.textContent=tab;if(i===0)b.className='active';return b;}));
+  $('prototypeResultCards').replaceChildren(...data.results.map(([label,value])=>{const box=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;box.append(small,strong);return box;}));$('prototypeResultNote').textContent=data.note;window.scrollTo({top:0,behavior:'smooth'});
+}
+for(const button of document.querySelectorAll('[data-mode-open]'))button.addEventListener('click',()=>button.dataset.modeOpen==='speed'?openSpeedMode():renderPrototype(button.dataset.modeOpen));
+$('prototypeBack').addEventListener('click',showModeHome);$('speedBack').addEventListener('click',showModeHome);$('prototypeStart').addEventListener('click',startPrototype);$('prototypeStop').addEventListener('click',finishPrototype);$('prototypeAgain').addEventListener('click',()=>renderPrototype(modulePrototype.dataset.mode));
+
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
@@ -611,4 +642,4 @@ $('populationSelect').addEventListener('change',()=>{
 });
 for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',()=>{$('presetSelect').value='custom';updateGoalDisplay();});
 updateGoalDisplay();
-setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
+setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);showModeHome();
