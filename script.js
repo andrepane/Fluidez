@@ -126,7 +126,7 @@ function renderTherapy() {
   const summary=therapySummary(source.bins,source.duration,goal);
   $('timelineEnd').textContent=formatTime(source.duration);
   $('summaryTitle').textContent=isFinalSource?'Resumen del audio analizado':'Resumen de la práctica · provisional';
-  $('summarySource').textContent=isFinalSource?`Whisper · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`Feedback observado durante la práctica · objetivo ${goal.min}–${goal.max} ppm. El análisis del audio se actualiza aparte.`;
+  $('summarySource').textContent=isFinalSource?`Análisis final · intervalos de ${intervalWidth()} s · objetivo ${goal.min}–${goal.max} ppm. Puede diferir del directo.`:`Feedback observado durante la práctica · objetivo ${goal.min}–${goal.max} ppm. El análisis del audio se actualiza aparte.`;
   for(const [id,zone] of [['targetPercent','target'],['slowPercent','slow'],['fastPercent','fast']])$(id).textContent=`${summary.seconds[zone].toFixed(1)} s`;
   $('therapyMean').textContent=Number.isFinite(source.mean)?`${Math.round(source.mean)} ppm`:'—';
   $('longestTarget').textContent=`${summary.longest.toFixed(1)} s`;
