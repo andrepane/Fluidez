@@ -1,10 +1,86 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
+let activeEngine='browser',dgWords=new DeepgramWords(),dgSocket=null,dgCapture=null,dgGain=null,dgStopTimer=null;
+let diagnostic={status:'Sin iniciar',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
+function drawDiagnostic(){
+  $('diagEngine').textContent=activeEngine==='deepgram'?'B · Deepgram Nova-3 español':'A · SpeechRecognition';
+  $('diagState').textContent=diagnostic.status;$('diagError').textContent=diagnostic.error||'Sin errores';
+  $('diagPpm').textContent=liveValue===null?'Sin estimación':`${Math.round(liveValue)} ppm provisionales`;
+  $('diagWords').textContent=String(countWords(liveText()));$('diagText').textContent=liveText()||'Sin texto';
+  $('diagCadence').textContent=diagnostic.cadence===null?'Pendiente':`${diagnostic.cadence.toFixed(2)} s`;
+  $('diagAge').textContent=diagnostic.age===null?'No disponible en A':`${diagnostic.age.toFixed(2)} s desde fin del audio analizado hasta recepción (no latencia por palabra)`;
+  $('diagDelay').textContent=diagnostic.delay===null?'Pendiente':`${diagnostic.delay.toFixed(2)} s actividad acústica → primer feedback del tramo (aproximación)`;
+  $('diagPause').textContent=diagnostic.pause;
+}
+function noteLiveResult(){const now=performance.now()/1000;if(diagnostic.lastResult!==null)diagnostic.cadence=now-diagnostic.lastResult;diagnostic.lastResult=now;}
+function stopDeepgram(graceful=false){
+  const socket=dgSocket,node=dgCapture,gain=dgGain;dgSocket=null;dgCapture=null;dgGain=null;clearTimeout(dgStopTimer);
+  const cleanup=()=>{node?.disconnect();if(node)node.port.onmessage=null;gain?.disconnect();};
+  if(socket?.readyState===1&&graceful&&node){
+    let finished=false;
+    const finish=()=>{if(finished)return;finished=true;clearTimeout(flushTimer);cleanup();if(socket.readyState===1)socket.send(JSON.stringify({type:'CloseStream'}));dgStopTimer=setTimeout(()=>socket.close(),2000);};
+    const flushTimer=setTimeout(finish,300);
+    node.port.onmessage=({data})=>{
+      if(socket.readyState===1){const audio=data.type==='flushed'?data.audio:data;if(audio?.byteLength)socket.send(audio);}
+      if(data.type==='flushed')finish();
+    };
+    node.port.postMessage('flush');
+  }else{cleanup();socket?.close();}
+}
+async function startDeepgram(token){
+  if(!window.AudioWorkletNode||!audioContext?.audioWorklet||!micSource)throw Error('Deepgram necesita AudioWorklet/Web Audio. Usa el motor A.');
+  diagnostic.status='Conectando al proxy local';drawDiagnostic();
+  let config;
+  try{const response=await fetch('/experimental/config',{signal:AbortSignal.timeout(5000)});if(!response.ok)throw Error();config=await response.json();}catch{throw Error('Proxy local no disponible. Abre http://127.0.0.1:8787 o usa A.');}
+  if(!config.configured)throw Error('Falta DEEPGRAM_API_KEY en el servidor. Puedes seleccionar A.');
+  const url=new URL('/experimental/deepgram',window.location.href);url.protocol=url.protocol==='https:'?'wss:':'ws:';
+  await new Promise((resolve,reject)=>{
+    const socket=new WebSocket(url);dgSocket=socket;let ready=false;
+    const timeout=setTimeout(()=>{socket.close();reject(Error('Deepgram no conectó en 12 s'));},12000);
+    const fail=message=>{
+      diagnostic.status='Error / desconectado';diagnostic.error=message;liveSupported=false;
+      if(!ready){clearTimeout(timeout);reject(Error(message));}else{stopDeepgram();if(state==='recording')tick();}
+    };
+    socket.onopen=()=>socket.send(JSON.stringify({type:'Start',sampleRate:audioContext.sampleRate}));
+    socket.onerror=()=>fail('Fallo del proxy o servicio. Audio conservado; selecciona A en la siguiente práctica.');
+    socket.onclose=()=>{
+      if(token!==session)return;clearTimeout(dgStopTimer);
+      if(!ready){clearTimeout(timeout);reject(Error('Deepgram desconectado antes de empezar'));}
+      diagnostic.status='Desconectado';if(state==='recording'){liveSupported=false;diagnostic.error||='Conexión interrumpida; el audio continúa grabándose';tick();}else drawDiagnostic();
+    };
+    socket.onmessage=({data})=>{
+      if(token!==session)return;let message;try{message=JSON.parse(data);}catch{return;}
+      if(message.type==='ProxyReady'){ready=true;clearTimeout(timeout);diagnostic.status='Conectado · escuchando';resolve();return;}
+      if(message.type==='ProxyError'){fail(message.message);return;}
+      if(message.type==='ProxyDisconnected'){diagnostic.status='Desconectado';return;}
+      if(state!=='recording')return;
+      if(message.type==='SpeechStarted'){diagnostic.pause='SpeechStarted · actividad detectada';diagnostic.status='Escuchando';}
+      if(message.type==='UtteranceEnd'){diagnostic.pause='UtteranceEnd · pausa probable del servicio';diagnostic.status='Esperando habla';}
+      if(message.type==='Results'&&dgWords.update(message)){
+        const elapsed=(performance.now()-started)/1000;noteLiveResult();diagnostic.age=Math.max(0,elapsed-dgWords.end);
+        lastLiveUpdate=dgWords.end;
+        diagnostic.status=message.is_final?'Tramo definitivo del directo':'Resultado parcial / revisable';
+        if(message.speech_final)diagnostic.pause='speech_final · endpoint detectado (300 ms configurados)';
+      }
+      tick();
+    };
+  });
+  await audioContext.audioWorklet.addModule(new URL('./deepgram-capture.worklet.js',import.meta.url));
+  if(dgSocket?.readyState!==1)throw Error('La conexión Deepgram se perdió al preparar el audio');
+  dgCapture=new AudioWorkletNode(audioContext,'fluidez-deepgram',{processorOptions:{frameSize:Math.round(audioContext.sampleRate*.1)}});
+  dgCapture.port.onmessage=({data})=>{
+    if(token!==session||state!=='recording')return;
+    if(dgSocket?.readyState!==1||dgSocket.bufferedAmount>audioContext.sampleRate*2){diagnostic.error='Conexión lenta o perdida: feedback desactivado, grabación conservada';diagnostic.status='Error';liveSupported=false;stopDeepgram();tick();return;}
+    dgSocket.send(data);
+  };
+  dgGain=audioContext.createGain();dgGain.gain.value=0;micSource.connect(dgCapture);dgCapture.connect(dgGain);dgGain.connect(audioContext.destination);
+}
+
 let analyser=null,micSource=null,micFrame=null,pauseGate=new PauseGate(),runStart=0;
 let stoppedSnapshot=null;
 let target = {min:120,max:187}, liveBins=[], liveDuration=0, liveValue=null, lastLiveUpdate=null, lastReceivedText='';
@@ -111,6 +187,7 @@ function setState(next) {
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
   $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
+  $('liveEngineSelect').disabled=busy();
   document.body.dataset.session=next;
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
@@ -176,7 +253,7 @@ async function monitorMic() {
     $('liveNotice').textContent+=' No se pudo monitorizar la energía: no hay neutralización acústica de pausas.';
   }
 }
-function liveText() { return `${completedRecognition} ${finalText} ${interimText}`.trim(); }
+function liveText() { if(activeEngine==='deepgram')return dgWords.text();return `${completedRecognition} ${finalText} ${interimText}`.trim(); }
 function tick() {
   const elapsed = (performance.now() - started) / 1000;
   const words = countWords(liveText());
@@ -188,19 +265,22 @@ function tick() {
     analyser.getFloatTimeDomainData(micFrame);
     const rms=Math.sqrt(micFrame.reduce((sum,x)=>sum+x*x,0)/micFrame.length);
     const gate=pauseGate.update(rms,elapsed);paused=gate.paused;
+    if(paused){diagnostic.onset=null;diagnostic.delay=null;}
+    else if(rms>.009&&diagnostic.onset===null)diagnostic.onset=elapsed;
     if(gate.resumed){runStart=elapsed;lastLiveUpdate=null;}
   }
   // Measure at text arrival, not at each UI tick: absence of new data is not
   // evidence of slower speech. Hold briefly, then the freshness gate hides it.
-  const recent = lastLiveUpdate===null?null:tracker.recent(lastLiveUpdate,lastLiveUpdate-runStart);
+  const recent = lastLiveUpdate===null?null:(activeEngine==='deepgram'?dgWords.recent(runStart):tracker.recent(lastLiveUpdate,lastLiveUpdate-runStart));
   $('recentSpeed').textContent = liveSupported && recent !== null && lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5 && !paused ? `${Math.round(recent)} ppm` : '—';
   $('liveTranscript').textContent = liveText() || 'Esperando voz…';
   const fresh=lastLiveUpdate!==null && elapsed-lastLiveUpdate<=5;
-  const value=liveSupported && tracker.entries.length && fresh && !paused?recent:null;
+  const value=liveSupported && (activeEngine==='deepgram'?dgWords.count():tracker.entries.length) && fresh && !paused?recent:null;
   if(state==='recording' && elapsed>liveDuration) {
     liveBins.push({start:liveDuration,end:elapsed,wpm:liveValue});liveDuration=elapsed;
   }
-  liveValue=value; feedback(value);
+  if(value!==null&&diagnostic.onset!==null&&diagnostic.delay===null)diagnostic.delay=elapsed-diagnostic.onset;
+  liveValue=value; feedback(value);drawDiagnostic();
   if(state==='recording' && paused){
     $('feedbackLabel').textContent='Pausa probable';
     $('feedbackValue').textContent='Tómate tu tiempo. El medidor queda neutral mientras no detecta actividad suficiente.';
@@ -220,6 +300,7 @@ function startRecognition(token) {
     return;
   }
   const instance = new Recognition(); recognition = instance;
+  instance.onstart=()=>{diagnostic.status='Escuchando';if(state==='recording')tick();};
   instance.lang = 'es-ES'; instance.continuous = true; instance.interimResults = true;
   instance.onresult = event => {
     if (token !== session || !['recording','stopping'].includes(state)) return;
@@ -230,13 +311,14 @@ function startRecognition(token) {
     }
     // Arrival times only; never reused for final word timestamps.
     const arrival=(performance.now()-started)/1000;
-    if(liveText()!==lastReceivedText){lastLiveUpdate=arrival;lastReceivedText=liveText();}
+    if(liveText()!==lastReceivedText){lastLiveUpdate=arrival;lastReceivedText=liveText();noteLiveResult();diagnostic.status='Resultado recibido';}
     tracker.update(liveText(), arrival);
     tick();
   };
   let blocked = false;
   instance.onerror = event => {
     if (token !== session) return;
+    diagnostic.status='Error del navegador';diagnostic.error=event.error;
     $('liveNotice').textContent = `Reconocimiento en directo: ${event.error}. El audio sigue grabándose.`;
     if (['not-allowed','service-not-allowed','audio-capture','network'].includes(event.error)) {
       blocked = true; liveSupported = false; tick();
@@ -244,6 +326,7 @@ function startRecognition(token) {
   };
   instance.onend = () => {
     if (token !== session) return;
+    diagnostic.status='Reconocimiento terminó / reiniciando';
     completedRecognition += finalText; finalText = ''; interimText = '';
     tracker.update(liveText(), (performance.now() - started) / 1000);
     if (state === 'recording' && !blocked) {
@@ -261,6 +344,8 @@ function startRecognition(token) {
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
   stopPlayback(); setState('starting'); const token = ++session;
+  stopDeepgram();activeEngine=$('liveEngineSelect').value==='deepgram'?'deepgram':'browser';dgWords=new DeepgramWords();liveSupported=true;
+  diagnostic={status:'Iniciando',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
   clearLive(); resetResults(); $('therapySummary').hidden=true; $('summarySource').textContent='Práctica en curso · resumen al detener'; $('therapyTimeline').replaceChildren();
   for(const id of ['targetPercent','slowPercent','fastPercent','therapyMean','longestTarget','therapyPauseInfo'])$(id).textContent='—'; $('coverageNotice').textContent=''; $('playback').removeAttribute('src'); $('playback').load(); $('downloadAudio').hidden = true; drawAllCharts();
   $('analysisTag').textContent = 'Provisional';
@@ -270,27 +355,28 @@ async function startRecording() {
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) throw Error('Necesitas un navegador compatible y HTTPS.');
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     await monitorMic();
+    if(activeEngine==='deepgram')await startDeepgram(token);
     const mime = ['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t => MediaRecorder.isTypeSupported(t));
     const activeRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     recorder = activeRecorder; const chunks = [];
     activeRecorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
     activeRecorder.onerror = () => {
-      clearInterval(clock); recognition?.abort(); releaseMic();
+      clearInterval(clock); recognition?.abort();stopDeepgram(); releaseMic();
       setState('error'); setStatus('La grabación falló.');
     };
     activeRecorder.onstop = async () => {
-      clearInterval(clock); releaseMic();
+      clearInterval(clock);stopDeepgram(true); releaseMic();
       if (token !== session) return;
       const provisional=stoppedSnapshot||snapshotLive();
       attachAudio(new Blob(chunks, { type: activeRecorder.mimeType }));
-      samples[selected].provisional=provisional; samples[selected].target={...target};
+      samples[selected].provisional=provisional; samples[selected].target={...target};samples[selected].liveEngine=activeEngine;
       renderTherapy(); await analyzeFinal();
     };
     activeRecorder.start(1000); started = performance.now();
     setState('recording'); setStatus(`Grabando ${selected ? 'B' : 'A'} · datos provisionales`);
-    clock = setInterval(tick, 250); startRecognition(token); tick();
+    clock = setInterval(tick, 250);if(activeEngine==='browser')startRecognition(token);else $('liveNotice').textContent='Deepgram experimental: audio enviado al servicio. Palabras/tiempos provisionales del directo; final con Whisper independiente. Pausas del servicio solo en diagnóstico.';tick();
   } catch (error) {
-    releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
+    stopDeepgram();diagnostic.status='Error';diagnostic.error=error.message;drawDiagnostic();releaseMic(); setState('error'); $('analysisTag').textContent = 'Error';
     setStatus(`No se pudo grabar: ${error.message}`);
   }
 }
@@ -487,12 +573,13 @@ $('intervalSelect').addEventListener('change',()=>{
   renderSelected();renderComparison();
 });
 $('sampleSelect').addEventListener('change',()=>selectSample(Number($('sampleSelect').value)));
+$('liveEngineSelect').addEventListener('change',()=>{activeEngine=$('liveEngineSelect').value;drawDiagnostic();});
 $('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventListener('click',stopRecording);
 $('retryBtn').addEventListener('click',analyzeFinal);
 $('fileInput').addEventListener('change',async event=>{
   const file=event.target.files[0];if(!file||busy())return;
   const goal=readTarget();if(!goal){event.target.value='';return;}target=goal;
-  ++session;clearLive();attachAudio(file);samples[selected].target={...target};$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
+  ++session;clearLive();attachAudio(file);samples[selected].target={...target};samples[selected].liveEngine=activeEngine;$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
   await analyzeFinal();event.target.value='';
 });
 $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
@@ -501,7 +588,7 @@ $('professionalDetails').addEventListener('toggle',drawAllCharts);
 $('professionalArea').addEventListener('toggle',drawAllCharts);
 $('comparisonPanel').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
-  clearInterval(clock);recognition?.abort();releaseMic();worker?.terminate();
+  clearInterval(clock);recognition?.abort();stopDeepgram();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
 });
 function updateGoalDisplay() {
