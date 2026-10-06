@@ -31,7 +31,7 @@
 <span>Más lento</span><span>En tu objetivo</span><span>Más rápido</span><i id="speedMarker" hidden></i>
 </div>
 <p id="feedbackValue" class="sr-only">Esperando grabación</p>
-<p class="feedback-caveat">Última estimación recibida · ventana de hasta 15 s · se mantiene hasta 5 s entre respuestas; puede llegar con retraso</p>
+<p class="feedback-caveat">Estimación reciente del ritmo · puede actualizarse con un pequeño retraso</p>
 <button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><section id="therapySummary" hidden class="panel patient-summary"><h2 id="summaryTitle">Resumen de la práctica</h2>
 <p id="summarySource">Aún no hay muestra.</p>
 <div class="therapy-cards">
@@ -52,7 +52,7 @@
 <div class="timeline-axis">
 <span>Inicio</span><span id="timelineEnd">Final</span>
 </div>
-<p class="hint">Estimations de la pratique. Le gris indique les pauses probables ou les périodes sans estimation.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
 <div class="button-row">
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
@@ -74,7 +74,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
-<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Detalles para el profesional · directo</summary><p id="liveNotice" class="hint"></p>
+<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
 <p class="label">Tiempo de grabación</p>
@@ -159,15 +159,15 @@
 <h3>Muestra A · azul</h3>
 <canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
 <canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">La transcripción en directo puede usar el servicio de voz del navegador. El análisis final usa Whisper Base multilingüe en este dispositivo; la primera vez descarga el modelo. No exige contar palabras ni corregir el texto. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico · directo</summary><p class="hint">Datos técnicos del biofeedback en directo. No representan precisión clínica ni latencia exacta por palabra.</p>
-<p><strong>Motor: </strong><span id="diagEngine">Deepgram Nova-3 español</span></p>
+<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
+<p><strong>Servicio de directo: </strong><span id="diagEngine">Disponible</span></p>
 <p><strong>Conexión/estado: </strong><span id="diagState">Sin iniciar</span></p>
 <p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
 <p><strong>Palabras detectadas: </strong><span id="diagWords">0</span></p>
 <p><strong>Actividad → primer marcador: </strong><span id="diagDelay">—</span></p>
 <p><strong>Antigüedad del audio al recibir resultado: </strong><span id="diagAge">—</span></p>
 <p><strong>Intervalo entre resultados: </strong><span id="diagCadence">—</span></p>
-<p><strong>Pausas del servicio: </strong><span id="diagPause">—</span></p>
+<p><strong>Eventos de voz: </strong><span id="diagPause">—</span></p>
 <p><strong>Errores: </strong><span id="diagError">Sin errores</span></p>
 <div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
 </body>
