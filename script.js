@@ -2,19 +2,46 @@ import { countWords, formatTime, acousticActivity, LiveWordTracker,
   finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
 const $ = id => document.getElementById(id);
 
-const analysisHome=$('analysisHome'),analysisPreview=$('analysisPreview');
+const analysisHome=$('analysisHome'),analysisCapture=$('analysisCapture'),analysisChooser=$('analysisChooser'),analysisPreview=$('analysisPreview');
 const analysisPreviewTitle=$('analysisPreviewTitle'),analysisPreviewText=$('analysisPreviewText'),analysisPreviewMetrics=$('analysisPreviewMetrics');
+let sampleCaptureRecorder=null,sampleCaptureStream=null,sampleCaptureClock=null,sampleCaptureStarted=0,sampleAnalysisBlob=null,sampleAnalysisUrl=null;
 const previewContent={
-  prosody:{title:'Prosodia y entonación',text:'Una vista centrada en cómo varía el tono a lo largo de la muestra, sin mezclarlo con la velocidad.',metrics:[['F0 media','— Hz'],['Rango tonal','—'],['Variabilidad','—']]},
-  voice:{title:'Voz',text:'Una vista independiente para parámetros acústicos de la voz y su evolución.',metrics:[['Intensidad media','— dB'],['Jitter','— %'],['Shimmer','— %']]},
-  full:{title:'Análisis completo',text:'Una única grabación que reúne los resultados de velocidad y ritmo, prosodia y voz en bloques separados.',metrics:[['Velocidad','— ppm'],['Rango tonal','—'],['Intensidad','— dB']]}
+  speed:{title:'Velocidad y ritmo',text:'Aquí aparecerían los resultados de velocidad y ritmo calculados sobre la muestra ya grabada, sin necesidad de repetirla.',metrics:[['Velocidad media','— ppm'],['Pausas','—'],['Ritmo','—']]},
+  prosody:{title:'Prosodia y entonación',text:'Aquí se mostraría cómo varía el tono a lo largo de la misma muestra.',metrics:[['F0 media','— Hz'],['Rango tonal','—'],['Variabilidad','—']]},
+  voice:{title:'Voz',text:'Aquí se mostrarían los parámetros acústicos de voz obtenidos sobre la misma muestra.',metrics:[['Intensidad media','— dB'],['Jitter','— %'],['Shimmer','— %']]},
+  full:{title:'Análisis completo',text:'La misma grabación alimentaría los módulos de velocidad y ritmo, prosodia y voz, presentados en bloques separados.',metrics:[['Velocidad','— ppm'],['Rango tonal','—'],['Intensidad','— dB']]}
 };
-function showAnalysisHome(){analysisHome.hidden=false;analysisPreview.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=true;}
-function showSpeedAnalysis(){analysisHome.hidden=true;analysisPreview.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
-function showAnalysisPreview(mode){const data=previewContent[mode];if(!data)return;analysisHome.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=true;analysisPreview.hidden=false;analysisPreviewTitle.textContent=data.title;analysisPreviewText.textContent=data.text;analysisPreviewMetrics.replaceChildren(...data.metrics.map(([label,value])=>{const box=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;box.append(small,strong);return box;}));window.scrollTo({top:0,behavior:'smooth'});}
-for(const button of document.querySelectorAll('[data-analysis-mode]'))button.addEventListener('click',()=>button.dataset.analysisMode==='speed'?showSpeedAnalysis():showAnalysisPreview(button.dataset.analysisMode));
+function hidePrototypeScreens(){analysisHome.hidden=true;analysisCapture.hidden=true;analysisChooser.hidden=true;analysisPreview.hidden=true;}
+function hideSpeedSections(){for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=true;}
+function showLandingHome(){hidePrototypeScreens();hideSpeedSections();analysisHome.hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function showSpeedPractice(){hidePrototypeScreens();for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=false;setState('idle');$('speedNav').hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function showCapture(){hidePrototypeScreens();hideSpeedSections();analysisCapture.hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function showChooser(){if(!sampleAnalysisBlob)return;hidePrototypeScreens();hideSpeedSections();analysisChooser.hidden=false;$('samplePreviewAudio').src=sampleAnalysisUrl;window.scrollTo({top:0,behavior:'smooth'});}
+function showAnalysisPreview(mode){const data=previewContent[mode];if(!data)return;hidePrototypeScreens();hideSpeedSections();analysisPreview.hidden=false;analysisPreviewTitle.textContent=data.title;analysisPreviewText.textContent=data.text;analysisPreviewMetrics.replaceChildren(...data.metrics.map(([label,value])=>{const box=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;box.append(small,strong);return box;}));window.scrollTo({top:0,behavior:'smooth'});}
+function setSampleBlob(blob){if(sampleAnalysisUrl)URL.revokeObjectURL(sampleAnalysisUrl);sampleAnalysisBlob=blob;sampleAnalysisUrl=URL.createObjectURL(blob);showChooser();}
+async function startSampleCapture(){
+  try{
+    sampleCaptureStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const mime=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>MediaRecorder.isTypeSupported(t));
+    const chunks=[];sampleCaptureRecorder=new MediaRecorder(sampleCaptureStream,mime?{mimeType:mime}:undefined);
+    sampleCaptureRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    sampleCaptureRecorder.onstop=()=>{clearInterval(sampleCaptureClock);sampleCaptureStream?.getTracks().forEach(t=>t.stop());sampleCaptureStream=null;$('sampleRecordBtn').disabled=false;$('sampleStopBtn').disabled=true;$('sampleCaptureStatus').textContent='Muestra preparada.';setSampleBlob(new Blob(chunks,{type:sampleCaptureRecorder.mimeType}));};
+    sampleCaptureRecorder.onerror=()=>{$('sampleCaptureStatus').textContent='No se pudo completar la grabación.';};
+    sampleCaptureRecorder.start(1000);sampleCaptureStarted=performance.now();$('sampleRecordBtn').disabled=true;$('sampleStopBtn').disabled=false;$('sampleCaptureStatus').textContent='Grabando muestra…';$('sampleCaptureTimer').textContent='00:00';sampleCaptureClock=setInterval(()=>{$('sampleCaptureTimer').textContent=formatTime((performance.now()-sampleCaptureStarted)/1000);},250);
+  }catch(error){$('sampleCaptureStatus').textContent='No se pudo acceder al micrófono: '+(error.message||'error desconocido');}
+}
+function stopSampleCapture(){if(sampleCaptureRecorder?.state==='recording')sampleCaptureRecorder.stop();}
+$('practiceSpeedBtn').addEventListener('click',showSpeedPractice);
+$('analyzeSampleBtn').addEventListener('click',showCapture);
+$('backFromCapture').addEventListener('click',showLandingHome);
+$('backFromChooser').addEventListener('click',showCapture);
+$('backToAnalysisChooser').addEventListener('click',showChooser);
+$('backFromSpeed').addEventListener('click',()=>{if(!busy())showLandingHome();});
+$('sampleRecordBtn').addEventListener('click',startSampleCapture);
+$('sampleStopBtn').addEventListener('click',stopSampleCapture);
+$('sampleFileInput').addEventListener('change',event=>{const file=event.target.files[0];if(file)setSampleBlob(file);event.target.value='';});
+for(const button of document.querySelectorAll('[data-sample-analysis]'))button.addEventListener('click',()=>showAnalysisPreview(button.dataset.sampleAnalysis));
 $('fullAnalysisBtn').addEventListener('click',()=>showAnalysisPreview('full'));
-$('backToAnalysisHome').addEventListener('click',showAnalysisHome);
 
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
@@ -605,6 +632,7 @@ $('comparisonPanel').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
   clearInterval(clock);recognition?.abort();stopDeepgram();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
+  if(sampleAnalysisUrl)URL.revokeObjectURL(sampleAnalysisUrl);sampleCaptureStream?.getTracks().forEach(track=>track.stop());
 });
 function updateGoalDisplay() {
   const min=Number($('targetMin').value),max=Number($('targetMax').value);
@@ -626,4 +654,4 @@ $('populationSelect').addEventListener('change',()=>{
 });
 for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',()=>{$('presetSelect').value='custom';updateGoalDisplay();});
 updateGoalDisplay();
-setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
+setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);showLandingHome();
