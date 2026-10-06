@@ -1,6 +1,21 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
   finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
 const $ = id => document.getElementById(id);
+
+const analysisHome=$('analysisHome'),analysisPreview=$('analysisPreview');
+const analysisPreviewTitle=$('analysisPreviewTitle'),analysisPreviewText=$('analysisPreviewText'),analysisPreviewMetrics=$('analysisPreviewMetrics');
+const previewContent={
+  prosody:{title:'Prosodia y entonación',text:'Una vista centrada en cómo varía el tono a lo largo de la muestra, sin mezclarlo con la velocidad.',metrics:[['F0 media','— Hz'],['Rango tonal','—'],['Variabilidad','—']]},
+  voice:{title:'Voz',text:'Una vista independiente para parámetros acústicos de la voz y su evolución.',metrics:[['Intensidad media','— dB'],['Jitter','— %'],['Shimmer','— %']]},
+  full:{title:'Análisis completo',text:'Una única grabación que reúne los resultados de velocidad y ritmo, prosodia y voz en bloques separados.',metrics:[['Velocidad','— ppm'],['Rango tonal','—'],['Intensidad','— dB']]}
+};
+function showAnalysisHome(){analysisHome.hidden=false;analysisPreview.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=true;}
+function showSpeedAnalysis(){analysisHome.hidden=true;analysisPreview.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+function showAnalysisPreview(mode){const data=previewContent[mode];if(!data)return;analysisHome.hidden=true;for(const el of document.querySelectorAll('.analysis-speed-section'))el.hidden=true;analysisPreview.hidden=false;analysisPreviewTitle.textContent=data.title;analysisPreviewText.textContent=data.text;analysisPreviewMetrics.replaceChildren(...data.metrics.map(([label,value])=>{const box=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;box.append(small,strong);return box;}));window.scrollTo({top:0,behavior:'smooth'});}
+for(const button of document.querySelectorAll('[data-analysis-mode]'))button.addEventListener('click',()=>button.dataset.analysisMode==='speed'?showSpeedAnalysis():showAnalysisPreview(button.dataset.analysisMode));
+$('fullAnalysisBtn').addEventListener('click',()=>showAnalysisPreview('full'));
+$('backToAnalysisHome').addEventListener('click',showAnalysisHome);
+
 let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
