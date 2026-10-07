@@ -1,6 +1,7 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
-  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
+  finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords, serializeSession, parseSession, SESSION_PROVENANCE } from './analysis.mjs';
 const $ = id => document.getElementById(id);
+let sessionIO=false;
 let state = 'idle', recorder, stream, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
@@ -156,7 +157,7 @@ function snapshotLive() {
 const chartLayouts = new Map();
 const intervalWidth = () => Number($('intervalSelect').value);
 const setStatus = text => $('statusText').textContent = text;
-const busy = () => ['starting', 'recording', 'stopping', 'processing'].includes(state);
+const busy = () => sessionIO || ['starting', 'recording', 'stopping', 'processing'].includes(state);
 
 let processingReminder=null;
 const processingPhases=['Preparando audio','Transcribiendo','Calculando velocidad y pausas','Generando resultados'];
@@ -189,6 +190,8 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
+  $('saveSession').disabled=busy()||!samples[selected]?.blob||!(samples[selected]?.result||samples[selected]?.provisional);
+  $('sessionInput').disabled=busy();
   $('targetMin').disabled = $('targetMax').disabled = $('populationSelect').disabled = $('taskSelect').disabled = busy();
   $('liveDiagnostic').hidden=practicingState(next);
   if(practicingState(next))$('liveDiagnostic').open=false;
@@ -237,7 +240,7 @@ function attachAudio(blob) {
   if (old) URL.revokeObjectURL(old.url);
   const extension = blob.type.includes('mp4') ? 'm4a' : blob.type.includes('wav') ? 'wav' : blob.type.includes('mpeg') ? 'mp3' : 'webm';
   samples[selected] = { blob, url: URL.createObjectURL(blob), result: null,
-    filename: blob.name || `fluidez-${selected ? 'B' : 'A'}-${Date.now()}.${extension}` };
+    createdAt:new Date().toISOString(),provenance:{...SESSION_PROVENANCE},filename: blob.name || `fluidez-${selected ? 'B' : 'A'}-${Date.now()}.${extension}` };
   showAudio();
 }
 function releaseMic() {
@@ -297,6 +300,7 @@ function tick() {
   }
 }
 async function startRecording() {
+  if(busy())return;
   const goal=readTarget();if(!goal)return;target=goal;
   const task=$('taskSelect').value;
   stopPlayback(); setState('starting'); const token = ++session;
@@ -401,6 +405,7 @@ async function analyzeFinal() {
     const output = await transcribe(audio);
     showProcessing(3,'Calculando la velocidad y las pausas del audio completo.');await paintProcessing();
     const activity = acousticActivity(audio, 16000);
+    sample.provenance={...SESSION_PROVENANCE};
     sample.result = { duration, activity, output, ...finalMetrics(output, duration, intervalWidth()) };
     showProcessing(4,'Preparando los gráficos y los resultados.');await paintProcessing();
     setState('done'); renderSelected(); renderComparison(); renderTherapy();
@@ -413,7 +418,7 @@ async function analyzeFinal() {
 }
 const taskLabels={conversation:'Conversación',reading:'Lectura',description:'Descripción de imágenes',custom:'Otra tarea'};
 function sampleContext(slot){const sample=samples[slot];return sample?`${taskLabels[sample.task]||'Tarea no indicada'} · objetivo ${sample.target?.min??'—'}–${sample.target?.max??'—'} ppm`:'Sin muestra';}
-function renderResultContext(){const sample=samples[selected];$('resultSample').textContent=`Muestra ${selected?'B':'A'}`;$('resultTask').textContent=taskLabels[sample?.task]||'Tarea no indicada';$('resultDuration').textContent=sample?.result?formatTime(sample.result.duration):sample?.provisional?formatTime(sample.provisional.duration):'Duración pendiente';$('resultGoal').textContent=sample?.target?`Objetivo ${sample.target.min}–${sample.target.max} ppm`:'Objetivo no guardado';$('listenPosition').textContent='Escucha la muestra';}
+function renderResultContext(){const sample=samples[selected];$('resultSample').textContent=`Muestra ${selected?'B':'A'}`;$('resultTask').textContent=taskLabels[sample?.task]||'Tarea no indicada';$('resultDuration').textContent=sample?.result?formatTime(sample.result.duration):sample?.provisional?formatTime(sample.provisional.duration):'Duración pendiente';$('sessionVersion').textContent=sample?.provenance?`Versión ${sample.provenance.appVersion} · análisis ${sample.provenance.analysisVersion} · ${sample.provenance.finalModel}`:'';$('resultGoal').textContent=sample?.target?`Objetivo ${sample.target.min}–${sample.target.max} ppm`:'Objetivo no guardado';$('listenPosition').textContent='Escucha la muestra';}
 function renderSelected() {
   resetResults(); renderTherapy(); const result = samples[selected]?.result;
   renderResultContext();
@@ -505,7 +510,7 @@ function drawAllCharts() {
   drawChart('chartA',results[0],shared,'#2d7ff9',0);drawChart('chartB',results[1],shared,'#8757cc',1);
 }
 function selectSample(slot) {
-  if (busy()) return;
+  if (busy() || sessionIO) return;
   selected=slot;$('sampleSelect').value=String(slot);clearLive();showAudio();
   if(samples[slot]?.target){target={...samples[slot].target};$('targetMin').value=String(target.min);$('targetMax').value=String(target.max);$('taskSelect').value=samples[slot].task||'custom';updateGoalDisplay();}
   setState(samples[slot]?.result?'done':'idle');renderSelected();renderComparison();
@@ -541,6 +546,20 @@ $('intervalSelect').addEventListener('change',()=>{
 $('sampleSelect').addEventListener('change',()=>selectSample(Number($('sampleSelect').value)));
 $('recordBtn').addEventListener('click',startRecording);$('stopBtn').addEventListener('click',stopRecording);
 $('retryBtn').addEventListener('click',analyzeFinal);
+async function saveLocalSession(){
+ if(busy()||sessionIO)return;const sample=samples[selected];if(!sample)return;
+ sessionIO=true;setState(state);
+ try{const file=await serializeSession(sample),url=URL.createObjectURL(file),link=document.createElement('a');link.href=url;link.download=`fluidez-${selected?'B':'A'}-${Date.now()}.fluidez.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);setStatus('Sesión enviada a Descargas. Incluye la grabación de voz; consérvala en un lugar adecuado.');}
+ catch(error){setStatus(error.message);}finally{sessionIO=false;setState(state);}
+}
+async function openLocalSession(file){
+ if(busy()||sessionIO||!file)return;sessionIO=true;setState(state);
+ try{const restored=await parseSession(file,intervalWidth());const slot=selected;stopPlayback();attachAudio(restored.blob);const local=samples[slot];Object.assign(local,restored);dgWords=new DeepgramWords();diagnostic={status:'Sesión recuperada · sin conexión en directo',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};clearLive();sessionIO=false;selectSample(slot);setStatus(`Sesión abierta en ${slot?'B':'A'} sin retranscribir. ${restored.result?'Resultado final recuperado.':'Solo resumen provisional; análisis final pendiente.'}`);}
+ catch(error){setStatus(error.message);}finally{sessionIO=false;$('sessionInput').value='';setState(state);}
+}
+$('saveSession').addEventListener('click',saveLocalSession);
+$('sessionInput').addEventListener('change',event=>openLocalSession(event.target.files[0]));
+
 $('fileInput').addEventListener('change',async event=>{
   const file=event.target.files[0];if(!file||busy())return;
   const goal=readTarget();if(!goal){event.target.value='';return;}target=goal;

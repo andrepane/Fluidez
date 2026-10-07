@@ -15,7 +15,7 @@ function harness() {
     replaceChildren(...nodes){this.children=nodes;}
     removeAttribute(name){delete this[name];}
     setAttribute(name,value){this[name]=value;}
-    load(){} pause(){this.pauseCalls++;} async play(){this.playCalls++;}
+    click(){this.events.click?.();} load(){} pause(){this.pauseCalls++;} async play(){this.playCalls++;}
     getBoundingClientRect(){return {left:0,top:0,width:600,height:260};}
     getContext(){return new Proxy({},{get:()=>noop,set:()=>true});}
   }
@@ -45,7 +45,7 @@ function harness() {
   const context={...analysis,document,window,navigator:{mediaDevices:{getUserMedia:async()=>({getTracks:()=>[{stop:noop}]})}},MediaRecorder,AudioWorkletNode,WebSocket,URLSearchParams,AbortSignal,ArrayBuffer,fetch:async()=>proxyConfigured?({ok:true,json:async()=>({access_token:'test-token',expires_in:60})}):({ok:false,json:async()=>({error:'Deepgram no está configurado en el servidor'})}),OfflineAudioContext,Worker,URL:FakeURL,console,performance:{now:()=>now},setTimeout:(fn,ms)=>{if(ms===20000)reminder=fn;return setTimeout(fn,ms);},clearTimeout,setInterval,clearInterval,Float32Array,Blob,getComputedStyle:()=>({getPropertyValue:()=> '#123'})};
   let source=readFileSync(new URL('../script.js',import.meta.url),'utf8');
   source=source.replace(/^import[\s\S]*?from '\.\/analysis\.mjs';/,'').replaceAll('import.meta.url',"'http://localhost/script.js'");
-  source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
+  source+='\nglobalThis.app={attachAudio,analyzeFinal,selectSample,playInterval,saveLocalSession,openLocalSession,startRecording,stopRecording,tick,recorder:()=>recorder,samples,chartLayouts,state:()=>state};';
   vm.runInNewContext(source,context);
   return {emitTranscript,configureProxy:()=>proxyConfigured=true,dgEmit:data=>dgClient.onmessage({data:JSON.stringify(data)}),dgBackpressure:()=>{dgClient.bufferedAmount=100000;capture.port.onmessage({data:new ArrayBuffer(8)});},remind:()=>reminder(),progress:p=>pendingWorker.worker.onmessage({data:{id:pendingWorker.data.id,type:'progress',progress:p}}),app:context.app,e:id=>document.getElementById(id),calls:()=>calls,setDuration:n=>duration=n,setOutput:o=>output=o,setFailure:b=>failure=b,setTime:n=>now=n,setRms:n=>rms=n,setPending:b=>pending=b,recognition:()=>recognizer,finish:()=>{const {worker,data}=pendingWorker;worker.onmessage({data:{id:data.id,type:'result',output}});}};
 }
@@ -238,4 +238,15 @@ test('results HTML prioritizes chart/audio and retains unique accessible technic
  assert.ok(html.indexOf('id="playback"')<html.indexOf('id="therapySummary"'));
  assert.ok(html.indexOf('id="therapySummary"')<html.indexOf('id="professionalDetails"'));
  assert.match(html,/<section id="professionalArea"/);
+});
+
+test('local session opens into A/B without worker, preserves audio and rejects invalid replacement',async()=>{
+ const h=harness();h.app.attachAudio(blob());h.app.samples[0].target={min:120,max:150};h.app.samples[0].task='reading';await h.app.analyzeFinal();
+ h.app.samples[0].result.activity={speech:0,silence:20,threshold:.003,pauses:[]};const saved=await analysis.serializeSession(h.app.samples[0]);const calls=h.calls();h.app.selectSample(1);await h.app.openLocalSession(saved);
+ assert.equal(h.calls(),calls);assert.equal(h.app.samples[1].result.words,1);assert.equal(h.app.samples[1].task,'reading');assert.equal(h.e('saveSession').disabled,false);assert.equal(h.e('resultTask').textContent,'Lectura');
+ const url=h.app.samples[1].url;await h.app.openLocalSession(new Blob(['invalid']));assert.equal(h.app.samples[1].url,url);assert.equal(h.calls(),calls);assert.match(h.e('statusText').textContent,/inválido/);
+ h.e('intervalSelect').value='10';h.e('intervalSelect').events.change();assert.equal(h.app.samples[1].result.bins.length,2);assert.equal(h.calls(),calls);
+});
+test('saving is unavailable while recording/processing and available after final analysis',async()=>{
+ const h=harness();h.configureProxy();await h.app.startRecording();assert.equal(h.e('saveSession').disabled,true);assert.equal(h.e('sessionInput').disabled,true);h.setTime(14000);h.app.stopRecording();await h.app.recorder().stopped;assert.equal(h.e('saveSession').disabled,false);assert.equal(h.e('sessionInput').disabled,false);
 });

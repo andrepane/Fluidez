@@ -71,3 +71,15 @@ Protocolo manual y hoja de medición reproducible: [docs/validation.md](docs/val
 El análisis aparece directamente: contexto de la muestra, media global secundaria, gráfico temporal grande con banda del objetivo guardado, reproductor y tabla accesible de escucha. El cursor sigue los eventos del reproductor. La banda es un objetivo de tarea, no normalidad clínica. A/B mantiene ejes comunes e identifica tarea/objetivo propio. No se suavizan datos ni se cambian algoritmos. Sin timestamps coherentes se avisa y no se genera una curva ficticia.
 
 El resumen del feedback observado conserva su fuente provisional, separado del gráfico final Whisper. Transcripción, pausas y mediciones quedan en detalles. No se añade exportación, almacenamiento ni nuevos módulos. Pendiente revisión visual en Preview de escritorio/móvil con audio real; pruebas deterministas no sustituyen esa comprobación.
+
+## Guardar y abrir sesiones locales
+
+Guardar sesión descarga un archivo `.fluidez.json` con audio (base64), tarea, objetivo, transcripción final/timestamps, actividad/pausas, feedback provisional observado, fecha y procedencia del análisis. No pide nombre de paciente ni crea una base de datos. El navegador decide la carpeta (habitualmente Descargas, o la que elijas si pregunta). No se envía el archivo a Firebase/nube/Deepgram. **El archivo contiene voz y texto sin cifrar**: conservarlo y compartirlo según corresponda.
+
+Seleccionar A o B en configuración y pulsar Abrir sesión. Recupera resultados sin ejecutar Whisper ni llamar al proveedor; recalcula únicamente medias/barras desde datos guardados para el intervalo de visualización actual. Cargar A y B permite comparación entre días. Abrir en una posición ocupada sustituye esa muestra; si el archivo es inválido, la muestra actual permanece. Guardar antes de sustituir una muestra que quieras conservar.
+
+El formato v1 registra appVersion `1.0.0-sessions`, analysisVersion `temporal-v1`, runtime y nombre del modelo. Son identificadores de implementación, no validación clínica ni un hash de pesos del proveedor. La procedencia se conserva al abrir/guardar; reanalizar crea resultados con la implementación actual. No demuestra autenticidad de un archivo editado ni coincidencia entre su audio y texto. Versiones futuras incompatibles se rechazan.
+
+Límites iniciales: 50 MB de audio, 72 MB de archivo de sesión, 30 minutos de duración, JSON/versiones/datos acotados. Sin timestamps completos se conserva el recuento global sin inventar gráfico. También permite guardar solo resumen provisional tras fallo final, identificado como tal. No almacena resultados antes de terminar ni durante procesamiento. La codificación base64 aumenta tamaño aproximadamente un tercio; en equipos limitados puede tardar al guardar.
+
+Verificación de esta PR: round trip de bytes y datos, guardado provisional, archivos/versiones inválidos, acústica incoherente, apertura A/B sin worker y protección de muestra ante error. Pendiente probar descarga/selector/reproducción del archivo recuperado en navegador real.

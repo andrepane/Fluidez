@@ -106,3 +106,6 @@ export class PauseGate {
 }
 
 export {DeepgramWords} from './deepgram-live.mjs';
+
+
+export {serializeSession,parseSession,SESSION_PROVENANCE} from './session.mjs';
