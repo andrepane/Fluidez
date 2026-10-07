@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+function capture(size,maxFrames=100){let C;const messages=[];class Base{port={postMessage(m,transfers){messages.push(structuredClone(m,{transfer:transfers}));}};}vm.runInNewContext(readFileSync(new URL('../pitch-capture.worklet.js',import.meta.url),'utf8'),{AudioWorkletProcessor:Base,Float32Array,currentTime:1,registerProcessor(_name,c){C=c;}});return {processor:new C({processorOptions:{frameSize:size,maxFrames}}),messages};}
+test('raw capture remains valid after transfer and flush retains exact tail',()=>{const {processor:p,messages}=capture(4);p.process([[new Float32Array([.1,.2,.3,.4,.5,.6])]]);p.port.onmessage({data:'flush'});assert.deepEqual(messages.map(m=>m.endFrame),[4,6]);assert.equal(messages[1].done,true);assert.equal(new Float32Array(messages[1].audio).length,2);p.process([[new Float32Array([.7,.8])]]);assert.equal(messages.length,2);});
+test('audio sample limit ends capture even when UI timers do not run',()=>{const {processor:p,messages}=capture(4,6);p.process([[new Float32Array(12).fill(.3)]]);assert.equal(messages.at(-1).done,true);assert.equal(messages.at(-1).endFrame,6);assert.equal(messages.reduce((n,m)=>n+m.audio.byteLength/4,0),6);});

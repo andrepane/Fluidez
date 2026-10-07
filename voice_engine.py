@@ -27,8 +27,11 @@ def analyze_wav(raw, floor=75., ceiling=600.):
     pitch = sound.to_pitch_ac(time_step=.01, pitch_floor=floor, pitch_ceiling=ceiling,
                               very_accurate=True, silence_threshold=.03, voicing_threshold=.45)
     frequencies = pitch.selected_array['frequency']
-    points = [{'time': float(t), 'hz': float(f) if f > 0 and np.isfinite(f) else None}
-              for t, f in zip(pitch.xs(), frequencies)]
+    strengths = pitch.selected_array['strength']
+    points = [{'time': float(t), 'hz': float(f) if f > 0 and np.isfinite(f) else None,
+               'periodicity': max(0., min(1., float(strength)))}
+              for t, f, strength in zip(pitch.xs(), frequencies, strengths)]
     return {'source': 'Praat/Parselmouth', 'version': parselmouth.VERSION,
             'praatVersion': parselmouth.PRAAT_VERSION, 'method': 'raw autocorrelation',
-            'duration': frames/rate, 'floor': floor, 'ceiling': ceiling, 'points': points}
+            'duration': frames/rate, 'floor': floor, 'ceiling': ceiling, 'points': points,
+            'signal': {'clippedFraction': float(np.mean(np.abs(values) >= .99))}}
