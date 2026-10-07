@@ -57,6 +57,7 @@
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
 <p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
+<label for="accessCode">Código de acceso al directo</label><input id="accessCode" type="password" autocomplete="off" maxlength="256" placeholder="Código del profesional"><p class="hint">Permite utilizar el reconocimiento en directo, que envía voz a un servicio externo. No es la clave de Deepgram y no se guarda al cerrar la pestaña.</p>
 <div class="button-row">
 <label for="taskSelect">Tarea</label><select id="taskSelect"><option value="conversation">Conversación</option>
 <option value="reading">Lectura</option>
@@ -66,10 +67,7 @@
 <details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p>
 <a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a><div class="goal-setup">
 <label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option>
-<option value="child">Niño / adolescente · objetivo personalizado</option></select><label for="presetSelect">Tarea</label><select id="presetSelect"><option value="conversation">Conversación · 120–187 ppm</option>
-<option value="reading">Lectura · 120–161 ppm</option>
-<option value="description">Descripción de imágenes · 67–158 ppm</option>
-<option value="custom">Personalizado</option></select>
+<option value="child">Niño / adolescente · objetivo personalizado</option></select>
 </div></details><div class="button-row">
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
@@ -172,3 +170,4 @@
 <div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
 </body>
 </html>
+
