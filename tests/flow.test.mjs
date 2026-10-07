@@ -21,7 +21,7 @@ function harness() {
   }
   const elements=new Map();
   const document={getElementById:id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);},querySelector:()=>new Element(),createElement:()=>new Element(),body:{dataset:{}}};
-  document.getElementById('intervalSelect').value='15';document.getElementById('accessCode').value='test-access-code';document.getElementById('taskSelect').value='conversation';
+  document.getElementById('intervalSelect').value='15';document.getElementById('taskSelect').value='conversation';
   document.getElementById('targetMin').value='120';document.getElementById('targetMax').value='150';
   document.getElementById('presetSelect').options=['conversation','reading','description','custom'].map(value=>({value}));
   let now=10000,pending=false,pendingWorker,reminder,proxyConfigured=false,dgClient,capture;
@@ -209,9 +209,8 @@ test('Deepgram backlog disables feedback without abandoning recording',async()=>
 
 
 
-test('access required before microphone and diagnostics hidden during practice',async()=>{
- const h=harness();h.e('accessCode').value='';await h.app.startRecording();assert.equal(h.app.state(),'idle');assert.match(h.e('statusText').textContent,/código de acceso/);
- h.e('accessCode').value='test-access-code';h.configureProxy();await h.app.startRecording();assert.equal(h.e('liveDiagnostic').hidden,true);assert.equal(h.e('taskSelect').disabled,true);h.app.stopRecording();await h.app.recorder().stopped;assert.equal(h.e('liveDiagnostic').hidden,false);
+test('public practice starts without password and diagnostics remain hidden',async()=>{
+ const h=harness();h.configureProxy();await h.app.startRecording();assert.equal(h.e('liveDiagnostic').hidden,true);assert.equal(h.e('taskSelect').disabled,true);h.app.stopRecording();await h.app.recorder().stopped;assert.equal(h.e('liveDiagnostic').hidden,false);
 });
 test('task and target persist independently in samples and restore on selection',async()=>{
  const h=harness();h.configureProxy();h.e('taskSelect').value='reading';await h.app.startRecording();h.setTime(14000);h.app.stopRecording();await h.app.recorder().stopped;
