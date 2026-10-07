@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {PitchDetector} from '../vendor/pitchy-4.1.0.mjs';
+import {acceptPitch,summarize,wav16,validateFinal,validLimits} from '../pitch-data.mjs';
+test('bundled Pitchy estimates known harmonic tones',()=>{for(const rate of [44100,48000])for(const hz of [100,200,400,700]){const samples=Float32Array.from({length:4096},(_,i)=>.3*Math.sin(2*Math.PI*hz*i/rate)+.1*Math.sin(4*Math.PI*hz*i/rate));const [value,clarity]=PitchDetector.forFloat32Array(4096).findPitch(samples,rate);assert.ok(Math.abs(value-hz)<1);assert.ok(clarity>.9);}});
+test('unclear, silent and out-of-range frames leave gaps',()=>{assert.equal(acceptPitch(200,.8,.1,75,600),null);assert.equal(acceptPitch(200,.99,0,75,600),null);assert.equal(acceptPitch(700,.99,.1,75,600),null);assert.equal(acceptPitch(200,.99,.1,75,600),200);assert.equal(summarize([{hz:null}]).median,null);assert.equal(summarize([{hz:100},{hz:null},{hz:200}]).detected,2/3);});
+test('PCM WAV metadata and clipping are consistent',()=>{const view=new DataView(wav16(new Float32Array([-2,0,2])));assert.equal(view.getUint32(24,true),16000);assert.equal(view.getUint16(22,true),1);assert.equal(view.getUint32(40,true),6);assert.equal(view.getInt16(44,true),-32768);assert.equal(view.getInt16(48,true),32767);});
+test('final validation rejects malformed, nonmonotonic and excessive results',()=>{const data={source:'Praat/Parselmouth',duration:1,points:[{time:.1,hz:200},{time:.2,hz:null}]};assert.equal(validateFinal(data),data);for(const points of [[{time:.2,hz:200},{time:.1,hz:200}],[{time:2,hz:200}],[{time:.1,hz:NaN}]])assert.throws(()=>validateFinal({...data,points}));assert.ok(validLimits(75,600));assert.equal(validLimits(200,250),false);});
