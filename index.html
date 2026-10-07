@@ -14,7 +14,17 @@
 </div>
 </div>
 <button id="themeSwitch" aria-label="Cambiar tema">🌗</button></header>
-<main><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
+<main><section id="modeHome" class="panel mode-home" aria-labelledby="modeHomeTitle"><p class="eyebrow">Fluidez+ · elige el objetivo</p><h2 id="modeHomeTitle">¿Qué quieres trabajar?</h2><p class="mode-intro">El objetivo adapta la tarea y el feedback durante la práctica. Después podrás revisar los análisis compatibles con tu muestra.</p><div class="mode-grid">
+<button class="mode-card" data-module="speed"><span class="mode-symbol">↔</span><strong>Velocidad y ritmo</strong><small>Control del ritmo, evolución temporal y escucha de tramos.</small><span class="module-badge ready">Disponible</span></button>
+<button class="mode-card" data-module="pitch"><span class="mode-symbol">⌁</span><strong>Entonación y control tonal</strong><small>Una curva para seguir cómo sube y baja el tono.</small><span class="module-badge">Prototipo de interfaz</span></button>
+<button class="mode-card" data-module="intensity"><span class="mode-symbol">◔</span><strong>Control de intensidad</strong><small>Seguir el nivel relativo de la señal durante la tarea.</small><span class="module-badge">Prototipo de interfaz</span></button>
+<button class="mode-card" data-module="voice"><span class="mode-symbol">◌</span><strong>Calidad vocal</strong><small>Elegir una muestra adecuada antes de analizar la voz.</small><span class="module-badge">Prototipo de interfaz</span></button>
+<button class="mode-card guided-card" data-module="guided"><span class="mode-symbol">＋</span><strong>Evaluación guiada</strong><small>Una sesión con varias tareas: habla, vocal sostenida y ejercicio tonal.</small><span class="module-badge">Prototipo de interfaz</span></button></div></section>
+<section id="modulePreview" class="panel module-preview" hidden><button id="previewBack" type="button">← Objetivos</button><span class="module-badge">Prototipo · sin mediciones</span><h2 id="previewTitle"></h2><p id="previewDescription"></p><div class="prototype-warning">Prueba de estructura: estos módulos todavía no graban ni analizan audio. Los indicadores no representan una voz real.</div>
+<div id="previewSetup"><div class="preview-fields"><label>Origen de la muestra<select id="previewSource"><option value="record">Preparar una grabación</option><option value="upload">Audio existente</option></select></label><label>Tarea<select id="previewTask"></select></label><label id="previewAnalysisField" hidden>Análisis a consultar<select id="previewAnalysis"><option value="pitch">Entonación</option><option value="intensity">Intensidad relativa</option><option value="voice">Calidad vocal</option></select></label></div><label id="previewUploadField" hidden>Seleccionar audio para explorar este flujo<input id="previewUpload" type="file" accept="audio/*"></label><p id="previewFile" class="hint"></p><p id="previewAdvice" class="hint"></p><ol id="guidedTasks" hidden><li>Habla: conversación o lectura.</li><li>Vocal sostenida: muestra específica de fonación.</li><li>Ejercicio tonal: cambios de tono pautados.</li></ol><button id="showPracticePreview" class="preview-primary">Ver pantalla de práctica · maqueta</button></div>
+<div id="practicePreview" hidden><p class="eyebrow">Durante la tarea · ejemplo de organización</p><h3 id="practiceTitle"></h3><div class="prototype-indicator"><span id="prototypeIndicatorLabel"></span><strong>—</strong><small>Sin motor de análisis implementado</small></div><p id="practiceNote" class="hint"></p><button id="showResultsPreview">Ver resultados · maqueta</button></div>
+<div id="resultsPreview" hidden><h3>Resultados del módulo · maqueta</h3><div id="previewMetrics" class="preview-metrics"></div><p id="previewLimit" class="hint"></p><button id="restartPreview">Volver a configurar</button></div></section>
+<div id="speedSurface" hidden><nav class="speed-navigation"><button id="speedHome" type="button">← Objetivos</button><span>Velocidad y ritmo · herramienta disponible</span></nav><section id="processingPanel" class="panel processing-panel" aria-labelledby="processingTitle" hidden>
 <div class="processing-orbit" aria-hidden="true"><span>f+</span></div>
 <p class="eyebrow">Análisis automático</p>
 <h2 id="processingTitle">Analizando tu muestra…</h2>
@@ -95,7 +105,7 @@
 <p><strong>Intervalo entre resultados: </strong><span id="diagCadence">—</span></p>
 <p><strong>Eventos de voz: </strong><span id="diagPause">—</span></p>
 <p><strong>Errores: </strong><span id="diagError">Sin errores</span></p>
-<div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
+<div id="diagText" class="transcript">Sin texto</div></details></div></main><script type="module" src="script.js"></script><script type="module" src="navigation-prototype.mjs"></script>
 </body>
 </html>
 
