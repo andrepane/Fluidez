@@ -18,18 +18,17 @@ SpeechRecognition ya no se inicia y no existe un selector de motores. El proxy l
 En Project → Settings → Environment Variables, configurar para Preview y Production:
 
 1. `DEEPGRAM_API_KEY`: clave del proveedor con permisos para emitir tokens.
-2. `FLUIDEZ_ACCESS_CODE`: secreto distinto, aleatorio, de 16 a 256 caracteres, que solo conocerán los profesionales autorizados. No usar la clave de Deepgram como código.
-3. Volver a desplegar. Introducir el código en «Código de acceso al directo» antes de empezar. No se incluye en código fuente, URL ni almacenamiento persistente del navegador. Permanece temporalmente en el campo de esta pestaña; no compartir el equipo con el campo rellenado.
+2. Volver a desplegar si se cambia la variable. La web permite grabar sin contraseña ni cuenta.
 
-**Cambio de configuración obligatorio:** sin código configurado, el endpoint devuelve 503 y no emite tokens. Sin código correcto devuelve 401. Importación y análisis local siguen disponibles sin código. El directo usa un servicio externo: no enviar grabaciones de pacientes sin el procedimiento de autorización y privacidad correspondiente.
+`FLUIDEZ_ACCESS_CODE` no se utiliza: si se creó previamente, puede eliminarse de Vercel. Sin API key el endpoint devuelve 503. No se devuelve la clave al navegador, solo un token temporal. El directo usa un servicio externo; la interfaz lo indica antes de grabar.
 
 ### Límites y coste
 
-El código compartido restringe el uso a quienes lo conocen; no sustituye cuentas de usuario. La función incorpora un freno de diez solicitudes por minuto POR INSTANCIA (incluye intentos incorrectos), respuesta 429 y timeout de cuatro segundos al proveedor. En serverless ese contador no es global ni persistente.
+El endpoint es público, sin autenticación. La función incorpora un freno de diez solicitudes por minuto POR INSTANCIA, respuesta 429 y timeout de cuatro segundos al proveedor. En serverless ese contador no es global ni persistente.
 
 **Configurar además Vercel Firewall**: Project → Firewall → Configure → New Rule; condición Request Path equals `/api/deepgram-token`; acción Rate Limit con ventana fija de 60 s y límite inicial de 10 solicitudes por IP, respuesta de bloqueo 429 (no solo Log). Guardar y publicar. Adaptar el límite si varios profesionales comparten IP. Esta PR no configura el dashboard ni afirma que esa regla ya esté activa.
 
-El TTL de 60 s limita el tiempo para iniciar una conexión, NO la duración de un WebSocket ya abierto ni el gasto de una sesión. No existe una cuota global de minutos/gasto implementada. Revisar consumo y restricciones de la cuenta Deepgram. El código compartido + Firewall sirve para un piloto restringido, no para comercialización pública; para ello faltan identidad, cuotas persistentes y control de sesiones en servidor.
+El TTL de 60 s limita el tiempo para iniciar una conexión, NO la duración de un WebSocket ya abierto ni el gasto de una sesión. No existe una cuota global de minutos/gasto implementada. Revisar consumo y restricciones de la cuenta Deepgram. Firewall reduce solicitudes excesivas, pero no garantiza un presupuesto máximo. Para una prueba abierta, vigilar consumo y configurar restricciones en el proveedor; para escalado faltan cuotas persistentes y control de sesiones en servidor.
 
 Fuentes: https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting y https://developers.deepgram.com/guides/fundamentals/token-based-authentication
 Tarifa vigente de la cuenta: https://deepgram.com/pricing (no se fija un precio promocional en la app).
