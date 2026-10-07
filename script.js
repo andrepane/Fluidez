@@ -196,7 +196,7 @@ function setState(next) {
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
   $('setupPanel').hidden=practicing||next==='stopping'||next==='processing';
-  $('professionalArea').hidden=practicing||analyzing;
+  $('professionalArea').hidden=practicing||analyzing||!samples[selected];
   document.querySelector('.app-header').hidden=practicing;
   if(practicing){$('therapySummary').hidden=true;$('professionalArea').open=false;}
   if(next==='done'||next==='error')$('setupPanel').open=false;
@@ -390,7 +390,7 @@ function transcribe(audio) {
 }
 async function analyzeFinal() {
   const sample = samples[selected]; if (!sample) return;
-  stopPlayback(); setState('processing'); resetResults(); sample.result = null; renderTherapy(); drawAllCharts();
+  stopPlayback(); setState('processing'); resetResults(); sample.result = null; renderResultContext(); renderTherapy(); drawAllCharts();
   $('analysisTag').textContent = 'Procesando audio completo';
   setStatus('Reprocesando · resultado final pendiente');
   try {
@@ -411,8 +411,12 @@ async function analyzeFinal() {
     setStatus('Audio conservado · análisis final incompleto'); renderComparison(); renderTherapy();
   }
 }
+const taskLabels={conversation:'Conversación',reading:'Lectura',description:'Descripción de imágenes',custom:'Otra tarea'};
+function sampleContext(slot){const sample=samples[slot];return sample?`${taskLabels[sample.task]||'Tarea no indicada'} · objetivo ${sample.target?.min??'—'}–${sample.target?.max??'—'} ppm`:'Sin muestra';}
+function renderResultContext(){const sample=samples[selected];$('resultSample').textContent=`Muestra ${selected?'B':'A'}`;$('resultTask').textContent=taskLabels[sample?.task]||'Tarea no indicada';$('resultDuration').textContent=sample?.result?formatTime(sample.result.duration):sample?.provisional?formatTime(sample.provisional.duration):'Duración pendiente';$('resultGoal').textContent=sample?.target?`Objetivo ${sample.target.min}–${sample.target.max} ppm`:'Objetivo no guardado';$('listenPosition').textContent='Escucha la muestra';}
 function renderSelected() {
   resetResults(); renderTherapy(); const result = samples[selected]?.result;
+  renderResultContext();
   if (!result) {
     $('analysisTag').textContent = samples[selected] ? 'Sin resultado final' : 'Sin análisis';
     $('finalNotice').textContent = 'El audio se conserva temporalmente en esta pestaña.';
@@ -446,6 +450,7 @@ function renderSelected() {
 }
 function renderComparison() {
   const results = samples.map(s => s?.result); $('comparisonRows').replaceChildren();
+  $('compareContextA').textContent=sampleContext(0);$('compareContextB').textContent=sampleContext(1);
   $('comparisonNotice').textContent = results.every(Boolean) ?
     'Comparación automática con los mismos ejes e intervalos. Diferencias descriptivas, sin interpretación clínica.' :
     'Analiza una muestra en A y otra en B. Ambas se conservan temporalmente en esta pestaña.';
@@ -466,18 +471,20 @@ function renderComparison() {
   drawAllCharts();
 }
 function drawChart(id, result, scale, color, slot) {
-  const canvas = $(id), ctx = canvas.getContext('2d'), w = canvas.clientWidth || 600, h = 260;
+  const canvas = $(id), ctx = canvas.getContext('2d'), w = canvas.clientWidth || 600, h = id==='speedChart'?320:260;
   const dpr = window.devicePixelRatio || 1; canvas.width = w*dpr; canvas.height = h*dpr; ctx.scale(dpr,dpr);
   const textColor = getComputedStyle(document.body).getPropertyValue('--text');
   ctx.fillStyle = textColor; ctx.font = '12px system-ui'; chartLayouts.delete(id);
   if (!result?.bins) { ctx.fillText(result ? 'Marcas temporales incompletas' : 'Pendiente del análisis final', 20, 40); return; }
   const left = 45, right = w-15, top = 25, bottom = h-40;
-  chartLayouts.set(id, { left, right, top, bottom, duration: scale.duration, bins: result.bins, slot });
+  chartLayouts.set(id, { left, right, top, bottom, duration: scale.duration, max:scale.max, goal:samples[slot]?.target, bins: result.bins, slot });
   for (let i=0;i<=4;i++) {
     const y=bottom-(bottom-top)*i/4; ctx.strokeStyle='#94a3b855'; ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();
     ctx.fillStyle=textColor;ctx.fillText(String(Math.round(scale.max*i/4)),2,y+4);
     const t=scale.duration*i/4;ctx.fillText(formatTime(t),left+(right-left)*i/4-12,bottom+22);
   }
+  const goal=samples[slot]?.target;
+  if(goal){const yHigh=bottom-goal.max/scale.max*(bottom-top),yLow=bottom-goal.min/scale.max*(bottom-top);ctx.fillStyle='#75b49c22';ctx.fillRect(left,yHigh,right-left,yLow-yHigh);ctx.strokeStyle='#237565';ctx.setLineDash([3,5]);for(const y of [yHigh,yLow]){ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();}ctx.setLineDash([]);}
   const activeTime = slot === selected ? $('playback').currentTime : -1;
   for (const b of result.bins) {
     const x=left+b.start/scale.duration*(right-left), width=(b.end-b.start)/scale.duration*(right-left);
@@ -485,13 +492,16 @@ function drawChart(id, result, scale, color, slot) {
     ctx.fillStyle=color;ctx.fillRect(x+width*.08,bottom-height,width*.84,height);
     if (activeTime>=b.start && activeTime<b.end) {ctx.strokeStyle=textColor;ctx.lineWidth=2;ctx.strokeRect(x+width*.08,top,width*.84,bottom-top);ctx.lineWidth=1;}
   }
+  if(activeTime>=0 && activeTime<=result.duration){const x=left+activeTime/scale.duration*(right-left);ctx.strokeStyle=textColor;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke();}
   const y=bottom-result.mean/scale.max*(bottom-top);ctx.strokeStyle='#c27616';ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=textColor;ctx.fillText('ppm · línea discontinua = media',left,14);
 }
 function drawAllCharts() {
   const results=samples.map(s=>s?.result), shared=sharedChartScale(results);
+  shared.max=Math.max(shared.max,...samples.filter(s=>s?.result&&s?.target).map(s=>s.target.max*1.15));
   const current=['starting','recording','stopping'].includes(state)?null:results[selected];
-  drawChart('speedChart',current,sharedChartScale([current]),selected?'#8757cc':'#2d7ff9',selected);
+  const currentScale=sharedChartScale([current]);if(current&&samples[selected]?.target)currentScale.max=Math.max(currentScale.max,samples[selected].target.max*1.15);
+  drawChart('speedChart',current,currentScale,selected?'#8757cc':'#2d7ff9',selected);
   drawChart('chartA',results[0],shared,'#2d7ff9',0);drawChart('chartB',results[1],shared,'#8757cc',1);
 }
 function selectSample(slot) {
@@ -519,7 +529,7 @@ for (const id of ['speedChart','chartA','chartB']) $(id).addEventListener('click
   const bin=intervalAt(time,layout.bins);if(bin)playInterval(layout.slot,bin);
 });
 $('playback').addEventListener('timeupdate',()=>{
-  const audio=$('playback');if(playbackEnd!==null&&audio.currentTime>=playbackEnd){audio.pause();playbackEnd=null;}
+  const audio=$('playback');$('listenPosition').textContent=`Escuchando ${formatTime(audio.currentTime)}${samples[selected]?.result?' / '+formatTime(samples[selected].result.duration):''}`;if(playbackEnd!==null&&audio.currentTime>=playbackEnd){audio.pause();playbackEnd=null;}
   for(const row of $('segmentRows').children)row.classList.toggle('active-segment',audio.currentTime>=Number(row.dataset.start)&&audio.currentTime<Number(row.dataset.end));
   drawAllCharts();
 });
@@ -565,4 +575,5 @@ $('populationSelect').addEventListener('change',()=>{
 for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',updateGoalDisplay);
 updateGoalDisplay();
 setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
+
 

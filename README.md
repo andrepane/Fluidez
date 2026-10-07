@@ -64,3 +64,10 @@ Comparación A/B con mismos ejes; no estira ni rellena grabación corta. Pulsar 
 Node.js 22+: `node --test tests/*.test.mjs`. GitHub Actions ejecuta el mismo comando en push y PR. Tests deterministas del cálculo, captura PCM, Deepgram, interfaz/estados y endpoint con proveedor simulado: no miden exactitud clínica, rendimiento del servicio ni micrófono real.
 
 Protocolo manual y hoja de medición reproducible: [docs/validation.md](docs/validation.md).
+
+
+## Propuesta de pantalla de resultados
+
+El análisis aparece directamente: contexto de la muestra, media global secundaria, gráfico temporal grande con banda del objetivo guardado, reproductor y tabla accesible de escucha. El cursor sigue los eventos del reproductor. La banda es un objetivo de tarea, no normalidad clínica. A/B mantiene ejes comunes e identifica tarea/objetivo propio. No se suavizan datos ni se cambian algoritmos. Sin timestamps coherentes se avisa y no se genera una curva ficticia.
+
+El resumen del feedback observado conserva su fuente provisional, separado del gráfico final Whisper. Transcripción, pausas y mediciones quedan en detalles. No se añade exportación, almacenamiento ni nuevos módulos. Pendiente revisión visual en Preview de escritorio/móvil con audio real; pruebas deterministas no sustituyen esa comprobación.
