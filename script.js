@@ -1,14 +1,14 @@
 import { countWords, formatTime, acousticActivity, LiveWordTracker,
   finalMetrics, sharedChartScale, intervalAt, speedZone, therapySummary, therapyPresets, PauseGate, DeepgramWords } from './analysis.mjs';
 const $ = id => document.getElementById(id);
-let state = 'idle', recorder, stream, recognition, clock, audioContext, worker, job = 0, workerTimeout;
+let state = 'idle', recorder, stream, clock, audioContext, worker, job = 0, workerTimeout;
 let started = 0, session = 0, finalText = '', interimText = '', completedRecognition = '', liveSupported = true;
 let tracker = new LiveWordTracker(), selected = 0, playbackEnd = null;
 const samples = [null, null];
 let activeEngine='deepgram',dgWords=new DeepgramWords(),dgSocket=null,dgCapture=null,dgGain=null,dgStopTimer=null;
 let diagnostic={status:'Sin iniciar',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
 function drawDiagnostic(){
-  $('diagEngine').textContent='Disponible';
+  $('diagEngine').textContent='Reconocimiento en directo';
   $('diagState').textContent=(dgSocket?.readyState===1?'Conectado · ':'')+diagnostic.status;$('diagError').textContent=diagnostic.error||'Sin errores';
   $('diagPpm').textContent=liveValue===null?'Sin estimación':`${Math.round(liveValue)} ppm provisionales`;
   $('diagWords').textContent=String(countWords(liveText()));$('diagText').textContent=liveText()||'Sin texto';
@@ -37,7 +37,7 @@ async function startDeepgram(token){
   diagnostic.status='Preparando reconocimiento en directo';drawDiagnostic();
   let accessToken;
   try{
-    const response=await fetch('/api/deepgram-token',{method:'POST',headers:{'Accept':'application/json'},cache:'no-store',signal:AbortSignal.timeout(5000)});
+    const response=await fetch('/api/deepgram-token',{method:'POST',cache:'no-store',headers:{'Accept':'application/json','Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(5000)});
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.access_token)throw Error(data.error||'No se pudo obtener acceso temporal');
     accessToken=data.access_token;
@@ -172,6 +172,7 @@ function showProcessing(step,detail,percent=null){
 }
 // Yield before short synchronous calculations so the new phase can paint.
 const paintProcessing=()=>new Promise(resolve=>setTimeout(resolve,0));
+const practicingState=next=>['recording','stopping','processing'].includes(next);
 function setState(next) {
   const wasProcessing=['stopping','processing'].includes(state);
   state = next;
@@ -188,7 +189,9 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
-  $('targetMin').disabled = $('targetMax').disabled = $('presetSelect').disabled = $('populationSelect').disabled = busy();
+  $('targetMin').disabled = $('targetMax').disabled = $('populationSelect').disabled = $('taskSelect').disabled = busy();
+  $('liveDiagnostic').hidden=practicingState(next);
+  if(practicingState(next))$('liveDiagnostic').open=false;
   document.body.dataset.session=next;
   const practicing=next==='recording';
   $('patientPanel').hidden=!practicing;
@@ -293,57 +296,9 @@ function tick() {
     $('feedbackValue').textContent='No hay texto nuevo desde hace más de 5 s. No podemos distinguir una pausa de un retraso del reconocimiento.';
   }
 }
-function startRecognition(token) {
-  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  liveSupported = !!Recognition;
-  if (!Recognition) {
-    $('liveNotice').textContent = 'Sin reconocimiento en directo en este navegador. Puedes grabar y obtener el análisis final; prueba Chrome o Edge para el directo.';
-    return;
-  }
-  const instance = new Recognition(); recognition = instance;
-  instance.onstart=()=>{diagnostic.status='Escuchando';if(state==='recording')tick();};
-  instance.lang = 'es-ES'; instance.continuous = true; instance.interimResults = true;
-  instance.onresult = event => {
-    if (token !== session || !['recording','stopping'].includes(state)) return;
-    finalText = ''; interimText = '';
-    for (const result of event.results) {
-      if (result.isFinal) finalText += result[0].transcript + ' ';
-      else interimText += result[0].transcript + ' ';
-    }
-    // Arrival times only; never reused for final word timestamps.
-    const arrival=(performance.now()-started)/1000;
-    if(liveText()!==lastReceivedText){lastLiveUpdate=arrival;lastReceivedText=liveText();noteLiveResult();diagnostic.status='Resultado recibido';}
-    tracker.update(liveText(), arrival);
-    tick();
-  };
-  let blocked = false;
-  instance.onerror = event => {
-    if (token !== session) return;
-    diagnostic.status='Error del navegador';diagnostic.error=event.error;
-    $('liveNotice').textContent = `Reconocimiento en directo: ${event.error}. El audio sigue grabándose.`;
-    if (['not-allowed','service-not-allowed','audio-capture','network'].includes(event.error)) {
-      blocked = true; liveSupported = false; tick();
-    }
-  };
-  instance.onend = () => {
-    if (token !== session) return;
-    diagnostic.status='Reconocimiento terminó / reiniciando';
-    completedRecognition += finalText; finalText = ''; interimText = '';
-    tracker.update(liveText(), (performance.now() - started) / 1000);
-    if (state === 'recording' && !blocked) {
-      try { instance.start(); } catch {
-        liveSupported = false; tick();
-        $('liveNotice').textContent = 'El reconocimiento se ha detenido; el audio continúa grabándose.';
-      }
-    }
-  };
-  try { instance.start(); } catch {
-    liveSupported = false;
-    $('liveNotice').textContent = 'No se inició el reconocimiento. El análisis final utilizará el audio grabado.';
-  }
-}
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
+  const task=$('taskSelect').value;
   stopPlayback(); setState('starting'); const token = ++session;
   stopDeepgram();activeEngine='deepgram';dgWords=new DeepgramWords();liveSupported=true;
   diagnostic={status:'Iniciando',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};
@@ -362,7 +317,7 @@ async function startRecording() {
     recorder = activeRecorder; const chunks = [];
     activeRecorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
     activeRecorder.onerror = () => {
-      clearInterval(clock); recognition?.abort();stopDeepgram(); releaseMic();
+      clearInterval(clock); stopDeepgram(); releaseMic();
       setState('error'); setStatus('La grabación falló.');
     };
     activeRecorder.onstop = async () => {
@@ -370,7 +325,7 @@ async function startRecording() {
       if (token !== session) return;
       const provisional=stoppedSnapshot||snapshotLive();
       attachAudio(new Blob(chunks, { type: activeRecorder.mimeType }));
-      samples[selected].provisional=provisional; samples[selected].target={...target};samples[selected].liveEngine=activeEngine;
+      samples[selected].provisional=provisional; samples[selected].target={...target};samples[selected].liveEngine=activeEngine;samples[selected].task=task;
       renderTherapy(); await analyzeFinal();
     };
     activeRecorder.start(1000); started = performance.now();
@@ -388,7 +343,6 @@ function stopRecording() {
   const old=samples[selected];const temporary={provisional,target:{...target}};
   samples[selected]=temporary;renderTherapy();samples[selected]=old;
   setState('stopping'); setStatus('Finalizando grabación…');
-  try { recognition?.stop(); } catch { /* Recording must stop even if recognition fails. */ }
   recorder.stop();
 }
 async function decodeAudio(blob) {
@@ -543,6 +497,7 @@ function drawAllCharts() {
 function selectSample(slot) {
   if (busy()) return;
   selected=slot;$('sampleSelect').value=String(slot);clearLive();showAudio();
+  if(samples[slot]?.target){target={...samples[slot].target};$('targetMin').value=String(target.min);$('targetMax').value=String(target.max);$('taskSelect').value=samples[slot].task||'custom';updateGoalDisplay();}
   setState(samples[slot]?.result?'done':'idle');renderSelected();renderComparison();
   setStatus(`Muestra ${slot?'B':'A'} seleccionada`);
 }
@@ -579,7 +534,7 @@ $('retryBtn').addEventListener('click',analyzeFinal);
 $('fileInput').addEventListener('change',async event=>{
   const file=event.target.files[0];if(!file||busy())return;
   const goal=readTarget();if(!goal){event.target.value='';return;}target=goal;
-  ++session;clearLive();attachAudio(file);samples[selected].target={...target};samples[selected].liveEngine=activeEngine;$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
+  ++session;clearLive();attachAudio(file);samples[selected].target={...target};samples[selected].liveEngine=activeEngine;samples[selected].task=$('taskSelect').value;$('liveTranscript').textContent='Archivo importado: sin transcripción en directo.';
   await analyzeFinal();event.target.value='';
 });
 $('themeSwitch').addEventListener('click',()=>{document.body.dataset.theme=document.body.dataset.theme==='dark'?'light':'dark';drawAllCharts();});
@@ -588,7 +543,7 @@ $('professionalDetails').addEventListener('toggle',drawAllCharts);
 $('professionalArea').addEventListener('toggle',drawAllCharts);
 $('comparisonPanel').addEventListener('toggle',drawAllCharts);
 window.addEventListener('beforeunload',()=>{
-  clearInterval(clock);recognition?.abort();stopDeepgram();releaseMic();worker?.terminate();
+  clearInterval(clock);stopDeepgram();releaseMic();worker?.terminate();
   for(const sample of samples)if(sample)URL.revokeObjectURL(sample.url);
 });
 function updateGoalDisplay() {
@@ -596,19 +551,18 @@ function updateGoalDisplay() {
   $('goalDisplay').textContent=min>0&&max>min?`${min}–${max} ppm`:'Elige un objetivo';
 }
 function applyPreset() {
-  const preset=therapyPresets[$('presetSelect').value];
-  if(preset){$('targetMin').value=String(preset.min);$('targetMax').value=String(preset.max);}
+  const preset=therapyPresets[$('taskSelect').value];
+  if(preset && $('populationSelect').value!=='child'){$('targetMin').value=String(preset.min);$('targetMax').value=String(preset.max);}
   updateGoalDisplay();
 }
-$('presetSelect').addEventListener('change',applyPreset);
+$('taskSelect').addEventListener('change',applyPreset);
 $('populationSelect').addEventListener('change',()=>{
   const child=$('populationSelect').value==='child';
-  for(const option of $('presetSelect').options)option.disabled=child&&option.value!=='custom';
-  $('presetSelect').value=child?'custom':'conversation';
   if(child){$('targetMin').value='';$('targetMax').value='';document.querySelector('.goal-details').open=true;}
   $('referenceNotice').textContent=child?'No se aplica una referencia adulta. Define el objetivo de esta tarea con el logopeda.':'Referencia descriptiva P10–P90: 60 adultos de 21–30 años de Puerto Rico. Incluye pausas; no son límites diagnósticos ni referencias para España, niños o ventanas de 15 s.';
-  applyPreset();
+  if(!child)applyPreset();else updateGoalDisplay();
 });
-for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',()=>{$('presetSelect').value='custom';updateGoalDisplay();});
+for(const id of ['targetMin','targetMax'])$(id).addEventListener('input',updateGoalDisplay);
 updateGoalDisplay();
 setState('idle');renderComparison();drawAllCharts();renderTherapy();feedback(null);
+

@@ -66,15 +66,12 @@
 <details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p>
 <a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a><div class="goal-setup">
 <label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option>
-<option value="child">Niño / adolescente · objetivo personalizado</option></select><label for="presetSelect">Tarea</label><select id="presetSelect"><option value="conversation">Conversación · 120–187 ppm</option>
-<option value="reading">Lectura · 120–161 ppm</option>
-<option value="description">Descripción de imágenes · 67–158 ppm</option>
-<option value="custom">Personalizado</option></select>
+<option value="child">Niño / adolescente · objetivo personalizado</option></select>
 </div></details><div class="button-row">
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
-<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
+<p class="hint">El reconocimiento en directo envía voz a un servicio externo. El análisis final se realiza en este dispositivo.</p><p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
 <p class="label">Tiempo de grabación</p>
@@ -172,3 +169,4 @@
 <div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
 </body>
 </html>
+
