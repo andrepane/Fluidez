@@ -31,3 +31,14 @@ class VoiceTests(unittest.TestCase):
     def test_reject_bad_format_limits_duration(self):
         for raw,low,high in [(b'garbage',75,600),(wav(np.zeros(16000)),float('nan'),600),(wav(np.zeros(16000),8000),75,600),(wav(np.zeros(121*16000)),75,600),(wav(np.zeros(16000))[:-100],75,600)]:
             with self.assertRaises(ValueError):analyze_wav(raw,low,high)
+
+    def test_quiet_voice_and_glide_preserve_known_frequency(self):
+        t=np.arange(32000)/16000
+        quiet=analyze_wav(wav(.006*np.sin(2*np.pi*200*t)))
+        self.assertLess(abs(np.median([p['hz'] for p in quiet['points'] if p['hz']])-200),1)
+        phase=2*np.pi*(120*t+32.5*t*t)
+        glide=analyze_wav(wav(.3*np.sin(phase)))
+        errors=[abs(p['hz']-(120+65*p['time'])) for p in glide['points'] if p['hz']]
+        self.assertLess(np.median(errors),1)
+        self.assertTrue(all(0<=p['periodicity']<=1 for p in glide['points']))
+        self.assertEqual(glide['signal']['clippedFraction'],0)
