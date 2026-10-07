@@ -4,7 +4,7 @@ No se han realizado nuevos benchmarks con micrófono real en esta PR. No se afir
 
 ## Flujo en Preview
 
-Configurar ambas variables y Firewall según README. Probar código incorrecto/ausente (sin emisión de token), correcto, permisos denegados, conexión interrumpida durante habla, silencio, voz baja y dos muestras consecutivas. Comprobar que el paciente solo ve el medidor y Terminar; que al detener aparece la tarjeta inmediatamente; que audio/resumen observado sobreviven al error del final; que A/B restaura tarea y objetivo y permite escuchar intervalos. Importar audio sin código y verificar que el análisis local funciona.
+Configurar API key y Firewall según README. Probar arranque público sin contraseña, API key ausente, permisos denegados, conexión interrumpida durante habla, silencio, voz baja y dos muestras consecutivas. Comprobar que el paciente solo ve el medidor y Terminar; que al detener aparece la tarjeta inmediatamente; que audio/resumen observado sobreviven al error del final; que A/B restaura tarea y objetivo y permite escuchar intervalos. Importar audio y verificar que el análisis local funciona.
 
 ## Medición técnica sin cambiar motores
 
