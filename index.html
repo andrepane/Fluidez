@@ -57,7 +57,6 @@
 <label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
 </div>
 <p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
-<label for="accessCode">Código de acceso al directo</label><input id="accessCode" type="password" autocomplete="off" maxlength="256" placeholder="Código del profesional"><p class="hint">Permite utilizar el reconocimiento en directo, que envía voz a un servicio externo. No es la clave de Deepgram y no se guarda al cerrar la pestaña.</p>
 <div class="button-row">
 <label for="taskSelect">Tarea</label><select id="taskSelect"><option value="conversation">Conversación</option>
 <option value="reading">Lectura</option>
@@ -72,7 +71,7 @@
 <label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
 <option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
 </div>
-<p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
+<p class="hint">El reconocimiento en directo envía voz a un servicio externo. El análisis final se realiza en este dispositivo.</p><p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
 <div class="metrics">
 <div class="metric">
 <p class="label">Tiempo de grabación</p>
