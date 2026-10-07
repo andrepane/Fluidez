@@ -553,7 +553,7 @@ async function saveLocalSession(){
  catch(error){setStatus(error.message);}finally{sessionIO=false;setState(state);}
 }
 async function openLocalSession(file){
- if(busy()||sessionIO||!file)return;sessionIO=true;$('sessionInput').disabled=true;$('recordBtn').disabled=true;$('fileInput').disabled=true;$('sampleSelect').disabled=true;$('saveSession').disabled=true;
+ if(busy()||sessionIO||!file)return;sessionIO=true;setState(state);
  try{const restored=await parseSession(file,intervalWidth());const slot=selected;stopPlayback();attachAudio(restored.blob);const local=samples[slot];Object.assign(local,restored);dgWords=new DeepgramWords();diagnostic={status:'Sesión recuperada · sin conexión en directo',error:'',lastResult:null,cadence:null,age:null,onset:null,delay:null,pause:'Sin evento del servicio'};clearLive();sessionIO=false;selectSample(slot);setStatus(`Sesión abierta en ${slot?'B':'A'} sin retranscribir. ${restored.result?'Resultado final recuperado.':'Solo resumen provisional; análisis final pendiente.'}`);}
  catch(error){setStatus(error.message);}finally{sessionIO=false;$('sessionInput').value='';setState(state);}
 }
