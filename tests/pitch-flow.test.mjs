@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+import {PitchDetector} from '../vendor/pitchy-4.1.0.mjs';
+import * as data from '../pitch-data.mjs';
+function harness({denied=false,serverError=false}={}){
+ const nodes=new Map();const get=id=>{if(!nodes.has(id))nodes.set(id,{value:id==='pitchFloor'?'75':id==='pitchCeiling'?'600':'',hidden:false,disabled:false,textContent:'',width:1000,height:300,currentTime:0,duration:NaN,events:{},children:[],addEventListener(k,f){this.events[k]=f;},replaceChildren(...v){this.children=v;},append(v){this.children.push(v);},pause(){},removeAttribute(k){delete this[k];},getContext(){return {clearRect(){},beginPath(){},moveTo(){},lineTo(){},stroke(){},fillText(){}};}});return nodes.get(id);};
+ let tick,stopped=0,closed=0,requests=0,finish,now=0;
+ const stream={getTracks:()=>[{stop(){stopped++;}}]};
+ class AudioContext{sampleRate=48000;resume(){return Promise.resolve();}close(){closed++;return Promise.resolve();}createAnalyser(){return {fftSize:4096,getFloatTimeDomainData(b){for(let i=0;i<b.length;i++)b[i]=.3*Math.sin(2*Math.PI*200*i/48000);}};}createMediaStreamSource(){return {connect(){}};}decodeAudioData(){return Promise.resolve({duration:1});}}
+ class OfflineAudioContext{createBufferSource(){return {connect(){},start(){}};}startRendering(){return Promise.resolve({getChannelData:()=>new Float32Array(16000)});}}
+ class MediaRecorder{mimeType='audio/webm';state='inactive';start(){this.state='recording';}stop(){this.state='inactive';this.ondataavailable({data:new Blob(['audio'])});finish=this.onstop();}}
+ const document={getElementById:get,body:{dataset:{session:'done'}},createElement:()=>({textContent:'',children:[],append(n){this.children.push(n);}})};
+ const window={AudioContext,MediaRecorder,addEventListener(){}};
+ const source=readFileSync(new URL('../pitch-controller.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
+ vm.runInNewContext(source,{document,window,navigator:{mediaDevices:{getUserMedia:async()=>{if(denied)throw Error('Permission denied');return stream;}}},OfflineAudioContext,MediaRecorder,Float32Array,Blob,AbortController,URL:{createObjectURL:()=> 'blob:test',revokeObjectURL(){}},performance:{now:()=>now},setInterval:f=>{tick=f;return 1;},clearInterval(){},setTimeout:()=>1,clearTimeout(){},fetch:async()=>{requests++;return {ok:!serverError,status:503,json:async()=>({source:'Praat/Parselmouth',version:'0.4.7',praatVersion:'6.1.38',method:'raw autocorrelation',duration:1,points:[{time:.1,hz:200},{time:.2,hz:null}]})};},PitchDetector,...data});
+ return {get,document,click:async id=>{await get(id).events.click();},tick(){now+=60;tick();},finish:()=>finish,stopped:()=>stopped,closed:()=>closed,requests:()=>requests};
+}
+test('tone record/stop retains audio, runs independent final analysis and releases mic',async()=>{const h=harness();await h.click('pitchRecord');assert.equal(h.document.body.dataset.session,'recording');assert.equal(h.get('pitchStop').disabled,false);h.tick();assert.match(h.get('pitchValue').textContent,/200 Hz/);assert.equal(h.requests(),0);await h.click('pitchStop');await h.finish();assert.equal(h.requests(),1);assert.equal(h.stopped(),1);assert.ok(h.closed()>=2);assert.equal(h.get('pitchAudio').src,'blob:test');assert.match(h.get('pitchChartSource').textContent,/Análisis final.*Praat 6.1.38/);assert.equal(h.document.body.dataset.session,'done');assert.equal(h.get('pitchRecord').disabled,false);});
+test('server failure leaves provisional curve and audio available with retry',async()=>{const h=harness({serverError:true});await h.click('pitchRecord');h.tick();await h.click('pitchStop');await h.finish();assert.match(h.get('pitchStatus').textContent,/no está disponible/);assert.match(h.get('pitchChartSource').textContent,/provisional/);assert.equal(h.get('pitchAudio').src,'blob:test');assert.equal(h.get('pitchRetry').disabled,false);assert.equal(h.get('pitchResults').hidden,false);});
+test('denied microphone returns to setup without sending audio',async()=>{const h=harness({denied:true});await h.click('pitchRecord');assert.equal(h.document.body.dataset.session,'done');assert.match(h.get('pitchStatus').textContent,/Permission denied/);assert.equal(h.requests(),0);assert.equal(h.get('pitchRecord').disabled,false);});
+test('invalid pitch bounds stop before microphone or upload',async()=>{const h=harness();h.get('pitchFloor').value='200';h.get('pitchCeiling').value='250';await h.click('pitchRecord');assert.match(h.get('pitchStatus').textContent,/Revisa los límites/);assert.equal(h.requests(),0);assert.equal(h.document.body.dataset.session,'done');});
