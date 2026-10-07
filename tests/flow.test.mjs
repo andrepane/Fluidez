@@ -217,3 +217,25 @@ test('task and target persist independently in samples and restore on selection'
  assert.equal(h.app.samples[0].task,'reading');h.app.selectSample(1);h.e('taskSelect').value='conversation';h.e('targetMin').value='100';h.e('targetMax').value='130';await h.app.startRecording();h.setTime(18000);h.app.stopRecording();await h.app.recorder().stopped;
  h.app.selectSample(0);assert.equal(h.e('taskSelect').value,'reading');assert.equal(h.e('targetMin').value,'120');h.app.selectSample(1);assert.equal(h.e('targetMin').value,'100');assert.equal(h.app.samples[1].task,'conversation');
 });
+
+
+test('result context restores sample task and goal and chart keeps target visible',async()=>{
+ const h=harness();h.app.attachAudio(blob());h.app.samples[0].task='reading';h.app.samples[0].target={min:120,max:161};await h.app.analyzeFinal();
+ assert.equal(h.e('professionalArea').hidden,false);assert.equal(h.e('resultTask').textContent,'Lectura');assert.equal(h.e('resultGoal').textContent,'Objetivo 120–161 ppm');assert.equal(h.e('resultDuration').textContent,'00:20');
+ assert.equal(h.app.chartLayouts.get('speedChart').goal.max,161);assert.ok(h.app.chartLayouts.get('speedChart').max>=161);
+ h.app.selectSample(1);assert.equal(h.e('professionalArea').hidden,true);h.app.selectSample(0);assert.equal(h.e('resultSample').textContent,'Muestra A');
+});
+test('temporal canvas click seeks real interval and playback updates displayed position',async()=>{
+ const h=harness();h.app.attachAudio(blob());await h.app.analyzeFinal();
+ h.e('speedChart').events.click({clientX:500,clientY:80});await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(h.e('playback').currentTime,15);assert.equal(h.e('playback').playCalls,1);
+ h.e('playback').currentTime=16;h.e('playback').events.timeupdate();assert.equal(h.e('listenPosition').textContent,'Escuchando 00:16 / 00:20');
+});
+test('results HTML prioritizes chart/audio and retains unique accessible technical IDs',()=>{
+ const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size);
+ assert.ok(html.indexOf('id="speedChart"')<html.indexOf('id="professionalDetails"'));
+ assert.ok(html.indexOf('id="playback"')<html.indexOf('id="therapySummary"'));
+ assert.ok(html.indexOf('id="therapySummary"')<html.indexOf('id="professionalDetails"'));
+ assert.match(html,/<section id="professionalArea"/);
+});
