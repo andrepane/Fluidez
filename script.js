@@ -37,7 +37,7 @@ async function startDeepgram(token){
   diagnostic.status='Preparando reconocimiento en directo';drawDiagnostic();
   let accessToken;
   try{
-    const response=await fetch('/api/deepgram-token',{method:'POST',cache:'no-store',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({accessCode:$('accessCode').value}),signal:AbortSignal.timeout(5000)});
+    const response=await fetch('/api/deepgram-token',{method:'POST',cache:'no-store',headers:{'Accept':'application/json','Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(5000)});
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.access_token)throw Error(data.error||'No se pudo obtener acceso temporal');
     accessToken=data.access_token;
@@ -189,7 +189,7 @@ function setState(next) {
   $('stopBtn').disabled = next !== 'recording';
   $('fileInput').disabled = $('sampleSelect').disabled = $('intervalSelect').disabled = busy();
   $('retryBtn').disabled = !samples[selected]?.blob || busy();
-  $('targetMin').disabled = $('targetMax').disabled = $('populationSelect').disabled = $('taskSelect').disabled = $('accessCode').disabled = busy();
+  $('targetMin').disabled = $('targetMax').disabled = $('populationSelect').disabled = $('taskSelect').disabled = busy();
   $('liveDiagnostic').hidden=practicingState(next);
   if(practicingState(next))$('liveDiagnostic').open=false;
   document.body.dataset.session=next;
@@ -298,7 +298,6 @@ function tick() {
 }
 async function startRecording() {
   const goal=readTarget();if(!goal)return;target=goal;
-  if(!$('accessCode').value.trim()){setStatus('Introduce el código de acceso para iniciar el directo. Puedes importar un audio sin código.');return;}
   const task=$('taskSelect').value;
   stopPlayback(); setState('starting'); const token = ++session;
   stopDeepgram();activeEngine='deepgram';dgWords=new DeepgramWords();liveSupported=true;
