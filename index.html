@@ -32,7 +32,36 @@
 </div>
 <p id="feedbackValue" class="sr-only">Esperando grabación</p>
 <p class="feedback-caveat">Estimación reciente del ritmo · puede actualizarse con un pequeño retraso</p>
-<button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><section id="therapySummary" hidden class="panel patient-summary"><h2 id="summaryTitle">Resumen de la práctica</h2>
+<button id="stopBtn" disabled>■ Terminar</button><p>Tiempo de grabación: <strong id="visibleTimer">00:00</strong></p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
+<div class="button-row">
+<label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
+</div>
+<p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
+<div class="button-row">
+<label for="taskSelect">Tarea</label><select id="taskSelect"><option value="conversation">Conversación</option>
+<option value="reading">Lectura</option>
+<option value="description">Descripción de imágenes</option>
+<option value="custom">Otra tarea</option></select>
+</div>
+<details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p>
+<a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a><div class="goal-setup">
+<label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option>
+<option value="child">Niño / adolescente · objetivo personalizado</option></select>
+</div></details><div class="button-row">
+<label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
+<option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
+</div>
+<p class="hint">El reconocimiento en directo envía voz a un servicio externo. El análisis final se realiza en este dispositivo.</p><p id="statusText" role="status">Listo para grabar</p></details><section id="professionalArea" class="panel results-workspace" hidden aria-labelledby="resultsTitle">
+<div class="results-header"><div><p class="eyebrow">Escucha · observa · compara</p><h2 id="resultsTitle">El ritmo de tu muestra</h2></div><span id="analysisTag" class="tag">Sin análisis</span></div>
+<div class="sample-context"><span id="resultSample">Muestra A</span><span id="resultTask">Tarea pendiente</span><span id="resultDuration">—</span><span id="resultGoal">Objetivo —</span></div>
+<div class="result-overview"><div><span>Velocidad media global · con pausas</span><strong id="wpm">—</strong><small>Análisis automático del audio completo</small></div><p>Una media puede ocultar cambios de ritmo. Explora los intervalos y escucha qué ocurrió en cada momento.</p></div>
+<section class="pattern-section" aria-labelledby="patternTitle"><div class="pattern-heading"><div><h3 id="patternTitle">Cómo cambió el ritmo</h3><p class="hint">Selecciona una barra para escuchar ese tramo.</p></div><label for="intervalSelect">Tramos <select id="intervalSelect"><option value="15">15 segundos</option><option value="10">10 segundos</option><option value="30">30 segundos</option></select></label></div>
+<div class="chart-legend"><span class="legend-bars">Velocidad por tramo</span><span class="legend-goal">Objetivo de esta muestra</span><span class="legend-mean">Media global</span></div>
+<p id="chartNotice" class="hint">Intervalos reales según marcas por palabra.</p><canvas id="speedChart" height="320" aria-label="Gráfico temporal de velocidad; alternativa accesible en tabla de tramos" role="img"></canvas>
+<div class="listen-panel"><div><strong id="listenPosition">Escucha la muestra</strong><span class="hint">El cursor sigue la reproducción.</span></div><audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a></div>
+<p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p>
+<details class="segment-details"><summary>Tramos: escuchar con teclado y ver recuentos</summary><div class="table-wrap"><table><thead><tr><th>Tramo</th><th>Palabras</th><th>Palabras/min</th></tr></thead><tbody id="segmentRows"></tbody></table></div></details></section>
+<section id="therapySummary" hidden class="panel patient-summary"><h2 id="summaryTitle">Resumen de la práctica</h2>
 <p id="summarySource">Aún no hay muestra.</p>
 <div class="therapy-cards">
 <div>Dentro del objetivo<strong id="targetPercent">—</strong>
@@ -52,111 +81,11 @@
 <div class="timeline-axis">
 <span>Inicio</span><span id="timelineEnd">Final</span>
 </div>
-<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section><details id="setupPanel" class="panel" open=""><summary>Configuración del logopeda</summary><h2 class="intro-title">Encuentra un ritmo cómodo.</h2>
-<div class="button-row">
-<label>Desde <input id="targetMin" type="number" min="1" max="1000" value="120"> ppm</label><label>Hasta <input id="targetMax" type="number" min="1" max="1000" value="187"> ppm</label>
-</div>
-<p class="hint">Elige el objetivo para esta tarea. Las referencias poblacionales son una ayuda opcional, no el ritmo correcto del paciente.</p>
-<div class="button-row">
-<label for="taskSelect">Tarea</label><select id="taskSelect"><option value="conversation">Conversación</option>
-<option value="reading">Lectura</option>
-<option value="description">Descripción de imágenes</option>
-<option value="custom">Otra tarea</option></select>
-</div>
-<details class="goal-details"><summary>Ajustar objetivo / ver referencias</summary><p id="referenceNotice" class="hint">Referencia descriptiva: percentiles 10–90 de 60 adultos de 21–30 años de Puerto Rico. Incluye pausas. No son límites de normalidad, ni objetivos terapéuticos prescritos, ni referencias para niños. Fuera del rango no significa trastorno. La ventana reciente de 15 s no equivale a una muestra completa del estudio.</p>
-<a href="https://www.researchgate.net/publication/276411717_SPEECH_RATE_OF_NON-STUTTERING_SPANISH-SPEAKING_ADULTS" target="_blank" rel="noopener">Fuente: Carlo (2007), tabla 5 · rango redondeado</a><div class="goal-setup">
-<label for="populationSelect">Persona</label><select id="populationSelect"><option value="adult">Adulto · referencia orientativa</option>
-<option value="child">Niño / adolescente · objetivo personalizado</option></select>
-</div></details><div class="button-row">
-<label for="sampleSelect">Muestra</label><select id="sampleSelect"><option value="0">A</option>
-<option value="1">B</option></select><button id="recordBtn">● Empezar práctica</button><label class="file-upload"><input id="fileInput" type="file" accept="audio/*"><span>Subir audio</span></label><button id="retryBtn" disabled>Reintentar análisis final</button>
-</div>
-<p class="hint">El reconocimiento en directo envía voz a un servicio externo. El análisis final se realiza en este dispositivo.</p><p id="statusText" role="status">Listo para grabar</p></details><details id="professionalArea" class="panel"><summary>Detalles para el profesional · audio, resultados y comparación</summary><details><summary>Biofeedback en directo</summary><p id="liveNotice" class="hint"></p>
-<div class="metrics">
-<div class="metric">
-<p class="label">Tiempo de grabación</p>
-<p id="timer" class="value">00:00</p>
-</div>
-<div class="metric">
-<p class="label">Velocidad estimada · media acumulada</p>
-<p id="liveSpeed" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Palabras provisionales</p>
-<p id="liveCount" class="value">—</p>
-</div>
-</div>
-<div class="metric">
-<p class="label">Velocidad reciente estimada · últimos 15 s</p>
-<p id="recentSpeed" class="value">—</p>
-</div>
-<h2>Transcripción en directo</h2>
-<p id="liveTranscript" class="transcript">La transcripción aparecerá al hablar.</p></details><div>Media global · con pausas<strong id="therapyMean">—</strong>
-</div>
-<div>Pausas / silencio estimados<strong id="therapyPauseInfo">—</strong>
-</div>
-<section class="panel"><div class="results-header">
-<h2>Audio y resultado final</h2>
-<span id="analysisTag" class="tag">Sin análisis</span>
-</div>
-<audio id="playback" controls></audio><a id="downloadAudio" hidden>Descargar audio</a><p id="finalNotice" role="status" class="hint">El audio se conserva temporalmente en esta pestaña.</p>
-<details id="professionalDetails"><summary>Detalles para el profesional · análisis final</summary><div class="metrics">
-<div class="metric">
-<p class="label">Duración total</p>
-<p id="totalDuration" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Palabras reconocidas</p>
-<p id="wordCount" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Velocidad media · incluye pausas</p>
-<p id="wpm" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Actividad acústica estimada</p>
-<p id="speechDuration" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Silencio estimado</p>
-<p id="silenceDuration" class="value">—</p>
-</div>
-<div class="metric">
-<p class="label">Pausas internas ≥ 0,5 s</p>
-<p id="pauseCount" class="value">—</p>
-</div>
-</div>
-<h2>Velocidad a lo largo de la muestra</h2>
-<label for="intervalSelect">Intervalos</label> <select id="intervalSelect"><option value="15">15 segundos</option>
-<option value="10">10 segundos</option>
-<option value="30">30 segundos</option></select><p id="chartNotice" class="hint">Intervalos reales según marcas por palabra. Pulsa una barra o un tramo de la tabla para escucharlo.</p>
-<canvas id="speedChart" height="260" aria-label="Gráfico temporal de velocidad" role="img"></canvas><div class="table-wrap"><table>
-<thead><tr>
-<th>Tramo</th>
-<th>Palabras</th>
-<th>Palabras/min</th>
-</tr></thead>
-<tbody id="segmentRows"></tbody>
-</table></div>
-<h2>Pausas detectadas</h2>
-<p id="pauses" class="hint">—</p>
-<h2>Transcripción final automática</h2>
-<p id="finalTranscript" class="transcript">Pendiente del reprocesamiento del audio.</p>
-<p class="tiny">Resultado final significa procesamiento terminado, no exactitud clínica validada. Las palabras y sus tiempos pueden contener errores. Las pausas se estiman por energía acústica, no identifican bloqueos ni distinguen todas las fuentes de sonido.</p></details></section>
-<details class="panel" id="comparisonPanel"><summary>Comparar dos muestras</summary><h2>Comparar muestras A y B</h2>
-<p id="comparisonNotice" class="hint">Analiza una muestra en A y otra en B. Se conservan en esta pestaña.</p>
-<div class="table-wrap"><table>
-<thead><tr>
-<th>Medida</th>
-<th>Muestra A</th>
-<th>Muestra B</th>
-</tr></thead>
-<tbody id="comparisonRows"></tbody>
-</table></div>
-<h3>Muestra A · azul</h3>
-<canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas><h3>Muestra B · violeta</h3>
-<canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas><p class="hint">Mismos ejes en segundos y palabras/minuto. Los espacios tras el final de una muestra corta no representan silencio. Pulsa un tramo para escucharlo. Compara muestras de tareas y condiciones similares; la app no interpreta mejoría ni empeoramiento.</p></details><section class="panel"><h2>Procesamiento</h2>
-<p class="hint">El biofeedback en directo utiliza reconocimiento automático en tiempo real. El análisis final se realiza de forma independiente en este dispositivo. La primera vez puede ser necesario descargar el modelo de análisis. No cierres la pestaña hasta descargar el audio si quieres conservarlo.</p></section></details><details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
+<p class="hint">Estimación de la práctica. El gris indica pausas probables o periodos sin estimación.</p></section>
+<details id="comparisonPanel" class="comparison-panel"><summary>Comparar dos muestras</summary><p id="comparisonNotice" class="hint"></p><div class="comparison-grid"><section><h3>Muestra A · azul</h3><p id="compareContextA" class="hint"></p><canvas id="chartA" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra A"></canvas></section><section><h3>Muestra B · violeta</h3><p id="compareContextB" class="hint"></p><canvas id="chartB" class="comparison-chart" height="260" role="img" aria-label="Velocidad temporal de muestra B"></canvas></section></div><p class="hint">Mismos ejes. Cada banda corresponde al objetivo guardado de esa muestra; no es una referencia de normalidad. Pulsa un tramo para escucharlo. No se interpreta mejoría ni empeoramiento.</p><details><summary>Comparación numérica</summary><div class="table-wrap"><table><thead><tr><th>Medida</th><th>Muestra A</th><th>Muestra B</th></tr></thead><tbody id="comparisonRows"></tbody></table></div></details></details>
+<details id="professionalDetails" class="result-details"><summary>Detalles para el profesional · transcripción, pausas y mediciones</summary><div class="metrics"><div class="metric"><p class="label">Duración total</p><p id="totalDuration" class="value">—</p></div><div class="metric"><p class="label">Palabras reconocidas</p><p id="wordCount" class="value">—</p></div><div class="metric"><p class="label">Actividad acústica estimada</p><p id="speechDuration" class="value">—</p></div><div class="metric"><p class="label">Silencio estimado</p><p id="silenceDuration" class="value">—</p></div><div class="metric"><p class="label">Pausas internas ≥ 0,5 s</p><p id="pauseCount" class="value">—</p></div></div><h3>Pausas detectadas · estimación acústica</h3><p id="pauses" class="hint">—</p><h3>Transcripción final automática</h3><p id="finalTranscript" class="transcript"></p><p class="tiny">Final significa procesamiento terminado, no exactitud clínica validada. Las palabras y sus tiempos pueden contener errores. Las pausas por energía no identifican bloqueos ni todas las fuentes de sonido.</p><details><summary>Registro provisional del directo</summary><p id="liveNotice" class="hint"></p><div class="metrics"><div class="metric">Duración<strong id="timer">00:00</strong></div><div class="metric">Media acumulada<strong id="liveSpeed">—</strong></div><div class="metric">Palabras<strong id="liveCount">—</strong></div><div class="metric">Velocidad reciente<strong id="recentSpeed">—</strong></div></div><p id="liveTranscript" class="transcript"></p><p>Media provisional: <strong id="therapyMean">—</strong> · Pausas/silencio del final: <strong id="therapyPauseInfo">—</strong></p></details></details>
+<p class="storage-note">Las muestras solo permanecen en esta pestaña. Descarga el audio antes de cerrarla.</p></section>
+<details id="liveDiagnostic" class="panel"><summary>Diagnóstico técnico</summary><p class="hint">Información avanzada para comprobación técnica. No es necesaria para utilizar Fluidez+ en sesión.</p>
 <p><strong>Servicio de directo: </strong><span id="diagEngine">Disponible</span></p>
 <p><strong>Conexión/estado: </strong><span id="diagState">Sin iniciar</span></p>
 <p><strong>PPM recientes: </strong><span id="diagPpm">—</span></p>
@@ -169,4 +98,5 @@
 <div id="diagText" class="transcript">Sin texto</div></details></main><script type="module" src="script.js"></script>
 </body>
 </html>
+
 
