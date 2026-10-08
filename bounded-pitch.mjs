@@ -3,6 +3,7 @@ import {Autocorrelator} from './vendor/pitchy-4.1.0.mjs';
 // search range. Late peaks supported by very few samples must not choose F0.
 export class BoundedPitchDetector {
  constructor(size){this.correlation=Autocorrelator.forFloat32Array(size);this.ac=new Float32Array(size);this.nsdf=new Float32Array(size);}
+ clarityAt(period){const i=Math.round(period);return i>0&&i<this.nsdf.length?Math.max(0,Math.min(1,this.nsdf[i])):0;}
  findPitch(samples,rate,floor,ceiling,relativeThreshold=.98){
   this.correlation.autocorrelate(samples,this.ac);
   let denominator=2*this.ac[0];
