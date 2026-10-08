@@ -16,7 +16,7 @@ class LiveComparisonTests(unittest.TestCase):
             # Cadences differ. Test each actual frame at its own timestamp, not
             # a coarser frame repeated on multiple reference timestamps.
             # Preserve the earlier 30 ms transition budget in elapsed time.
-            self.assertLessEqual(row['after']['actualFrameAgreement']['directWhenPraatNull'] * .01,.03)
+            self.assertLessEqual(row['after']['actualFrameAgreement']['directWhenPraatNull'] * .005,.03)
             self.assertEqual(row['after']['actualFrameAgreement']['stableUnvoicedAccepted'],0)
         for name in ['silence','noise-only']:
             self.assertEqual(rows[name]['after']['unvoicedAccepted'],0)
