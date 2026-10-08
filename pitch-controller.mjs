@@ -1,3 +1,4 @@
+import {comparePitchCurves} from './pitch-comparison.mjs';
 import {SPECTRAL_CONFIG,SpectralRaster} from './spectrogram.mjs';
 import {LiveAnalysisClient} from './live-analysis-client.mjs';
 import {contiguousRuns,curveSegments,VisualClock,movingWindow,LIVE_WINDOW_SECONDS,VISUAL_DELAY,revealedTip} from './live-curve.mjs';
@@ -162,7 +163,9 @@ async function finalAnalysis(){
  try{
   const res=await fetch('/api/voice-analysis',{method:'POST',headers:{'Content-Type':'audio/wav','X-Pitch-Floor':String(limits.floor),'X-Pitch-Ceiling':String(limits.ceiling)},body:prepared,signal:aborter.signal});
   if(!res.ok)throw Error(res.status===503?'El motor Praat no está disponible en este despliegue.':res.status===429?'El servidor está ocupado. Espera un poco antes de reintentar.':`El análisis final no se ha completado (${res.status}).`);
-  const result=validateFinal(await res.json());points=result.points;duration=result.duration;sourceKind='final';
+  const result=validateFinal(await res.json());
+  if(sourceKind==='live'&&liveEngine?.diagnostic){const comparison=comparePitchCurves(points,result.points);$('pitchDiagnosticReport').textContent=JSON.stringify({...liveEngine.report(),sameAudioComparison:comparison},null,2);}
+  points=result.points;duration=result.duration;sourceKind='final';
   $('pitchSignalNotice').textContent=result.signal?.clippedFraction>.01?'Hay muestras cercanas al límite digital. Repite con menor ganancia o más distancia al micrófono.':'La periodicidad del detector no garantiza una F0 correcta. El ruido y los armónicos pueden producir errores.';
   summary(`Análisis final · Praat ${result.praatVersion} / Parselmouth ${result.version} · ${result.method} · pasos de 10 ms`);
   status(points.some(p=>p.hz!==null)?'Análisis final terminado. Escucha la muestra siguiendo la curva.':'Análisis terminado sin tono estimable. Revisa la señal y los límites de búsqueda.');
@@ -225,7 +228,7 @@ async function stop(){
  const length=chunks.reduce((n,c)=>n+c.length,0);if(!length){busy=false;document.body.dataset.session='done';view('setup');controls();status('No se capturó audio. Vuelve a intentarlo.');return;}
  const raw=new Float32Array(length);let offset=0;for(const c of chunks){raw.set(c,offset);offset+=c.length;}chunks=[];
  duration=length/rate;setAudio(new Blob([wav16(raw,rate)],{type:'audio/wav'}));
- summary('Resumen provisional · Pitchy en directo · pendiente de Praat');
+ summary('Resumen provisional · McLeod/NSDF en directo · pendiente de Praat');
  if(incomplete){busy=false;document.body.dataset.session='done';controls();status('No se confirmó el final de la captura. Conservamos un WAV que podría estar incompleto; no se envía automáticamente a Praat.');return;}
  processing('Preparando tu muestra…');
  try{const ready=await prepare(blob);prepared=ready.wav;await finalAnalysis();}
