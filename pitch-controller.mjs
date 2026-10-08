@@ -14,7 +14,7 @@ let windowSeconds=LIVE_WINDOW_SECONDS;
 let spectral=null,raster=null;
 let stream,context,capture,silent,autoStop,aborter,flushResolve;
 let points=[],chunks=[],blob,audioURL,prepared,busy=false,recording=false,rate=48000,duration=0;
-let limits={floor:75,ceiling:600},task='Habla espontánea',sourceKind='none',lastPlotTime=0,captureComplete=false;
+let limits={floor:50,ceiling:1000},task='Habla espontánea',sourceKind='none',lastPlotTime=0,captureComplete=false;
 let replaceTarget=null;
 let attempts=[null,null],selected=0,chartSource='',exerciseText='',mode='free',guide={low:130,high:250,duration:4};
 const adaptive=new AdaptiveScale();
