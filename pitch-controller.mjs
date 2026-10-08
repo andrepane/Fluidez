@@ -1,6 +1,6 @@
 import {SPECTRAL_CONFIG,SpectralRaster} from './spectrogram.mjs';
 import {LiveAnalysisClient} from './live-analysis-client.mjs';
-import {contiguousRuns,curveSegments,VisualClock,movingWindow,VISUAL_DELAY,revealedTip} from './live-curve.mjs';
+import {contiguousRuns,curveSegments,VisualClock,movingWindow,LIVE_WINDOW_SECONDS,VISUAL_DELAY,revealedTip} from './live-curve.mjs';
 import {visualPoints,referencePoints,AdaptiveScale,comparisonExtent} from './prosody.mjs';
 import {MAX_SECONDS,validLimits,summarize,wav16,validateFinal,plotRange,timeAtX,nearestPoint} from './pitch-data.mjs';
 const $=id=>document.getElementById(id);
@@ -42,7 +42,7 @@ function nextSlot(){
 function ready(){
  if(busy)return;
  $('pitchAudio').pause();spectral=null;raster=null;points=[];duration=0;prepared=null;blob=null;sourceKind='none';chartSource='';
- view('setup');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Preparado';$('pitchBadge').textContent='Práctica libre';$('pitchInstruction').textContent='Empieza a hablar cuando quieras.';$('pitchWorkspaceLabel').textContent='Tu curva de entonación';$('pitchHover').textContent='Últimos 8 segundos durante la práctica · estimación provisional';processing(null);status('Preparado para grabar.');configurationChanged();controls();draw();
+ view('setup');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Preparado';$('pitchBadge').textContent='Práctica libre';$('pitchInstruction').textContent='Empieza a hablar cuando quieras.';$('pitchWorkspaceLabel').textContent='Tu curva de entonación';$('pitchHover').textContent='Últimos 3 segundos durante la práctica · estimación provisional';processing(null);status('Preparado para grabar.');configurationChanged();controls();draw();
 }
 function paintDiagnostic(){if(!liveEngine?.diagnostic)return;$('pitchDiagnosticReport').textContent=JSON.stringify(liveEngine.report(),null,2);}
 function status(text){$('pitchStatus').textContent=text;}
@@ -66,7 +66,7 @@ function draw(){
  const readyView=$('pitchSurface').dataset.view==='setup';
  const visible=readyView?[]:recording?[{points,duration}]:attempts.some(Boolean)?attempts.filter((a,i)=>a&&$('pitchShow'+i).checked):[{points,duration}];
  const visual=visualClock.at(performance.now()),windowRange=movingWindow(visual.clock);
- const end=readyView?8:recording?windowRange.end:comparisonExtent(attempts.some(Boolean)?attempts:[{duration}]),begin=recording?windowRange.begin:0,span=end-begin;
+ const end=readyView?LIVE_WINDOW_SECONDS:recording?windowRange.end:comparisonExtent(attempts.some(Boolean)?attempts:[{duration}]),begin=recording?windowRange.begin:0,span=end-begin;
  const reference=referencePoints(mode,guide.low,guide.high,guide.duration);
  const range=recording?{low:limits.floor,high:limits.ceiling}:plotRange([...visible.flatMap(a=>a.points),...reference],Math.min(limits.floor,...attempts.filter(Boolean).map(a=>a.limits.floor)),Math.max(limits.ceiling,...attempts.filter(Boolean).map(a=>a.limits.ceiling)));
  const x=t=>left+(t-begin)/span*(w-left-right),y=f=>h-bottom-Math.log2(f/range.low)/Math.log2(range.high/range.low)*(h-top-bottom);
@@ -208,7 +208,7 @@ async function start(){
   limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();liveEngine=new LiveAnalysisClient({onresult:analyzed,onerror:directError});await liveEngine.init(rate,limits,{diagnostic:$('pitchDiagnose').checked});latestAgeMs=Infinity;lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
   spectral={rate,config:SPECTRAL_CONFIG,hop:Math.round(rate*SPECTRAL_CONFIG.hopSeconds),columns:[]};raster=new SpectralRaster(spectral);points=[];chunks=[];duration=0;visualClock.reset();prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
   $('pitchAudio').pause();$('pitchAudio').removeAttribute('src');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Escuchando';$('pitchToneMarker').hidden=true;
-  $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent='Directo · últimos 8 segundos';$('pitchBadge').textContent='Estimación en directo';
+  $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent='Directo · últimos 3 segundos';$('pitchBadge').textContent='Estimación en directo';
   $('pitchChartSource').textContent='Provisional · Pitchy · procesamiento local separado';$('pitchHover').textContent='Observa cómo sube y baja tu tono. Los huecos no significan que lo estés haciendo mal.';
   recording=true;document.body.dataset.session='recording';view('recording');$('pitchWorkspace').scrollIntoView?.({block:'start',behavior:'smooth'});context.createMediaStreamSource(stream).connect(capture);
   status('Grabando WAV en tu dispositivo. El marcador es una estimación; no indica normalidad.');
