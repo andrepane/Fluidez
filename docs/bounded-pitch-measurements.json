@@ -1,0 +1,1701 @@
+[
+  {
+    "audio": "fall",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 2.231056219469544,
+      "p90Cents": 4.215508868896881,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 2.231056219469544,
+      "p90Cents": 4.215508868896881,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.07410902242731399,
+          "p10": 0.075286043908503,
+          "median": 0.07611364168490352,
+          "p90": 0.07682599649427123,
+          "max": 0.07800527750240242
+        },
+        "clarity": {
+          "min": 0.9995342542455621,
+          "p10": 0.9997026581567796,
+          "median": 0.9998451667499327,
+          "p90": 0.9999088278460001,
+          "max": 0.9999242877979434
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11544299999968644,
+          "p10": 0.11635500000011234,
+          "median": 0.11688600000024962,
+          "p90": 0.15696699999989505,
+          "max": 0.28133299999990413
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "female-quiet",
+    "duration": 8,
+    "before": {
+      "voicedReference": 482,
+      "unvoicedReference": 298,
+      "acceptedVoiced": 246,
+      "coverage": 0.5103734439834025,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 6.832221642847407,
+      "p90Cents": 33.736607552230105,
+      "octaveDisagreements": 0,
+      "nullTransitions": 30,
+      "longestDetectedRunSeconds": 0.4
+    },
+    "after": {
+      "voicedReference": 482,
+      "unvoicedReference": 298,
+      "acceptedVoiced": 264,
+      "coverage": 0.5477178423236515,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 7.3406622317868635,
+      "p90Cents": 38.58269299431028,
+      "octaveDisagreements": 0,
+      "nullTransitions": 29,
+      "longestDetectedRunSeconds": 0.4
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 398,
+      "accepted": 132,
+      "rejections": {
+        "low_energy": 187,
+        "confirmation": 22,
+        "accepted": 132,
+        "periodicity": 57
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 3.5285332584272715e-05,
+          "p10": 5.2636071374381525e-05,
+          "median": 0.0005355702923911131,
+          "p90": 0.0012610383584306577,
+          "max": 0.002967703488887711
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.7979422096735734,
+          "p90": 0.9657867157991419,
+          "max": 0.9958473381986049
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.019999999999999574,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000462,
+          "max": 0.020000000000000462
+        },
+        "cpuMs": {
+          "min": 0.17536500000005617,
+          "p10": 0.183556999999837,
+          "median": 0.18965499999967506,
+          "p90": 0.21207899999990332,
+          "max": 0.7794149999999718
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "female",
+    "duration": 8,
+    "before": {
+      "voicedReference": 482,
+      "unvoicedReference": 298,
+      "acceptedVoiced": 285,
+      "coverage": 0.5912863070539419,
+      "unvoicedAccepted": 1,
+      "unvoicedRate": 0.003355704697986577,
+      "medianCents": 7.047907370752142,
+      "p90Cents": 33.86767804705956,
+      "octaveDisagreements": 0,
+      "nullTransitions": 28,
+      "longestDetectedRunSeconds": 0.4
+    },
+    "after": {
+      "voicedReference": 482,
+      "unvoicedReference": 298,
+      "acceptedVoiced": 305,
+      "coverage": 0.6327800829875518,
+      "unvoicedAccepted": 1,
+      "unvoicedRate": 0.003355704697986577,
+      "medianCents": 7.367806776759278,
+      "p90Cents": 37.28358312962555,
+      "octaveDisagreements": 0,
+      "nullTransitions": 27,
+      "longestDetectedRunSeconds": 0.4
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 398,
+      "accepted": 153,
+      "rejections": {
+        "periodicity": 223,
+        "confirmation": 22,
+        "accepted": 153
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0017642666482516245,
+          "p10": 0.00263180358543772,
+          "median": 0.02677851487777575,
+          "p90": 0.06305191787071666,
+          "max": 0.14838517441479132
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.7979420887264421,
+          "p90": 0.9657867221542821,
+          "max": 0.9958474358213103
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.019999999999999574,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000462,
+          "max": 0.020000000000000462
+        },
+        "cpuMs": {
+          "min": 0.11501399999997375,
+          "p10": 0.11631600000009712,
+          "median": 0.11708700000008321,
+          "p90": 0.15215900000021065,
+          "max": 0.8730949999999211
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "harmonic",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 4.34514043705809e-05,
+      "p90Cents": 4.345140744587042e-05,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 4.34514043705809e-05,
+      "p90Cents": 4.345140744587042e-05,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.3596664295636545,
+          "p10": 0.3596664295636545,
+          "median": 0.3596664295636545,
+          "p90": 0.3596664295636545,
+          "max": 0.3596664295636545
+        },
+        "clarity": {
+          "min": 1,
+          "p10": 1,
+          "median": 1,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11538399999972171,
+          "p10": 0.1160650000001624,
+          "median": 0.11666599999989558,
+          "p90": 0.13731700000016644,
+          "max": 0.5086370000003626
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "intensity",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.021922693735617532,
+      "p90Cents": 0.5089375792650551,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.021922693735617532,
+      "p90Cents": 0.5089375792650551,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.006996077301253192,
+          "p10": 0.007038101965489018,
+          "median": 0.009767383567586186,
+          "p90": 0.06655708377201096,
+          "max": 0.07091419016223638
+        },
+        "clarity": {
+          "min": 0.9862965944188612,
+          "p10": 0.9959278453595011,
+          "median": 0.999995211767666,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.1154540000002271,
+          "p10": 0.11638499999980922,
+          "median": 0.11679599999979473,
+          "p90": 0.13178800000014235,
+          "max": 0.3174180000000888
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "male-quiet",
+    "duration": 8,
+    "before": {
+      "voicedReference": 496,
+      "unvoicedReference": 284,
+      "acceptedVoiced": 190,
+      "coverage": 0.38306451612903225,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 5.800250468096782,
+      "p90Cents": 27.044289738201474,
+      "octaveDisagreements": 0,
+      "nullTransitions": 35,
+      "longestDetectedRunSeconds": 0.28
+    },
+    "after": {
+      "voicedReference": 496,
+      "unvoicedReference": 284,
+      "acceptedVoiced": 232,
+      "coverage": 0.46774193548387094,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 6.731231874563204,
+      "p90Cents": 30.30773057620185,
+      "octaveDisagreements": 0,
+      "nullTransitions": 29,
+      "longestDetectedRunSeconds": 0.38
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 398,
+      "accepted": 120,
+      "rejections": {
+        "low_energy": 157,
+        "confirmation": 24,
+        "accepted": 120,
+        "periodicity": 97
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 2.7846051564705336e-06,
+          "p10": 8.056917350869896e-06,
+          "median": 0.001039279655814793,
+          "p90": 0.003270907579824165,
+          "max": 0.005502235142912583
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0.07184201616238607,
+          "median": 0.7678301410321027,
+          "p90": 0.9692820369775965,
+          "max": 0.9970561395445462
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.019999999999999574,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000462,
+          "max": 0.020000000000000462
+        },
+        "cpuMs": {
+          "min": 0.11474300000008952,
+          "p10": 0.11627600000019811,
+          "median": 0.11703699999998207,
+          "p90": 0.1613630000001649,
+          "max": 0.6661629999998695
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "male",
+    "duration": 8,
+    "before": {
+      "voicedReference": 499,
+      "unvoicedReference": 281,
+      "acceptedVoiced": 208,
+      "coverage": 0.4168336673346693,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 6.144504189712029,
+      "p90Cents": 29.64442035923213,
+      "octaveDisagreements": 0,
+      "nullTransitions": 36,
+      "longestDetectedRunSeconds": 0.28
+    },
+    "after": {
+      "voicedReference": 499,
+      "unvoicedReference": 281,
+      "acceptedVoiced": 252,
+      "coverage": 0.5050100200400801,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 6.9371812852076715,
+      "p90Cents": 33.44096506812574,
+      "octaveDisagreements": 0,
+      "nullTransitions": 30,
+      "longestDetectedRunSeconds": 0.38
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 398,
+      "accepted": 130,
+      "rejections": {
+        "low_energy": 45,
+        "periodicity": 198,
+        "confirmation": 25,
+        "accepted": 130
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0001392302596648135,
+          "p10": 0.0004028458670756923,
+          "median": 0.051963983130511184,
+          "p90": 0.16354537963519333,
+          "max": 0.2751117578183033
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0.07184203425918992,
+          "median": 0.7678300868870261,
+          "p90": 0.9692819773729517,
+          "max": 0.9970561376605954
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.019999999999999574,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000462,
+          "max": 0.020000000000000462
+        },
+        "cpuMs": {
+          "min": 0.11475300000029165,
+          "p10": 0.11609499999985928,
+          "median": 0.11686599999984537,
+          "p90": 0.16518900000028225,
+          "max": 0.6916519999999764
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "noise-0",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 0,
+      "coverage": 0,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 0,
+      "coverage": 0,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 0,
+      "rejections": {
+        "periodicity": 198
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0967858244058247,
+          "p10": 0.09796446719803996,
+          "median": 0.09989185941955372,
+          "p90": 0.1016569438945244,
+          "max": 0.10362775371292127
+        },
+        "clarity": {
+          "min": 0.47401254405887266,
+          "p10": 0.5017295842363744,
+          "median": 0.5221812269166647,
+          "p90": 0.5392947733130565,
+          "max": 0.5556517792134339
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11630499999955646,
+          "p10": 0.11671599999999671,
+          "median": 0.1179269999997814,
+          "p90": 0.1725299999998242,
+          "max": 1.0282900000001973
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "noise-10",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 284,
+      "coverage": 0.7473684210526316,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 5.875777866434836,
+      "p90Cents": 20.972409846375214,
+      "octaveDisagreements": 2,
+      "nullTransitions": 23,
+      "longestDetectedRunSeconds": 0.46
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 6.0272731154037125,
+      "p90Cents": 21.248433860813826,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.07244770420132579,
+          "p10": 0.07328130818960672,
+          "median": 0.07415205284189375,
+          "p90": 0.07509027827077554,
+          "max": 0.07589348887236717
+        },
+        "clarity": {
+          "min": 0.9023828140264023,
+          "p10": 0.9067697185207343,
+          "median": 0.911258987254304,
+          "p90": 0.9158164312583138,
+          "max": 0.9197655664097936
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11611499999980879,
+          "p10": 0.11640500000021348,
+          "median": 0.11690700000008292,
+          "p90": 0.16591999999991458,
+          "max": 1.0149799999999232
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "noise-20",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 1.6530541070606193,
+      "p90Cents": 3.7194774461703246,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 1.6530541070606193,
+      "p90Cents": 3.7194774461703246,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0699279008457865,
+          "p10": 0.07030491440200683,
+          "median": 0.07089931612913546,
+          "p90": 0.07167805739620094,
+          "max": 0.07193291741623029
+        },
+        "clarity": {
+          "min": 0.9892194857145704,
+          "p10": 0.9897317159124289,
+          "median": 0.9902036863737844,
+          "p90": 0.9907537114996989,
+          "max": 0.9912336895137992
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.1153439999998227,
+          "p10": 0.11586400000032882,
+          "median": 0.11651600000004692,
+          "p90": 0.14397699999972247,
+          "max": 0.2599209999998493
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "noise-only",
+    "duration": 4,
+    "before": {
+      "voicedReference": 0,
+      "unvoicedReference": 380,
+      "acceptedVoiced": 0,
+      "coverage": null,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "after": {
+      "voicedReference": 0,
+      "unvoicedReference": 380,
+      "acceptedVoiced": 0,
+      "coverage": null,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 0,
+      "rejections": {
+        "periodicity": 198
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0028809782152336718,
+          "p10": 0.002930366313977518,
+          "median": 0.0029975700982550844,
+          "p90": 0.0030470935095824733,
+          "max": 0.0031218617469004266
+        },
+        "clarity": {
+          "min": 0.06154415085883334,
+          "p10": 0.0659276405821754,
+          "median": 0.07580269430159253,
+          "p90": 0.0917866863315206,
+          "max": 0.11170767724550963
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.120832000000064,
+          "p10": 0.12202399999978297,
+          "median": 0.12322499999982028,
+          "p90": 0.19849900000008347,
+          "max": 0.947146999999859
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "pauses",
+    "duration": 4,
+    "before": {
+      "voicedReference": 233,
+      "unvoicedReference": 147,
+      "acceptedVoiced": 224,
+      "coverage": 0.9613733905579399,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 0.0006690666906104826,
+      "p90Cents": 0.0027777774220732743,
+      "octaveDisagreements": 0,
+      "nullTransitions": 4,
+      "longestDetectedRunSeconds": 0.58
+    },
+    "after": {
+      "voicedReference": 233,
+      "unvoicedReference": 147,
+      "acceptedVoiced": 224,
+      "coverage": 0.9613733905579399,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 0.0006690666906104826,
+      "p90Cents": 0.0027777774220732743,
+      "octaveDisagreements": 0,
+      "nullTransitions": 4,
+      "longestDetectedRunSeconds": 0.58
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 115,
+      "rejections": {
+        "confirmation": 4,
+        "accepted": 115,
+        "periodicity": 7,
+        "low_energy": 72
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.06996077327625759,
+          "p90": 0.071275874821766,
+          "max": 0.071275874821766
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.9999999470351696,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11506299999973635,
+          "p10": 0.11634499999991021,
+          "median": 0.11752699999988181,
+          "p90": 0.20022199999993973,
+          "max": 1.0854249999997592
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "quiet-tone",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.015834660847427597,
+      "p90Cents": 0.019786900726901358,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.015834660847427597,
+      "p90Cents": 0.019786900726901358,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0027984309101583837,
+          "p10": 0.0027984309101583837,
+          "median": 0.002820738373443994,
+          "p90": 0.0028510349774722352,
+          "max": 0.0028510349774722352
+        },
+        "clarity": {
+          "min": 0.9999999668866572,
+          "p10": 0.9999999668866572,
+          "median": 1,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11554400000022724,
+          "p10": 0.11603400000012698,
+          "median": 0.11725699999988137,
+          "p90": 0.19505400000025475,
+          "max": 0.4588709999998173
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "rapid",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 228,
+      "coverage": 0.6,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 5.67984489125433,
+      "p90Cents": 39.966300120838284,
+      "octaveDisagreements": 0,
+      "nullTransitions": 15,
+      "longestDetectedRunSeconds": 0.18
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 11.954469603009882,
+      "p90Cents": 53.04804432896984,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.07485090006948608,
+          "p10": 0.07532985890162637,
+          "median": 0.075879217080345,
+          "p90": 0.07669285239436477,
+          "max": 0.07793129170717772
+        },
+        "clarity": {
+          "min": 0.9480182918033259,
+          "p10": 0.9576347150102449,
+          "median": 0.9757877919218221,
+          "p90": 0.9989475178899901,
+          "max": 0.9997249256669138
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11562499999990905,
+          "p10": 0.11646500000006199,
+          "median": 0.11727699999983088,
+          "p90": 0.18019199999980628,
+          "max": 0.7160090000002128
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "rise",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 2.2189534358924297,
+      "p90Cents": 4.31013055688908,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 2.2189534358924297,
+      "p90Cents": 4.31013055688908,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.07439316609193344,
+          "p10": 0.07544814348301752,
+          "median": 0.07617664293054195,
+          "p90": 0.07690612696776081,
+          "max": 0.07800318311281053
+        },
+        "clarity": {
+          "min": 0.9995686999536105,
+          "p10": 0.9996983317624992,
+          "median": 0.9998488525758618,
+          "p90": 0.9999091508927515,
+          "max": 0.9999201328074109
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11547399999972185,
+          "p10": 0.11627499999985957,
+          "median": 0.11673599999994622,
+          "p90": 0.1689249999999447,
+          "max": 0.406753000000208
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "short-syllables",
+    "duration": 4,
+    "before": {
+      "voicedReference": 209,
+      "unvoicedReference": 171,
+      "acceptedVoiced": 152,
+      "coverage": 0.7272727272727273,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 0.0009029737769645044,
+      "p90Cents": 0.9189248655318341,
+      "octaveDisagreements": 0,
+      "nullTransitions": 18,
+      "longestDetectedRunSeconds": 0.08
+    },
+    "after": {
+      "voicedReference": 209,
+      "unvoicedReference": 171,
+      "acceptedVoiced": 152,
+      "coverage": 0.7272727272727273,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": 0.0009029737769645044,
+      "p90Cents": 0.9189248655318341,
+      "octaveDisagreements": 0,
+      "nullTransitions": 18,
+      "longestDetectedRunSeconds": 0.08
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 79,
+      "rejections": {
+        "confirmation": 20,
+        "accepted": 79,
+        "periodicity": 39,
+        "low_energy": 60
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.05111760659413103,
+          "p90": 0.07119186699926207,
+          "max": 0.071275874821766
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0,
+          "median": 0.8576957811384638,
+          "p90": 0.9999999735094136,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11559399999987363,
+          "p10": 0.1163259999998445,
+          "median": 0.11735700000008364,
+          "p90": 0.17511400000012145,
+          "max": 0.4720820000002277
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "silence",
+    "duration": 4,
+    "before": {
+      "voicedReference": 0,
+      "unvoicedReference": 380,
+      "acceptedVoiced": 0,
+      "coverage": null,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "after": {
+      "voicedReference": 0,
+      "unvoicedReference": 380,
+      "acceptedVoiced": 0,
+      "coverage": null,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": 0,
+      "medianCents": null,
+      "p90Cents": null,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 0
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 0,
+      "rejections": {
+        "low_energy": 198
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        },
+        "clarity": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11497300000019095,
+          "p10": 0.1158450000002631,
+          "median": 0.11672599999974409,
+          "p90": 0.17433200000004945,
+          "max": 0.35217099999999846
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "stable",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.0007151117664071116,
+      "p90Cents": 0.003075627713579139,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.0007151117664071116,
+      "p90Cents": 0.003075627713579139,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.07528687178539369,
+          "p10": 0.07528687178539369,
+          "median": 0.07581147819106235,
+          "p90": 0.07741374394047386,
+          "max": 0.07741374394047386
+        },
+        "clarity": {
+          "min": 0.9999998278986435,
+          "p10": 0.9999998278986435,
+          "median": 1,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.11519399999997404,
+          "p10": 0.11607499999990978,
+          "median": 0.11661600000024919,
+          "p90": 0.17561399999976857,
+          "max": 0.7319729999999254
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "audio": "very-quiet-tone",
+    "duration": 4,
+    "before": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.23791416124787163,
+      "p90Cents": 0.4951511679840619,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "after": {
+      "voicedReference": 380,
+      "unvoicedReference": 0,
+      "acceptedVoiced": 380,
+      "coverage": 1,
+      "unvoicedAccepted": 0,
+      "unvoicedRate": null,
+      "medianCents": 0.23791416124787163,
+      "p90Cents": 0.4951511679840619,
+      "octaveDisagreements": 0,
+      "nullTransitions": 0,
+      "longestDetectedRunSeconds": 3.8000000000000003
+    },
+    "diagnostic": {
+      "rate": 48000,
+      "config": {
+        "size": 2048,
+        "hopSeconds": 0.02,
+        "minimumClarity": 0.85,
+        "minimumRms": 0.0005,
+        "retentionSeconds": 0.06
+      },
+      "detector": "bounded McLeod/NSDF",
+      "searchRange": {
+        "floor": 75,
+        "ceiling": 600
+      },
+      "windows": 198,
+      "accepted": 197,
+      "rejections": {
+        "confirmation": 1,
+        "accepted": 197
+      },
+      "captureGaps": 0,
+      "series": {
+        "rms": {
+          "min": 0.0006996077275395959,
+          "p10": 0.0006996077275395959,
+          "median": 0.0007051845933609985,
+          "p90": 0.0007127587443680588,
+          "max": 0.0007127587443680588
+        },
+        "clarity": {
+          "min": 0.9999999668866572,
+          "p10": 0.9999999668866572,
+          "median": 1,
+          "p90": 1,
+          "max": 1
+        },
+        "intervalSeconds": {
+          "min": 0.019999999999999574,
+          "p10": 0.01999999999999999,
+          "median": 0.020000000000000018,
+          "p90": 0.020000000000000018,
+          "max": 0.02000000000000024
+        },
+        "cpuMs": {
+          "min": 0.1155349999999089,
+          "p10": 0.11603500000001077,
+          "median": 0.11690599999974438,
+          "p90": 0.18111199999975724,
+          "max": 0.3904979999997522
+        },
+        "deliveryAgeMs": {
+          "min": 0,
+          "p10": 0,
+          "median": 0,
+          "p90": 0,
+          "max": 0
+        }
+      }
+    }
+  }
+]
