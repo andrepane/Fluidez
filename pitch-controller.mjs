@@ -1,3 +1,4 @@
+import {contiguousRuns,curveSegments,VisualClock,movingWindow,VISUAL_DELAY} from './live-curve.mjs';
 import {visualPoints,referencePoints,AdaptiveScale,comparisonExtent} from './prosody.mjs';
 import {PitchDetector} from './vendor/pitchy-4.1.0.mjs';
 import {MAX_SECONDS,validLimits,summarize,wav16,validateFinal,centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD,plotRange,timeAtX,nearestPoint} from './pitch-data.mjs';
@@ -10,8 +11,9 @@ let limits={floor:75,ceiling:600},task='Habla espontánea',detector,tracker,roll
 let replaceTarget=null;
 let attempts=[null,null],selected=0,chartSource='',exerciseText='',mode='free',guide={low:130,high:250,duration:4};
 const adaptive=new AdaptiveScale();
-let scheduled=false;
-function scheduleDraw(){if(scheduled)return;scheduled=true;window.requestAnimationFrame(()=>{scheduled=false;draw();});}
+const visualClock=new VisualClock();
+let scheduled=false,lastAnimationKey=null;
+function scheduleDraw(){if(scheduled)return;scheduled=true;window.requestAnimationFrame(()=>{scheduled=false;const key=`${visualClock.at(performance.now()).clock}:${points.length}`;if(!recording||key!==lastAnimationKey){draw();lastAnimationKey=key;}if(recording&&!document.hidden)scheduleDraw();});}
 function saveAttempt(){
  attempts[selected]={points,duration,blob,prepared,limits:{...limits},task,sourceKind,chartSource,exerciseText,mode,guide:{...guide}};
  for(let i=0;i<2;i++)$('pitchAttempt'+i).disabled=busy||!attempts[i];
@@ -58,11 +60,10 @@ function draw(){
  const text=style.getPropertyValue('--muted').trim()||'#65736f',accent=style.getPropertyValue('--accent').trim()||'#237565',border=style.getPropertyValue('--border').trim()||'#dfe7e3';
  const readyView=$('pitchSurface').dataset.view==='setup';
  const visible=readyView?[]:recording?[{points,duration}]:attempts.some(Boolean)?attempts.filter((a,i)=>a&&$('pitchShow'+i).checked):[{points,duration}];
- const end=readyView?8:recording?Math.max(8,duration):comparisonExtent(attempts.some(Boolean)?attempts:[{duration}]),begin=recording?Math.max(0,end-8):0,span=end-begin;
+ const visual=visualClock.at(performance.now()),windowRange=movingWindow(visual.clock);
+ const end=readyView?8:recording?windowRange.end:comparisonExtent(attempts.some(Boolean)?attempts:[{duration}]),begin=recording?windowRange.begin:0,span=end-begin;
  const reference=referencePoints(mode,guide.low,guide.high,guide.duration);
- const recent=points.filter(p=>p.time>=begin);
- const target=plotRange([...recent,...reference],limits.floor,limits.ceiling);if(target.high/target.low<2){const center=Math.sqrt(target.low*target.high);target.low=Math.max(limits.floor,center/Math.sqrt(2));target.high=Math.min(limits.ceiling,center*Math.sqrt(2));}
- const range=recording?adaptive.update(target):plotRange([...visible.flatMap(a=>a.points),...reference],Math.min(limits.floor,...attempts.filter(Boolean).map(a=>a.limits.floor)),Math.max(limits.ceiling,...attempts.filter(Boolean).map(a=>a.limits.ceiling)));
+ const range=recording?{low:limits.floor,high:limits.ceiling}:plotRange([...visible.flatMap(a=>a.points),...reference],Math.min(limits.floor,...attempts.filter(Boolean).map(a=>a.limits.floor)),Math.max(limits.ceiling,...attempts.filter(Boolean).map(a=>a.limits.ceiling)));
  const x=t=>left+(t-begin)/span*(w-left-right),y=f=>h-bottom-Math.log2(f/range.low)/Math.log2(range.high/range.low)*(h-top-bottom);
  ctx.clearRect(0,0,w,h);ctx.font='12px system-ui';ctx.fillStyle=text;
  for(let i=0;i<=4;i++){
@@ -73,8 +74,13 @@ function draw(){
  ctx.save();ctx.beginPath();ctx.rect(left,top,w-left-right,h-top-bottom+6);ctx.clip();
  if(reference.length){ctx.strokeStyle='#8a6ba6';ctx.lineWidth=1.5;ctx.setLineDash([7,6]);ctx.beginPath();reference.forEach((p,i)=>{if(i)ctx.lineTo(x(p.time),y(p.hz));else ctx.moveTo(x(p.time),y(p.hz));});ctx.stroke();ctx.setLineDash([]);}
  for(const a of visible){
- ctx.strokeStyle=!recording&&a===attempts[1]?'#8a6ba6':accent;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.beginPath();let previous=null;
- const displayed=visualPoints(a.points.filter(p=>p.time>=begin&&p.time<=end),recording&&$('pitchSmooth').checked);
+ ctx.strokeStyle=!recording&&a===attempts[1]?'#8a6ba6':accent;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();let previous=null;
+ const displayed=visualPoints(a.points.filter(p=>p.time>=begin-.12&&p.time<=end),recording&&$('pitchSmooth').checked);
+ if(recording&&$('pitchRenderSmooth').checked){
+ ctx.save();ctx.beginPath();ctx.rect(left,top,Math.max(0,x(visual.reveal)-left),h-top-bottom);ctx.clip();ctx.beginPath();
+ for(const run of contiguousRuns(displayed)){ctx.moveTo(x(run[0].time),y(run[0].hz));for(const segment of curveSegments(run))ctx.bezierCurveTo(x(segment.c1.time),y(segment.c1.hz),x(segment.c2.time),y(segment.c2.hz),x(segment.to.time),y(segment.to.hz));}
+ ctx.stroke();ctx.restore();continue;
+ }
  for(const p of displayed){
   if(p.hz===null){previous=null;continue;}
   if(previous&&p.time-previous.time<.12)ctx.lineTo(x(p.time),y(p.hz));else ctx.moveTo(x(p.time),y(p.hz));
@@ -82,7 +88,7 @@ function draw(){
  }
  ctx.stroke();
  }
- if(recording&&points.at(-1)?.hz!==null&&points.at(-1)){const p=points.at(-1);ctx.beginPath();ctx.arc(x(p.time),y(p.hz),5,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();}
+ if(recording&&!$('pitchRenderSmooth').checked&&points.at(-1)?.hz!==null&&points.at(-1)){const p=points.at(-1);ctx.beginPath();ctx.arc(x(p.time),y(p.hz),5,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();}
  if(!recording&&!readyView&&$('pitchAudio').currentTime>0){const px=x($('pitchAudio').currentTime);ctx.strokeStyle=text;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,h-bottom);ctx.stroke();ctx.setLineDash([]);}
  ctx.restore();
  if(readyView||!visible.some(a=>a.points.some(p=>p.hz!==null))){ctx.fillStyle=text;ctx.textAlign='center';ctx.fillText(recording?'Esperando un tono estimable…':readyView?'Pulsa Empezar práctica y habla':'Sin F0 estimable en los intentos visibles',left+(w-left-right)/2,top+(h-top-bottom)/2);ctx.textAlign='left';}
@@ -143,7 +149,7 @@ function readConfiguration(){
 function captured(message){
  const data=message.data,samples=new Float32Array(data.audio);
  if(samples.length){
-  chunks.push(samples);duration=data.endFrame/rate;
+  chunks.push(samples);duration=data.endFrame/rate;visualClock.accept(duration,performance.now());
   if(samples.length>=rolling.length){rolling.set(samples.subarray(samples.length-rolling.length));fill=rolling.length;}
   else{rolling.copyWithin(0,samples.length);rolling.set(samples,rolling.length-samples.length);fill=Math.min(rolling.length,fill+samples.length);}
   if(fill===rolling.length){
@@ -176,10 +182,10 @@ async function start(){
   silent=context.createGain();silent.gain.value=0;capture.connect(silent);silent.connect(context.destination);
   limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();detector=PitchDetector.forFloat32Array(4096);detector.clarityThreshold=CANDIDATE_THRESHOLD;
   tracker=new LiveToneTracker();rolling=new Float32Array(4096);centered=new Float32Array(4096);fill=0;lastPlotTime=-1;
-  points=[];chunks=[];duration=0;prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
+  points=[];chunks=[];duration=0;visualClock.reset();prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
   $('pitchAudio').pause();$('pitchAudio').removeAttribute('src');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Escuchando';$('pitchToneMarker').hidden=true;
   $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent='Directo · últimos 8 segundos';$('pitchBadge').textContent='Estimación en directo';
-  $('pitchChartSource').textContent='Provisional · Pitchy · muestras de audio sin compresión';$('pitchHover').textContent=$('pitchSmooth').checked?'Últimos 8 s · suavizado visual: mediana causal de hasta 3 ventanas; las medidas conservan los valores originales.':'Últimos 8 s · valores detectados sin suavizado.';
+  $('pitchChartSource').textContent='Provisional · Pitchy · muestras de audio sin compresión';$('pitchHover').textContent=$('pitchSmooth').checked?'Últimos 8 s · modo animado: horizonte visual 100 ms; modo recto: sin búfer · suavizado visual: mediana causal de hasta 3 ventanas; las medidas conservan los valores originales.':'Últimos 8 s · modo animado: horizonte visual 100 ms; modo recto: sin búfer · valores detectados sin suavizado.';
   recording=true;document.body.dataset.session='recording';view('recording');context.createMediaStreamSource(stream).connect(capture);
   status('Grabando WAV en tu dispositivo. El marcador es una estimación; no indica normalidad.');
   autoStop=setTimeout(stop,(MAX_SECONDS-1)*1000);controls();draw();
@@ -231,6 +237,6 @@ $('pitchHome').addEventListener('click',()=>{if(!busy){$('pitchAudio').pause();$
 $('pitchChart').addEventListener('pointermove',hover);
 $('pitchChart').addEventListener('click',event=>{const time=hover(event);if(time!==undefined&&blob){$('pitchAudio').currentTime=Math.min(duration,time);$('pitchAudio').play().catch(()=>status('Pulsa reproducir para escuchar la muestra.'));draw();}});
 $('pitchChart').addEventListener('keydown',event=>{if(recording||!blob||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();$('pitchAudio').currentTime=Math.max(0,Math.min(duration,event.key==='Home'?0:event.key==='End'?duration:$('pitchAudio').currentTime+(event.key==='ArrowRight'?.5:-.5)));draw();});
-$('pitchAudio').addEventListener('timeupdate',draw);$('pitchAudio').addEventListener('loadedmetadata',draw);window.addEventListener('resize',draw);
+$('pitchAudio').addEventListener('timeupdate',draw);$('pitchAudio').addEventListener('loadedmetadata',draw);window.addEventListener('resize',draw);document.addEventListener('visibilitychange',()=>{if(recording&&!document.hidden)scheduleDraw();});
 window.addEventListener('pagehide',()=>{aborter?.abort();cleanupCapture();if(audioURL)URL.revokeObjectURL(audioURL);});
 ready();
