@@ -24,7 +24,15 @@ export class VisualClock{
  at(now){if(this.arrival===null)return {clock:0,reveal:0};const elapsed=Math.max(0,(now-this.arrival)/1000),candidate=this.audio+Math.min(.12,elapsed),clock=Math.max(this.lastClock,candidate);this.lastClock=clock;return {clock,reveal:Math.max(0,Math.min(this.audio,clock-VISUAL_DELAY))};}
 }
 export const LIVE_WINDOW_SECONDS=5;
-export function movingWindow(clock,seconds=LIVE_WINDOW_SECONDS){const end=Math.max(seconds,clock+.25);return {begin:end-seconds,end};}
+export const LIVE_WINDOW_OPTIONS=Object.freeze([.5,2,3,5,8,10]);
+export function liveWindowSeconds(value){const n=Number(value);return LIVE_WINDOW_OPTIONS.includes(n)?n:LIVE_WINDOW_SECONDS;}
+export function timeTicks(begin,end,width){
+ const span=end-begin,precision=span<=.5?2:span<10?1:0;let divisions=4;
+ const label=t=>`${t.toFixed(precision)} s`;
+ while(divisions>1&&width/divisions<Math.max(label(begin).length,label(end).length)*7+12)divisions--;
+ return Array.from({length:divisions+1},(_,i)=>({time:begin+span*i/divisions,label:label(begin+span*i/divisions),fraction:i/divisions,align:i===0?'left':i===divisions?'right':'center'}));
+}
+export function movingWindow(clock,seconds=LIVE_WINDOW_SECONDS){const end=Math.max(seconds,clock+Math.min(.25,seconds*.05));return {begin:end-seconds,end};}
 // Presentation only: evaluate an existing limited curve at the reveal horizon.
 // A null estimate terminates the marker; no extension beyond measured support.
 export function revealedTip(displayed,time){
