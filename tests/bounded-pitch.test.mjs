@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {BoundedPitchDetector} from '../bounded-pitch.mjs';
+import {LivePitchEngine} from '../live-pitch.mjs';
+import {previousLive,continuity} from '../scripts/benchmark-bounded-pitch.mjs';
+import {comparePitchCurves} from '../pitch-comparison.mjs';
+const limits={floor:75,ceiling:600};
+function noisyVowel(rate,seconds){let seed=173;return Float32Array.from({length:rate*seconds},(_,i)=>{seed=(1664525*seed+1013904223)>>>0;return .1*Math.sin(2*Math.PI*180*i/rate)+(seed/2**32-.5)*.07746;});}
+function live(x,rate){const e=new LivePitchEngine(rate,limits),points=[];for(let at=0;at<x.length;at+=960){const end=Math.min(x.length,at+960);points.push(...e.push(x.subarray(at,end),end));}return points;}
+for(const rate of [44100,48000])test('sustained periodic signal with noise has real continuous estimates at '+rate,()=>{const x=noisyVowel(rate,4),next=live(x,rate).filter(p=>p.time>.1&&p.time<3.9),old=previousLive(x,rate,limits).filter(p=>p.time>.1&&p.time<3.9);assert.ok(next.filter(p=>p.hz!==null).length/next.length>.95);assert.ok(next.filter(p=>p.hz!==null).every(p=>Math.abs(p.hz-180)<6));assert.ok(continuity(next).longestDetectedRunSeconds>3);assert.ok(old.filter(p=>p.hz===null).length>next.filter(p=>p.hz===null).length);});
+test('search restriction rejects out-of-range fundamental and exact silence',()=>{const d=new BoundedPitchDetector(2048);assert.deepEqual(d.findPitch(new Float32Array(2048),48000,75,600),[0,0]);const x=Float32Array.from({length:2048},(_,i)=>.1*Math.sin(2*Math.PI*60*i/48000));assert.deepEqual(d.findPitch(x,48000,75,600),[0,0]);});
+test('actual silence remains a hole between noisy sustained signals',()=>{const x=noisyVowel(48000,3);x.fill(0,48000,96000);const p=live(x,48000);assert.ok(p.filter(p=>p.time>1.1&&p.time<1.9).every(p=>p.hz===null));assert.ok(p.filter(p=>p.time>.1&&p.time<.9).every(p=>p.hz!==null));assert.ok(p.filter(p=>p.time>2.1&&p.time<2.9).every(p=>p.hz!==null));});
+test('same-audio comparison matches timestamps, counts missing windows, and does not interpolate',()=>{const live=[{time:.02,hz:100},{time:.04,hz:null},{time:.06,hz:200}],final=[{time:.02,hz:100},{time:.04,hz:110},{time:.06,hz:null},{time:1,hz:200}],copy=JSON.stringify([live,final]);const r=comparePitchCurves(live,final);assert.equal(r.referenceVoicedWindows,2);assert.equal(r.alsoDetectedLive,1);assert.equal(r.missingLive,1);assert.equal(r.liveWhenPraatNull,1);assert.equal(r.medianDifferenceCents,0);assert.equal(JSON.stringify([live,final]),copy);assert.equal(comparePitchCurves([],final).medianDifferenceCents,null);});
