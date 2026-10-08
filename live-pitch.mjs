@@ -1,13 +1,14 @@
+import {PitchEvidenceFilter} from './pitch-evidence-filter.mjs';
 import {AdaptiveEnergyGate} from './adaptive-energy.mjs';
 import {BoundedPitchDetector} from './bounded-pitch.mjs';
 import {centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD} from './pitch-data.mjs';
-export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.01,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:true,quietMinimumRms:.00005,quietClarity:.92,noiseRatio:3,recoverySeconds:.15,recoveryClarity:.92,confirmationSeconds:.03});
+export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.005,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:true,quietMinimumRms:.00005,quietClarity:.92,noiseRatio:3,recoverySeconds:.15,recoveryClarity:.92,confirmationSeconds:.03,jumpConfirmationSeconds:.04,filteredEvidence:true});
 const distribution=values=>{if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),q=p=>a[Math.round((a.length-1)*p)];return {min:a[0],p10:q(.1),median:q(.5),p90:q(.9),max:a.at(-1)};};
 export class LivePitchEngine{
  constructor(rate,limits,{diagnostic=false,now=()=>performance.now(),config=LIVE_CONFIG}={}){
   this.rate=rate;this.limits=limits;this.config=config;this.now=now;this.diagnostic=diagnostic;
   this.ring=new Float32Array(config.size);this.frame=new Float32Array(config.size);this.centered=new Float32Array(config.size);
-  this.detector=new BoundedPitchDetector(config.size);
+  this.detector=new BoundedPitchDetector(config.size);this.filteredDetector=config.filteredEvidence?new BoundedPitchDetector(config.size):null;this.evidenceFilter=config.filteredEvidence?new PitchEvidenceFilter(config.size,rate):null;
   this.energy=config.adaptiveEnergy?new AdaptiveEnergyGate(config):null;this.tracker=new LiveToneTracker(config);this.hop=Math.round(rate*config.hopSeconds);this.total=0;this.fill=0;this.at=0;
   this.blocks=0;this.receivedSamples=0;this.windows=0;this.candidates=0;this.accepted=0;this.lastTime=null;this.reasons={};this.series={rms:[],clarity:[],intervalSeconds:[],cpuMs:[],deliveryAgeMs:[],recoveryMs:[]};this.events=[];this.captureGaps=0;this.rendered=0;this.renderFrames=0;
  }
@@ -19,16 +20,18 @@ export class LivePitchEngine{
    if(this.fill<this.ring.length||this.total%this.hop!==0)continue;
    const start=this.now();for(let i=0;i<this.frame.length;i++)this.frame[i]=this.ring[(this.at+i)%this.ring.length];
    const frame=centerFrame(this.frame,this.centered),[candidate,clarity]=this.detector.findPitch(frame.samples,this.rate,this.limits.floor,this.limits.ceiling,CANDIDATE_THRESHOLD),time=(this.total-this.frame.length/2)/this.rate;
-   const energyThreshold=this.energy?.threshold(frame.rms,clarity,frame.clipped)??this.config.minimumRms;
-   const value=this.tracker.update(candidate,clarity,frame.rms,frame.clipped,time,this.limits.floor,this.limits.ceiling,energyThreshold),cpuMs=this.now()-start;
+   let selectedCandidate=candidate,selectedClarity=clarity,evidence='raw';
+   if(this.evidenceFilter){const filtered=this.evidenceFilter.process(frame.samples),[f,c]=this.filteredDetector.findPitch(filtered,this.rate,this.limits.floor,this.limits.ceiling,CANDIDATE_THRESHOLD);const rawSupport=f>0?this.detector.clarityAt(this.rate/f):0;if(c>=.85&&rawSupport>=.70&&(clarity<this.config.minimumClarity||c>clarity+.02)){selectedCandidate=f;selectedClarity=Math.min(c,rawSupport+.10);evidence='filtered';}}
+   const energyThreshold=this.energy?.threshold(frame.rms,selectedClarity,frame.clipped)??this.config.minimumRms;
+   const value=this.tracker.update(selectedCandidate,selectedClarity,frame.rms,frame.clipped,time,this.limits.floor,this.limits.ceiling,energyThreshold),cpuMs=this.now()-start;
    const point={time,hz:value.hz};output.push({...point,state:value.state});
-   this.windows++;if(Number.isFinite(candidate)&&candidate>0)this.candidates++;if(value.hz!==null)this.accepted++;
+   this.windows++;if(Number.isFinite(selectedCandidate)&&selectedCandidate>0)this.candidates++;if(value.hz!==null)this.accepted++;
    if(this.diagnostic){
     this.reasons[value.reason]=(this.reasons[value.reason]||0)+1;
     if(value.confirmationKind)this.reasons['confirmation_'+value.confirmationKind]=(this.reasons['confirmation_'+value.confirmationKind]||0)+1;
-    const readings={rms:frame.rms,clarity,intervalSeconds:this.lastTime===null?null:time-this.lastTime,cpuMs,deliveryAgeMs,recoveryMs:value.recoveryMs??null};
+    const readings={rms:frame.rms,clarity:selectedClarity,intervalSeconds:this.lastTime===null?null:time-this.lastTime,cpuMs,deliveryAgeMs,recoveryMs:value.recoveryMs??null};
     for(const [key,v] of Object.entries(readings))if(v!==null&&Number.isFinite(v)&&this.series[key].length<6500)this.series[key].push(v);
-    this.events.push({time,candidate:Number.isFinite(candidate)?candidate:null,accepted:value.hz,rms:frame.rms,clarity,reason:value.reason,confirmationKind:value.confirmationKind,energyThreshold,cpuMs});if(this.events.length>100)this.events.shift();
+    this.events.push({time,candidate:Number.isFinite(selectedCandidate)?selectedCandidate:null,evidence,accepted:value.hz,rms:frame.rms,clarity:selectedClarity,rawClarity:clarity,reason:value.reason,confirmationKind:value.confirmationKind,energyThreshold,cpuMs});if(this.events.length>100)this.events.shift();
    }
    this.lastTime=time;
   }
