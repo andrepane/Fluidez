@@ -50,3 +50,5 @@ body[data-session=stopping] .patient-summary,body[data-session=processing] .pati
 /* Experimental live curve, discreet frame and high-DPI Canvas backing. */
 .pitch-surface[data-view=recording] #pitchChart{background:var(--panel);box-shadow:inset 0 0 0 1px var(--border)}
 .pitch-chart-key{flex-wrap:wrap;line-height:1.5}
+
+#pitchDiagnosticReport{font-size:11px;line-height:1.5;max-height:350px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);padding:12px;border-radius:10px}
