@@ -7,7 +7,7 @@ import {compareMeasuredFrames} from '../pitch-comparison.mjs';
 import {continuity} from './benchmark-bounded-pitch.mjs';
 export const BEFORE_CONFIG=Object.freeze({size:2048,hopSeconds:.02,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:false,recoverySeconds:0});
 const quantile=(a,p)=>a.length?[...a].sort((a,b)=>a-b)[Math.round((a.length-1)*p)]:null;
-const variants={before:BEFORE_CONFIG,cadence30:{...BEFORE_CONFIG,hopSeconds:.03},recovery30:{...LIVE_CONFIG,adaptiveEnergy:false},after:LIVE_CONFIG};
+const variants={before:BEFORE_CONFIG,cadence30:{...BEFORE_CONFIG,hopSeconds:.03},recovery30:{...LIVE_CONFIG,hopSeconds:.03,adaptiveEnergy:false},after:LIVE_CONFIG};
 export function runSignal(samples,rate,config){const e=new LivePitchEngine(rate,{floor:75,ceiling:600},{diagnostic:true,config}),points=[],hop=Math.round(rate*config.hopSeconds);for(let at=0;at<samples.length;at+=hop){const end=Math.min(samples.length,at+hop);points.push(...e.push(samples.subarray(at,end),end));}return {e,points};}
 if(process.argv[1]===fileURLToPath(import.meta.url)&&process.argv[2]){
  const directory=process.argv[2],rows=[];

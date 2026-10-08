@@ -1,7 +1,7 @@
 import {AdaptiveEnergyGate} from './adaptive-energy.mjs';
 import {BoundedPitchDetector} from './bounded-pitch.mjs';
 import {centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD} from './pitch-data.mjs';
-export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.03,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:true,quietMinimumRms:.00005,quietClarity:.92,noiseRatio:3,recoverySeconds:.15,recoveryClarity:.92});
+export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.01,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:true,quietMinimumRms:.00005,quietClarity:.92,noiseRatio:3,recoverySeconds:.15,recoveryClarity:.92,confirmationSeconds:.03});
 const distribution=values=>{if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),q=p=>a[Math.round((a.length-1)*p)];return {min:a[0],p10:q(.1),median:q(.5),p90:q(.9),max:a.at(-1)};};
 export class LivePitchEngine{
  constructor(rate,limits,{diagnostic=false,now=()=>performance.now(),config=LIVE_CONFIG}={}){
