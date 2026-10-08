@@ -11,9 +11,12 @@ class LiveComparisonTests(unittest.TestCase):
         for name in ['male','female','male-quiet','female-quiet']:
             row=rows[name]
             self.assertGreater(row['after']['coverage'],row['before']['coverage']+.2)
-            self.assertLess(row['after']['p90Cents'],50)
+            self.assertLess(row['after']['actualFrameAgreement']['p90Cents'],50)
             self.assertEqual(row['after']['octaveDisagreements'],0)
-            self.assertLessEqual(row['after']['unvoicedAccepted'],1)
+            # Cadences differ. Test each actual frame at its own timestamp, not
+            # one 30 ms frame repeated on three 10 ms reference timestamps.
+            self.assertLessEqual(row['after']['actualFrameAgreement']['directWhenPraatNull'],1)
+            self.assertEqual(row['after']['actualFrameAgreement']['stableUnvoicedAccepted'],0)
         for name in ['silence','noise-only']:
             self.assertEqual(rows[name]['after']['unvoicedAccepted'],0)
             self.assertEqual(rows[name]['diagnostic']['accepted'],0)

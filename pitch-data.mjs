@@ -13,21 +13,25 @@ export function centerFrame(input, output=new Float32Array(input.length)) {
  return {samples:output,rms:Math.sqrt(sum/input.length),clipped:clipped/input.length};
 }
 export class LiveToneTracker {
- constructor({minimumClarity=.95,minimumRms=.002,retentionSeconds=0}={}){this.retentionSeconds=retentionSeconds;this.lastAccepted=-Infinity;this.hadRejection=false;this.minimumClarity=minimumClarity;this.minimumRms=minimumRms;this.previous=null;this.pending=null;this.lastTime=-1;}
- update(hz,clarity,rms,clipped,time,floor,ceiling){
+ constructor({minimumClarity=.95,minimumRms=.002,retentionSeconds=0,recoverySeconds=0,recoveryClarity=.92}={}){this.recoverySeconds=recoverySeconds;this.recoveryClarity=recoveryClarity;this.lastAcceptedHz=null;this.rejectionStart=null;this.retentionSeconds=retentionSeconds;this.lastAccepted=-Infinity;this.hadRejection=false;this.minimumClarity=minimumClarity;this.minimumRms=minimumRms;this.previous=null;this.pending=null;this.lastTime=-1;}
+ update(hz,clarity,rms,clipped,time,floor,ceiling,energyThreshold=this.minimumRms){
   if(time-this.lastTime>.25){this.previous=null;this.pending=null;}if(this.retentionSeconds>0&&this.hadRejection&&this.previous!==null&&time-this.lastAccepted>this.retentionSeconds+1e-9){this.previous=null;}this.lastTime=time;
-  const reject=state=>{this.hadRejection=true;this.pending=null;if(this.retentionSeconds===0||time-this.lastAccepted>this.retentionSeconds+1e-9||state==='Entrada al límite digital'||state==='Fuera del rango de búsqueda')this.previous=null;return {hz:null,state,reason:state==='Entrada al límite digital'?'digital_limit':state==='Señal muy débil o silencio'?'low_energy':state==='Fuera del rango de búsqueda'?'range':'periodicity'};};
+  const reject=state=>{if(this.rejectionStart===null&&Number.isFinite(this.lastAccepted))this.rejectionStart=time;if(state==='Entrada al límite digital'||state==='Fuera del rango de búsqueda'){this.lastAcceptedHz=null;}this.hadRejection=true;this.pending=null;if(this.retentionSeconds===0||time-this.lastAccepted>this.retentionSeconds+1e-9||state==='Entrada al límite digital'||state==='Fuera del rango de búsqueda')this.previous=null;return {hz:null,state,reason:state==='Entrada al límite digital'?'digital_limit':state==='Señal muy débil o silencio'?'low_energy':state==='Fuera del rango de búsqueda'?'range':'periodicity'};};
   if(clipped>.01)return reject('Entrada al límite digital');
-  if(rms<this.minimumRms)return reject('Señal muy débil o silencio');
+  if(rms<energyThreshold)return reject('Señal muy débil o silencio');
   if(!Number.isFinite(hz)||hz<=0||clarity<this.minimumClarity)return reject('Tono no estimable');
   if(hz<floor||hz>ceiling)return reject('Fuera del rango de búsqueda');
   this.hadRejection=false;
+  const accept=reason=>{const recoveryMs=this.rejectionStart===null?null:Math.max(0,(time-this.rejectionStart)*1000);this.rejectionStart=null;this.previous=hz;this.lastAcceptedHz=hz;this.lastAccepted=time;this.pending=null;return {hz,state:'Tono estimado',reason,recoveryMs};};
+  // A real current candidate can reacquire a recent close tone immediately.
+  // Missing points stay null; octave-family jumps still require confirmation.
+  if(this.previous===null&&this.lastAcceptedHz!==null&&this.recoverySeconds>0&&time-this.lastAccepted<=this.recoverySeconds+1e-9&&clarity>=this.recoveryClarity&&Math.abs(12*Math.log2(hz/this.lastAcceptedHz))<2)return accept('recovered');
   const jump=this.previous===null||Math.abs(12*Math.log2(hz/this.previous))>7;
   if(jump){
-   if(this.pending&&Math.abs(12*Math.log2(hz/this.pending))<2){this.previous=hz;this.lastAccepted=time;this.pending=null;return {hz,state:'Tono estimado',reason:'accepted'};}
-   this.pending=hz;return {hz:null,state:'Confirmando tono',reason:'confirmation'};
+   if(this.pending&&Math.abs(12*Math.log2(hz/this.pending))<2){return accept('accepted');}
+   this.pending=hz;return {hz:null,state:'Confirmando tono',reason:'confirmation',confirmationKind:this.previous===null?'onset':'jump'};
   }
-  this.previous=hz;this.lastAccepted=time;this.pending=null;return {hz,state:'Tono estimado',reason:'accepted'};
+  return accept('accepted');
  }
 }
 export function plotRange(points,floor,ceiling){const voiced=points.filter(p=>p.hz!==null&&Number.isFinite(p.hz)).map(p=>p.hz);if(!voiced.length)return {low:floor,high:ceiling};return {low:Math.max(floor,Math.min(...voiced)/1.25),high:Math.min(ceiling,Math.max(...voiced)*1.25)};}

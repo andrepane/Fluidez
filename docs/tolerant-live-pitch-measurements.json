@@ -1,0 +1,1010 @@
+{
+  "beforeMinimumClarity": 0.85,
+  "afterMinimumClarity": 0.8,
+  "rows": [
+    {
+      "audio": "fall",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.231056219469544,
+        "p90Cents": 4.215508868896881,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11547500000000355,
+          "p10": 0.11648600000000897,
+          "median": 0.13229099999999505,
+          "p90": 0.3437100000000015,
+          "max": 11.876771999999995
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.231056219469544,
+        "p90Cents": 4.215508868896881,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11630599999998026,
+          "p10": 0.11759800000001519,
+          "median": 0.11839999999997985,
+          "p90": 0.2313999999999794,
+          "max": 1.5832960000000185
+        }
+      }
+    },
+    {
+      "audio": "female-quiet",
+      "duration": 8,
+      "before": {
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 264,
+        "coverage": 0.5477178423236515,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 7.3406622317868635,
+        "p90Cents": 38.58269299431028,
+        "octaveDisagreements": 0,
+        "nullTransitions": 29,
+        "longestDetectedRunSeconds": 0.4,
+        "rejections": {
+          "low_energy": 187,
+          "confirmation": 22,
+          "accepted": 132,
+          "periodicity": 57
+        },
+        "cpuMs": {
+          "min": 0.11555500000000052,
+          "p10": 0.11641700000001265,
+          "median": 0.11820899999997891,
+          "p90": 0.1806139999999914,
+          "max": 0.4426300000000083
+        }
+      },
+      "after": {
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 286,
+        "coverage": 0.5933609958506224,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 7.642954052615333,
+        "p90Cents": 42.48477897735473,
+        "octaveDisagreements": 0,
+        "nullTransitions": 29,
+        "longestDetectedRunSeconds": 0.4,
+        "rejections": {
+          "low_energy": 187,
+          "confirmation": 20,
+          "accepted": 143,
+          "periodicity": 48
+        },
+        "cpuMs": {
+          "min": 0.1162960000000055,
+          "p10": 0.11751800000001822,
+          "median": 0.11863999999997077,
+          "p90": 0.16937599999999975,
+          "max": 0.40298899999999094
+        }
+      }
+    },
+    {
+      "audio": "female",
+      "duration": 8,
+      "before": {
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 305,
+        "coverage": 0.6327800829875518,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.003355704697986577,
+        "medianCents": 7.367806776759278,
+        "p90Cents": 37.28358312962555,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.4,
+        "rejections": {
+          "periodicity": 223,
+          "confirmation": 22,
+          "accepted": 153
+        },
+        "cpuMs": {
+          "min": 0.11518399999999929,
+          "p10": 0.11614600000001474,
+          "median": 0.11717700000002651,
+          "p90": 0.1480940000000146,
+          "max": 0.8613339999999994
+        }
+      },
+      "after": {
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 355,
+        "coverage": 0.7365145228215768,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.003355704697986577,
+        "medianCents": 7.843494053389629,
+        "p90Cents": 42.461549542490815,
+        "octaveDisagreements": 0,
+        "nullTransitions": 24,
+        "longestDetectedRunSeconds": 0.42,
+        "rejections": {
+          "periodicity": 201,
+          "confirmation": 19,
+          "accepted": 178
+        },
+        "cpuMs": {
+          "min": 0.11455400000005511,
+          "p10": 0.11529499999994641,
+          "median": 0.11651699999998755,
+          "p90": 0.1542440000000056,
+          "max": 0.5076480000000174
+        }
+      }
+    },
+    {
+      "audio": "harmonic",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11523399999998674,
+          "p10": 0.11581599999999526,
+          "median": 0.11640599999998358,
+          "p90": 0.17455499999999802,
+          "max": 0.5321450000000141
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11554499999999734,
+          "p10": 0.11635600000005297,
+          "median": 0.11690699999996923,
+          "p90": 0.16815500000001293,
+          "max": 1.6601220000000012
+        }
+      }
+    },
+    {
+      "audio": "intensity",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021922693735617532,
+        "p90Cents": 0.5089375792650551,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11523400000004358,
+          "p10": 0.11569500000001653,
+          "median": 0.11676599999998416,
+          "p90": 0.168104000000028,
+          "max": 0.3457329999999956
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021922693735617532,
+        "p90Cents": 0.5089375792650551,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11509399999999914,
+          "p10": 0.11597500000004857,
+          "median": 0.11643600000002152,
+          "p90": 0.16556100000002516,
+          "max": 0.38621499999999287
+        }
+      }
+    },
+    {
+      "audio": "male-quiet",
+      "duration": 8,
+      "before": {
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 232,
+        "coverage": 0.46774193548387094,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 6.731231874563204,
+        "p90Cents": 30.30773057620185,
+        "octaveDisagreements": 0,
+        "nullTransitions": 29,
+        "longestDetectedRunSeconds": 0.38,
+        "rejections": {
+          "low_energy": 157,
+          "confirmation": 24,
+          "accepted": 120,
+          "periodicity": 97
+        },
+        "cpuMs": {
+          "min": 0.11511500000005981,
+          "p10": 0.11621599999989485,
+          "median": 0.11716699999999491,
+          "p90": 0.17387300000007144,
+          "max": 0.44994099999996706
+        }
+      },
+      "after": {
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 288,
+        "coverage": 0.5806451612903226,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 9.166206226452388,
+        "p90Cents": 37.82849458044677,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.38,
+        "rejections": {
+          "low_energy": 157,
+          "confirmation": 23,
+          "accepted": 148,
+          "periodicity": 70
+        },
+        "cpuMs": {
+          "min": 0.11512400000003709,
+          "p10": 0.11629600000003393,
+          "median": 0.12241499999993266,
+          "p90": 0.1641580000000431,
+          "max": 0.6297930000000633
+        }
+      }
+    },
+    {
+      "audio": "male",
+      "duration": 8,
+      "before": {
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 252,
+        "coverage": 0.5050100200400801,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 6.9371812852076715,
+        "p90Cents": 33.44096506812574,
+        "octaveDisagreements": 0,
+        "nullTransitions": 30,
+        "longestDetectedRunSeconds": 0.38,
+        "rejections": {
+          "low_energy": 45,
+          "periodicity": 198,
+          "confirmation": 25,
+          "accepted": 130
+        },
+        "cpuMs": {
+          "min": 0.11491399999999885,
+          "p10": 0.11611600000003364,
+          "median": 0.11689699999999448,
+          "p90": 0.15361300000006395,
+          "max": 0.3615980000000718
+        }
+      },
+      "after": {
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 316,
+        "coverage": 0.6332665330661322,
+        "unvoicedAccepted": 2,
+        "unvoicedRate": 0.0071174377224199285,
+        "medianCents": 9.20098501097258,
+        "p90Cents": 39.38475049439315,
+        "octaveDisagreements": 0,
+        "nullTransitions": 28,
+        "longestDetectedRunSeconds": 0.38,
+        "rejections": {
+          "low_energy": 45,
+          "periodicity": 168,
+          "confirmation": 22,
+          "accepted": 163
+        },
+        "cpuMs": {
+          "min": 0.11499400000002424,
+          "p10": 0.1159860000000208,
+          "median": 0.11681599999997161,
+          "p90": 0.1573280000000068,
+          "max": 0.3951680000000124
+        }
+      }
+    },
+    {
+      "audio": "noise-0",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "periodicity": 198
+        },
+        "cpuMs": {
+          "min": 0.11585500000001048,
+          "p10": 0.11698699999999462,
+          "median": 0.11756800000000567,
+          "p90": 0.15695700000003399,
+          "max": 0.5148590000000013
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "periodicity": 198
+        },
+        "cpuMs": {
+          "min": 0.11606499999993503,
+          "p10": 0.11668699999995624,
+          "median": 0.11722699999995712,
+          "p90": 0.16131399999994755,
+          "max": 0.379263999999921
+        }
+      }
+    },
+    {
+      "audio": "noise-10",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.0272731154037125,
+        "p90Cents": 21.248433860813826,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11524399999996149,
+          "p10": 0.11583500000006097,
+          "median": 0.11636599999997088,
+          "p90": 0.14755300000001625,
+          "max": 0.484442999999942
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.0272731154037125,
+        "p90Cents": 21.248433860813826,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11528399999997418,
+          "p10": 0.11615600000004633,
+          "median": 0.11656600000003436,
+          "p90": 0.162996000000021,
+          "max": 0.44043699999997443
+        }
+      }
+    },
+    {
+      "audio": "noise-20",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6530541070606193,
+        "p90Cents": 3.7194774461703246,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.1151950000000852,
+          "p10": 0.11560499999995955,
+          "median": 0.11645599999997103,
+          "p90": 0.165911000000051,
+          "max": 2.550709999999981
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6530541070606193,
+        "p90Cents": 3.7194774461703246,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.1152550000000474,
+          "p10": 0.11605599999995775,
+          "median": 0.11639600000000883,
+          "p90": 0.13223999999991065,
+          "max": 0.5038129999999228
+        }
+      }
+    },
+    {
+      "audio": "noise-only",
+      "duration": 4,
+      "before": {
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "periodicity": 198
+        },
+        "cpuMs": {
+          "min": 0.12095300000009956,
+          "p10": 0.12195400000007339,
+          "median": 0.1228360000000066,
+          "p90": 0.15588600000000952,
+          "max": 0.359833999999978
+        }
+      },
+      "after": {
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "periodicity": 198
+        },
+        "cpuMs": {
+          "min": 0.12116300000002411,
+          "p10": 0.1217940000000226,
+          "median": 0.12270599999999376,
+          "p90": 0.15349200000002838,
+          "max": 0.6016799999999876
+        }
+      }
+    },
+    {
+      "audio": "pauses",
+      "duration": 4,
+      "before": {
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 224,
+        "coverage": 0.9613733905579399,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0006690666906104826,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.58,
+        "rejections": {
+          "confirmation": 4,
+          "accepted": 115,
+          "periodicity": 7,
+          "low_energy": 72
+        },
+        "cpuMs": {
+          "min": 0.11498400000004949,
+          "p10": 0.11633600000004662,
+          "median": 0.11685699999998178,
+          "p90": 0.1311480000000529,
+          "max": 0.3548170000000255
+        }
+      },
+      "after": {
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 230,
+        "coverage": 0.9871244635193133,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0006999970472440678,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.6,
+        "rejections": {
+          "confirmation": 4,
+          "accepted": 118,
+          "periodicity": 4,
+          "low_energy": 72
+        },
+        "cpuMs": {
+          "min": 0.1156149999999343,
+          "p10": 0.11626599999999598,
+          "median": 0.11687699999993129,
+          "p90": 0.1716000000000122,
+          "max": 0.4363099999999349
+        }
+      }
+    },
+    {
+      "audio": "quiet-tone",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.015834660847427597,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11535499999990861,
+          "p10": 0.11604600000009668,
+          "median": 0.11658599999987018,
+          "p90": 0.16836400000011054,
+          "max": 0.47448800000006486
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.015834660847427597,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11507400000004964,
+          "p10": 0.11614600000007158,
+          "median": 0.116696999999931,
+          "p90": 0.15756899999996676,
+          "max": 0.37328499999989617
+        }
+      }
+    },
+    {
+      "audio": "rapid",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 11.954469603009882,
+        "p90Cents": 53.04804432896984,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.115043999999898,
+          "p10": 0.11594599999989441,
+          "median": 0.11671599999999671,
+          "p90": 0.1678239999998823,
+          "max": 0.4025289999999586
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 11.954469603009882,
+        "p90Cents": 53.04804432896984,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11512400000015077,
+          "p10": 0.1154950000000099,
+          "median": 0.11640600000009727,
+          "p90": 0.1624460000000454,
+          "max": 0.44531400000005306
+        }
+      }
+    },
+    {
+      "audio": "rise",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.2189534358924297,
+        "p90Cents": 4.31013055688908,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11499400000002424,
+          "p10": 0.11603599999989456,
+          "median": 0.11644599999999627,
+          "p90": 0.1608730000000378,
+          "max": 0.5027600000000803
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.2189534358924297,
+        "p90Cents": 4.31013055688908,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11539399999992384,
+          "p10": 0.1162259999998696,
+          "median": 0.11671599999999671,
+          "p90": 0.1655510000000504,
+          "max": 0.3878069999998388
+        }
+      }
+    },
+    {
+      "audio": "short-syllables",
+      "duration": 4,
+      "before": {
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 152,
+        "coverage": 0.7272727272727273,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0009029737769645044,
+        "p90Cents": 0.9189248655318341,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.08,
+        "rejections": {
+          "confirmation": 20,
+          "accepted": 79,
+          "periodicity": 39,
+          "low_energy": 60
+        },
+        "cpuMs": {
+          "min": 0.11537499999985812,
+          "p10": 0.11638600000014776,
+          "median": 0.11735799999996743,
+          "p90": 0.1697470000001431,
+          "max": 0.5123250000001462
+        }
+      },
+      "after": {
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 190,
+        "coverage": 0.9090909090909091,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.003579860656956197,
+        "p90Cents": 0.4485461378386813,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.1,
+        "rejections": {
+          "confirmation": 20,
+          "accepted": 98,
+          "periodicity": 20,
+          "low_energy": 60
+        },
+        "cpuMs": {
+          "min": 0.11531399999989844,
+          "p10": 0.11584500000003572,
+          "median": 0.11700700000005781,
+          "p90": 0.15434400000003734,
+          "max": 0.3753480000000309
+        }
+      }
+    },
+    {
+      "audio": "silence",
+      "duration": 4,
+      "before": {
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "low_energy": 198
+        },
+        "cpuMs": {
+          "min": 0.11482299999988754,
+          "p10": 0.11581500000011147,
+          "median": 0.11652600000002167,
+          "p90": 0.16034300000001167,
+          "max": 0.821864000000005
+        }
+      },
+      "after": {
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "rejections": {
+          "low_energy": 198
+        },
+        "cpuMs": {
+          "min": 0.1147240000000238,
+          "p10": 0.11572499999988395,
+          "median": 0.11636599999997088,
+          "p90": 0.15127899999993133,
+          "max": 0.34596399999986716
+        }
+      }
+    },
+    {
+      "audio": "stable",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0007151117664071116,
+        "p90Cents": 0.003075627713579139,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11506400000007488,
+          "p10": 0.11589500000013686,
+          "median": 0.11626599999999598,
+          "p90": 0.1458109999998669,
+          "max": 0.5469080000000304
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0007151117664071116,
+        "p90Cents": 0.003075627713579139,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11519399999997404,
+          "p10": 0.11546500000008564,
+          "median": 0.11647599999992053,
+          "p90": 0.171188999999913,
+          "max": 2.586473999999953
+        }
+      }
+    },
+    {
+      "audio": "very-quiet-tone",
+      "duration": 4,
+      "before": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23791416124787163,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11566500000003543,
+          "p10": 0.11643600000002152,
+          "median": 0.11691700000005767,
+          "p90": 0.1610239999999976,
+          "max": 0.4608069999999316
+        }
+      },
+      "after": {
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23791416124787163,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "rejections": {
+          "confirmation": 1,
+          "accepted": 197
+        },
+        "cpuMs": {
+          "min": 0.11516400000004978,
+          "p10": 0.1156149999999343,
+          "median": 0.11644599999999627,
+          "p90": 0.1352039999999306,
+          "max": 0.578956000000062
+        }
+      }
+    }
+  ]
+}

@@ -24,7 +24,7 @@ test('known onset and pause share F0 window clock; noise has energy without pitc
 });
 for(const sex of ['male','female'])test('real connected reading '+sex+' preserves capture and F0, spectral activity',()=>{
  const wav=inflateSync(Buffer.from(readFileSync(new URL('./fixtures/reading-'+sex+'.wav.zlib.b64',import.meta.url),'utf8'),'base64'));let at=12,data;while(at<wav.length){const length=wav.readUInt32LE(at+4);if(wav.toString('ascii',at,at+4)==='data'){data=wav.subarray(at+8,at+8+length);break;}at+=8+length+(length%2);}const raw=Float32Array.from({length:data.length/2},(_,i)=>data.readInt16LE(i*2)/32768),x=signal(48000,raw.length/16000,t=>{const p=t*16000,i=Math.floor(p);return (raw[i]||0)*(1-(p-i))+(raw[i+1]||0)*(p-i);}),copy=x.slice();
- const baseline=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length),e=feed(x,48000),after=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length);assert.deepEqual(x,copy);assert.deepEqual(after,baseline);assert.ok(e.columns.some((c,i)=>baseline[i].hz===null&&Math.max(...c.values)>0));assert.ok(e.columns.length>390);
+ const baseline=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length),e=feed(x,48000),after=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length);assert.deepEqual(x,copy);assert.deepEqual(after,baseline);assert.ok(e.columns.some((c,i)=>baseline[i].hz===null&&Math.max(...c.values)>0));assert.ok(e.columns.length>260);
 });
 test('120-second storage bounded; raster appends only new columns and shared view clips',()=>{
  const e=feed(signal(48000,120,t=>.01*Math.sin(2*Math.PI*1000*t)),48000);assert.ok(e.columns.length<=6000);assert.ok(e.report().bytes<800000);let writes=0,draw;

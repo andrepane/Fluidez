@@ -1,0 +1,6451 @@
+{
+  "before": {
+    "size": 2048,
+    "hopSeconds": 0.02,
+    "minimumClarity": 0.8,
+    "minimumRms": 0.0005,
+    "retentionSeconds": 0.06,
+    "adaptiveEnergy": false,
+    "recoverySeconds": 0
+  },
+  "after": {
+    "size": 2048,
+    "hopSeconds": 0.03,
+    "minimumClarity": 0.8,
+    "minimumRms": 0.0005,
+    "retentionSeconds": 0.06,
+    "adaptiveEnergy": true,
+    "quietMinimumRms": 0.00005,
+    "quietClarity": 0.92,
+    "noiseRatio": 3,
+    "recoverySeconds": 0.15,
+    "recoveryClarity": 0.92
+  },
+  "rows": [
+    {
+      "audio": "break-then-octave",
+      "duration": 4,
+      "pcmSha256": "462895e215f684c7d15b2b32ccbfe5c23249f21da05df648cb0253c395460a19",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 186,
+          "bothVoiced": 183,
+          "matchedUnvoicedWindows": 2,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.007041547832739265,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 370,
+        "coverage": 0.9866666666666667,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0021069352780695816,
+        "p90Cents": 0.006954715793041478,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.82,
+        "knownPeriodic": {
+          "windows": 182,
+          "accepted": 182,
+          "coverage": 1,
+          "p90Cents": 0.0032020952149306218,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.0986666666666667,
+            "causalAvailabilityDelayMs": 60.00000000000006
+          }
+        ],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11587500000001683,
+          "p10": 0.1173469999999952,
+          "median": 0.13842900000000213,
+          "p90": 0.2724410000000006,
+          "max": 7.699107999999995
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 99.99999999999997,
+          "p10": 99.99999999999997,
+          "median": 99.99999999999997,
+          "p90": 99.99999999999997,
+          "max": 99.99999999999997
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 192,
+          "periodicity": 4
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 121,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.006320143312478466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 368,
+        "coverage": 0.9813333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0022163000208077666,
+        "p90Cents": 0.006381768061461306,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.79,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0032020952149306218,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.1186666666666667,
+            "causalAvailabilityDelayMs": 80.00000000000007
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11640599999998358,
+          "p10": 0.11716699999999491,
+          "median": 0.14004099999999653,
+          "p90": 0.22400799999999776,
+          "max": 0.7156599999999855
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 120,
+          "p10": 120,
+          "median": 120,
+          "p90": 120,
+          "max": 120
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 127,
+          "periodicity": 3
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 121,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.006320143312478466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 368,
+        "coverage": 0.9813333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0022163000208077666,
+        "p90Cents": 0.006381768061461306,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.79,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0032020952149306218,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.1186666666666667,
+            "causalAvailabilityDelayMs": 80.00000000000007
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1170759999999973,
+          "p10": 0.11756700000000819,
+          "median": 0.11887899999999263,
+          "p90": 0.21576600000000212,
+          "max": 0.48991900000001465
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 120,
+          "p10": 120,
+          "median": 120,
+          "p90": 120,
+          "max": 120
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 127,
+          "periodicity": 3
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 121,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.006320143312478466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 368,
+        "coverage": 0.9813333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0022163000208077666,
+        "p90Cents": 0.006381768061461306,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.79,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0032020952149306218,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.1186666666666667,
+            "causalAvailabilityDelayMs": 80.00000000000007
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11611500000000774,
+          "p10": 0.11712699999998222,
+          "median": 0.19745800000001168,
+          "p90": 0.2532329999999945,
+          "max": 0.6800670000000082
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 120,
+          "p10": 120,
+          "median": 120,
+          "p90": 120,
+          "max": 120
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 127,
+          "periodicity": 3
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.029857631347347757,
+          "backgroundWindows": 2,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 368,
+        "beforeP90Cents": 0.006622222619963867,
+        "afterP90Cents": 0.006381768061461306
+      }
+    },
+    {
+      "audio": "brief-periodicity-break",
+      "duration": 4,
+      "pcmSha256": "38549a963df5ccba7e48ab6a2cdd46fb62f509f0ce67e7d774b72cae59c8d049",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 186,
+          "bothVoiced": 183,
+          "matchedUnvoicedWindows": 2,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.0066823735088690555,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 370,
+        "coverage": 0.9866666666666667,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0021046313139226752,
+        "p90Cents": 0.007235704563090128,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.82,
+        "knownPeriodic": {
+          "windows": 182,
+          "accepted": 182,
+          "coverage": 1,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.0986666666666667,
+            "causalAvailabilityDelayMs": 60.00000000000006
+          }
+        ],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11550500000004149,
+          "p10": 0.11658599999998387,
+          "median": 0.1180180000000064,
+          "p90": 0.2104179999999758,
+          "max": 0.49740100000002485
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 99.99999999999997,
+          "p10": 99.99999999999997,
+          "median": 99.99999999999997,
+          "p90": 99.99999999999997,
+          "max": 99.99999999999997
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 192,
+          "periodicity": 4
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 121,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.006910186905493857,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 368,
+        "coverage": 0.9813333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0019643705676130195,
+        "p90Cents": 0.0066823735088690555,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.79,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.1186666666666667,
+            "causalAvailabilityDelayMs": 80.00000000000007
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11716600000005428,
+          "p10": 0.11876899999998614,
+          "median": 0.11975999999998521,
+          "p90": 0.151108000000022,
+          "max": 0.4510700000000156
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 120,
+          "p10": 120,
+          "median": 120,
+          "p90": 120,
+          "max": 120
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 127,
+          "periodicity": 3
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 122,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.007291405244147696,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 371,
+        "coverage": 0.9893333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.001977802160465338,
+        "p90Cents": 0.00689802614769148,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.82,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.0886666666666667,
+            "causalAvailabilityDelayMs": 50.00000000000004
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11656600000003436,
+          "p10": 0.1176269999999704,
+          "median": 0.11833899999999176,
+          "p90": 0.13605499999999893,
+          "max": 0.4079060000000254
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 89.99999999999997,
+          "p10": 89.99999999999997,
+          "median": 89.99999999999997,
+          "p90": 89.99999999999997,
+          "max": 89.99999999999997
+        },
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 127,
+          "periodicity": 3,
+          "recovered": 1
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 124,
+          "bothVoiced": 122,
+          "matchedUnvoicedWindows": 1,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.007291405244147696,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 375,
+        "unvoicedReference": 5,
+        "acceptedVoiced": 371,
+        "coverage": 0.9893333333333333,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.001977802160465338,
+        "p90Cents": 0.00689802614769148,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.82,
+        "knownPeriodic": {
+          "windows": 121,
+          "accepted": 121,
+          "coverage": 1,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [
+          {
+            "audioRestart": 1.06,
+            "firstAcceptedCenter": 1.0886666666666667,
+            "causalAvailabilityDelayMs": 50.00000000000004
+          }
+        ],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1174970000000144,
+          "p10": 0.11814800000001924,
+          "median": 0.11901000000000295,
+          "p90": 0.19849899999996978,
+          "max": 0.622980000000041
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 89.99999999999997,
+          "p10": 89.99999999999997,
+          "median": 89.99999999999997,
+          "p90": 89.99999999999997,
+          "max": 89.99999999999997
+        },
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 127,
+          "periodicity": 3,
+          "recovered": 1
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.02959259379764609,
+          "backgroundWindows": 3,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 370,
+        "beforeP90Cents": 0.007235704563090128,
+        "afterP90Cents": 0.0068542622517210935
+      }
+    },
+    {
+      "audio": "fall",
+      "duration": 4,
+      "pcmSha256": "731b7740ba87c25736fb2c520b5eb0634ea7a23422e400dc59c27356fea090c8",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8600293379723005,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.231056219469544,
+        "p90Cents": 4.215508868896881,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11652499999996735,
+          "p10": 0.11745799999999917,
+          "median": 0.11821900000001051,
+          "p90": 0.14883400000002212,
+          "max": 0.597752000000014
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8740999878825179,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.072130476813338,
+        "p90Cents": 5.1601505407789965,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11663599999997132,
+          "p10": 0.11728699999997616,
+          "median": 0.11813799999998764,
+          "p90": 0.14803399999999556,
+          "max": 0.22545000000002346
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8740999878825179,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.072130476813338,
+        "p90Cents": 5.1601505407789965,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1170759999999973,
+          "p10": 0.1175569999999766,
+          "median": 0.11818899999997257,
+          "p90": 0.15668599999997923,
+          "max": 0.3383309999999824
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8740999878825179,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.072130476813338,
+        "p90Cents": 5.1601505407789965,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11703699999998207,
+          "p10": 0.11768799999998691,
+          "median": 0.11851899999999205,
+          "p90": 0.15959000000003698,
+          "max": 0.4905200000000036
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 4.215508868896881,
+        "afterP90Cents": 5.1601505407789965
+      }
+    },
+    {
+      "audio": "fan-50hz",
+      "duration": 4,
+      "pcmSha256": "90282102b40f20dd553ef743b8b8f7b77d006d90949cef561d2f4abf56a5c74a",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 188,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 190,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11491300000000138,
+          "p10": 0.11571500000002288,
+          "median": 0.12232499999998936,
+          "p90": 0.157999000000018,
+          "max": 1.7767410000000154
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11495400000001155,
+          "p10": 0.11597499999999172,
+          "median": 0.11665600000003451,
+          "p90": 0.13035699999994677,
+          "max": 0.6454739999999788
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11497300000002042,
+          "p10": 0.11539399999998068,
+          "median": 0.11621600000000853,
+          "p90": 0.13002599999998665,
+          "max": 0.19209000000000742
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11634600000002138,
+          "p10": 0.11821900000001051,
+          "median": 0.1217340000000604,
+          "p90": 0.13792799999998806,
+          "max": 0.43280299999992167
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.0006933849507518822,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "female-quiet",
+      "duration": 8,
+      "pcmSha256": "a9e59a72bb77780ddffb6f164116fa6f7a21df26d090372420e6b2ad1b88526f",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 238,
+          "bothVoiced": 141,
+          "matchedUnvoicedWindows": 150,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 33.34129982444527,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 286,
+        "coverage": 0.5933609958506224,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 7.642954052615333,
+        "p90Cents": 42.48477897735473,
+        "octaveDisagreements": 0,
+        "nullTransitions": 29,
+        "longestDetectedRunSeconds": 0.4,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 398,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11487299999998868,
+          "p10": 0.11663599999997132,
+          "median": 0.1272519999999986,
+          "p90": 0.3097169999999778,
+          "max": 0.9112949999999955
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 19.999999999999574,
+          "p10": 20.000000000000018,
+          "median": 120,
+          "p90": 340.00000000000006,
+          "max": 659.9999999999992
+        },
+        "rejections": {
+          "low_energy": 187,
+          "confirmation": 20,
+          "confirmation_onset": 20,
+          "accepted": 143,
+          "periodicity": 48
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 85,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 26.38811588955656,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 260,
+        "coverage": 0.5394190871369294,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 8.467373557727566,
+        "p90Cents": 48.57391449304677,
+        "octaveDisagreements": 0,
+        "nullTransitions": 20,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11588499999993473,
+          "p10": 0.11717599999997219,
+          "median": 0.11828800000000683,
+          "p90": 0.14192400000001726,
+          "max": 0.6960399999999254
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 149.99999999999946,
+          "p90": 600.0000000000001,
+          "max": 720
+        },
+        "rejections": {
+          "low_energy": 123,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 87,
+          "periodicity": 34
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 85,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 26.38811588955656,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 260,
+        "coverage": 0.5394190871369294,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 8.467373557727566,
+        "p90Cents": 48.57391449304677,
+        "octaveDisagreements": 0,
+        "nullTransitions": 20,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11479299999996329,
+          "p10": 0.11638600000003407,
+          "median": 0.11724600000002283,
+          "p90": 0.1314079999999649,
+          "max": 0.5636999999999261
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 149.99999999999946,
+          "p90": 600.0000000000001,
+          "max": 720
+        },
+        "rejections": {
+          "low_energy": 123,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 87,
+          "periodicity": 34
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 92,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 23.757004663259927,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 280,
+        "coverage": 0.5809128630705395,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.003355704697986577,
+        "medianCents": 7.914520690627458,
+        "p90Cents": 44.722353025805276,
+        "octaveDisagreements": 0,
+        "nullTransitions": 20,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11570400000005066,
+          "p10": 0.11659600000007231,
+          "median": 0.1183490000000802,
+          "p90": 0.1340820000000349,
+          "max": 0.524752000000035
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 149.99999999999946,
+          "p90": 570.0000000000002,
+          "max": 660.0000000000001
+        },
+        "rejections": {
+          "low_energy": 116,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 94,
+          "periodicity": 34
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00004909969864995975,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 245,
+        "beforeP90Cents": 38.7888635985533,
+        "afterP90Cents": 40.56998133175235
+      }
+    },
+    {
+      "audio": "female",
+      "duration": 8,
+      "pcmSha256": "0f4b4a64de9253f38c78665ce81f6182638bbe81657e97f29bcf1e83b93db7a4",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 239,
+          "bothVoiced": 175,
+          "matchedUnvoicedWindows": 149,
+          "directWhenPraatNull": 1,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 37.28358312962555,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 355,
+        "coverage": 0.7365145228215768,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.003355704697986577,
+        "medianCents": 7.843494053389629,
+        "p90Cents": 42.461549542490815,
+        "octaveDisagreements": 0,
+        "nullTransitions": 24,
+        "longestDetectedRunSeconds": 0.42,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 398,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11502299999995103,
+          "p10": 0.11618599999997059,
+          "median": 0.11712599999998474,
+          "p90": 0.1347040000000561,
+          "max": 0.7462659999999914
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 19.999999999999574,
+          "p10": 20.000000000000018,
+          "median": 119.99999999999922,
+          "p90": 419.99999999999994,
+          "max": 619.9999999999992
+        },
+        "rejections": {
+          "periodicity": 201,
+          "confirmation": 19,
+          "confirmation_onset": 19,
+          "accepted": 178
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 105,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 28.095988389836346,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 318,
+        "coverage": 0.6597510373443983,
+        "unvoicedAccepted": 2,
+        "unvoicedRate": 0.006711409395973154,
+        "medianCents": 8.255641730825554,
+        "p90Cents": 53.0806275992819,
+        "octaveDisagreements": 0,
+        "nullTransitions": 21,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11511299999995117,
+          "p10": 0.11615499999993517,
+          "median": 0.11703699999998207,
+          "p90": 0.13203899999996338,
+          "max": 0.49270400000000336
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 120,
+          "p90": 450.00000000000017,
+          "max": 629.9999999999999
+        },
+        "rejections": {
+          "periodicity": 137,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 107
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 105,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 28.095988389836346,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 318,
+        "coverage": 0.6597510373443983,
+        "unvoicedAccepted": 2,
+        "unvoicedRate": 0.006711409395973154,
+        "medianCents": 8.255641730825554,
+        "p90Cents": 53.0806275992819,
+        "octaveDisagreements": 0,
+        "nullTransitions": 21,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11537399999997433,
+          "p10": 0.11638600000003407,
+          "median": 0.11744700000008379,
+          "p90": 0.1322099999999864,
+          "max": 0.6309320000000298
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 120,
+          "p90": 450.00000000000017,
+          "max": 629.9999999999999
+        },
+        "rejections": {
+          "periodicity": 137,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 106,
+          "recovered": 1
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 159,
+          "bothVoiced": 105,
+          "matchedUnvoicedWindows": 99,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 28.095988389836346,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 482,
+        "unvoicedReference": 298,
+        "acceptedVoiced": 318,
+        "coverage": 0.6597510373443983,
+        "unvoicedAccepted": 2,
+        "unvoicedRate": 0.006711409395973154,
+        "medianCents": 8.255641730825554,
+        "p90Cents": 53.0806275992819,
+        "octaveDisagreements": 0,
+        "nullTransitions": 21,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11555400000008831,
+          "p10": 0.11639600000000883,
+          "median": 0.11834800000008272,
+          "p90": 0.13727700000004006,
+          "max": 0.6597359999999526
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000025,
+          "median": 120,
+          "p90": 450.00000000000017,
+          "max": 629.9999999999999
+        },
+        "rejections": {
+          "periodicity": 137,
+          "confirmation": 21,
+          "confirmation_onset": 21,
+          "accepted": 106,
+          "recovered": 1
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.0024549849300701896,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 304,
+        "beforeP90Cents": 40.686123720384934,
+        "afterP90Cents": 48.144653728587926
+      }
+    },
+    {
+      "audio": "harmonic",
+      "duration": 4,
+      "pcmSha256": "bbb37af99e49917bb84ab305e5d5ba64cb3d97f445a9faac278a25380b129198",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.0000434514043705809,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11526400000002468,
+          "p10": 0.11602500000003602,
+          "median": 0.11691700000005767,
+          "p90": 0.12944500000003245,
+          "max": 0.5535149999999476
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.00004787607193171289,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11519399999997404,
+          "p10": 0.11571400000002541,
+          "median": 0.11677700000007007,
+          "p90": 0.13067700000010518,
+          "max": 0.6323540000000776
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.00004787607193171289,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11537399999997433,
+          "p10": 0.11625600000002123,
+          "median": 0.11676699999998164,
+          "p90": 0.13131799999996474,
+          "max": 0.587806999999998
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.00004787607193171289,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0000434514043705809,
+        "p90Cents": 0.00004345140744587042,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11576499999989665,
+          "p10": 0.11637599999994563,
+          "median": 0.11708699999996952,
+          "p90": 0.13177900000005138,
+          "max": 0.5802360000000135
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 0.00004345140744587042,
+        "afterP90Cents": 0.00004345140744587042
+      }
+    },
+    {
+      "audio": "intensity-drop",
+      "duration": 4,
+      "pcmSha256": "e5b328a405efa49e6ec88b98aae9e626d599a4bdd94e91bd75acc6805caccefd",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 174,
+          "bothVoiced": 173,
+          "matchedUnvoicedWindows": 14,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.004765963399401466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 351,
+        "unvoicedReference": 29,
+        "acceptedVoiced": 350,
+        "coverage": 0.9971509971509972,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0022980797932925946,
+        "p90Cents": 0.0054410757816777035,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.6,
+        "knownPeriodic": {
+          "windows": 190,
+          "accepted": 175,
+          "coverage": 0.9210526315789473,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11579500000004828,
+          "p10": 0.11671599999999671,
+          "median": 0.11735699999996996,
+          "p90": 0.13133800000002793,
+          "max": 0.2250890000000254
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 300.00000000000006,
+          "p10": 300.00000000000006,
+          "median": 300.00000000000006,
+          "p90": 300.00000000000006,
+          "max": 300.00000000000006
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 182,
+          "periodicity": 1,
+          "low_energy": 13
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 116,
+          "bothVoiced": 115,
+          "matchedUnvoicedWindows": 9,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.004765963399401466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 351,
+        "unvoicedReference": 29,
+        "acceptedVoiced": 349,
+        "coverage": 0.9943019943019943,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.034482758620689655,
+        "medianCents": 0.0019399941695554938,
+        "p90Cents": 0.004765963399401466,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.58,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 116,
+          "coverage": 0.9206349206349206,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11528399999997418,
+          "p10": 0.11562400000002526,
+          "median": 0.11658599999987018,
+          "p90": 0.1321899999999232,
+          "max": 0.6967620000000352
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 300.00000000000006,
+          "p10": 300.00000000000006,
+          "median": 300.00000000000006,
+          "p90": 300.00000000000006,
+          "max": 300.00000000000006
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 121,
+          "low_energy": 9
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 116,
+          "bothVoiced": 115,
+          "matchedUnvoicedWindows": 9,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.004765963399401466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 351,
+        "unvoicedReference": 29,
+        "acceptedVoiced": 349,
+        "coverage": 0.9943019943019943,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.034482758620689655,
+        "medianCents": 0.0019399941695554938,
+        "p90Cents": 0.004765963399401466,
+        "octaveDisagreements": 0,
+        "nullTransitions": 1,
+        "longestDetectedRunSeconds": 2.58,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 116,
+          "coverage": 0.9206349206349206,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11571400000002541,
+          "p10": 0.11641599999984464,
+          "median": 0.1168760000000475,
+          "p90": 0.13219899999990048,
+          "max": 0.5745269999999891
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 300.00000000000006,
+          "p10": 300.00000000000006,
+          "median": 300.00000000000006,
+          "p90": 300.00000000000006,
+          "max": 300.00000000000006
+        },
+        "rejections": {
+          "confirmation": 2,
+          "confirmation_onset": 2,
+          "accepted": 121,
+          "low_energy": 9
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 116,
+          "bothVoiced": 116,
+          "matchedUnvoicedWindows": 9,
+          "directWhenPraatNull": 9,
+          "stableUnvoicedAccepted": 7,
+          "p90Cents": 0.004765963399401466,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 351,
+        "unvoicedReference": 29,
+        "acceptedVoiced": 351,
+        "coverage": 1,
+        "unvoicedAccepted": 29,
+        "unvoicedRate": 1,
+        "medianCents": 0.0019399941695554938,
+        "p90Cents": 0.004765963399401466,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 126,
+          "coverage": 1,
+          "p90Cents": 0.0015942213170326476,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11525400000004993,
+          "p10": 0.11560399999984838,
+          "median": 0.11663599999997132,
+          "p90": 0.1305370000000039,
+          "max": 0.5631200000000263
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 350,
+        "beforeP90Cents": 0.0054410757816777035,
+        "afterP90Cents": 0.004765963399401466
+      }
+    },
+    {
+      "audio": "intensity",
+      "duration": 4,
+      "pcmSha256": "89d8d062de69550070bda7223ee62d5022f6d3b9d1ac1fff3afccb9565811965",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.5438077275516553,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021922693735617532,
+        "p90Cents": 0.5089375792650551,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11569499999995969,
+          "p10": 0.11594500000001062,
+          "median": 0.11692599999992126,
+          "p90": 0.13460299999997005,
+          "max": 0.7652840000000651
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.5089375792650551,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021805881120019736,
+        "p90Cents": 0.46096796365150383,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11712699999998222,
+          "p10": 0.11762700000008408,
+          "median": 0.1186689999999544,
+          "p90": 0.15146800000002258,
+          "max": 0.2808740000000398
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.5089375792650551,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021805881120019736,
+        "p90Cents": 0.46096796365150383,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11539400000015121,
+          "p10": 0.11641600000007202,
+          "median": 0.12327600000003258,
+          "p90": 0.15895999999997912,
+          "max": 0.4488570000000891
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.5089375792650551,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.021805881120019736,
+        "p90Cents": 0.46096796365150383,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11527399999999943,
+          "p10": 0.1159650000001875,
+          "median": 0.11682599999994636,
+          "p90": 0.14954600000010032,
+          "max": 0.2353049999999257
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 0.5089375792650551,
+        "afterP90Cents": 0.46096796365150383
+      }
+    },
+    {
+      "audio": "knocks",
+      "duration": 4,
+      "pcmSha256": "c951f3951b4e9b152f3e73d6237a9c8df3c05441212fedb7d0c6355ba61ee055",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 188,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 190,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11482300000011492,
+          "p10": 0.11535400000002483,
+          "median": 0.11693700000000717,
+          "p90": 0.13768800000002557,
+          "max": 0.5081669999999576
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 192,
+          "periodicity": 6
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11490300000014031,
+          "p10": 0.11527399999999943,
+          "median": 0.11684700000000703,
+          "p90": 0.15937099999996462,
+          "max": 1.0789480000000822
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 127,
+          "periodicity": 5
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11454299999991235,
+          "p10": 0.11500300000011521,
+          "median": 0.11590500000011161,
+          "p90": 0.16197399999987283,
+          "max": 0.31092899999998735
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 127,
+          "periodicity": 5
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11620500000003631,
+          "p10": 0.11825900000008005,
+          "median": 0.12759300000016083,
+          "p90": 0.15375200000016775,
+          "max": 1.0979970000000776
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 127,
+          "periodicity": 5
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "male-quiet",
+      "duration": 8,
+      "pcmSha256": "85ace2945512b1f4e8c833a5a7e58ea3ee75c6571643e72a7da5451e9755c057",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 246,
+          "bothVoiced": 142,
+          "matchedUnvoicedWindows": 142,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 29.92980376877315,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 288,
+        "coverage": 0.5806451612903226,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 9.166206226452388,
+        "p90Cents": 37.82849458044677,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.38,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 398,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11551400000007561,
+          "p10": 0.11609499999985928,
+          "median": 0.11712600000009843,
+          "p90": 0.18041300000004412,
+          "max": 2.528015000000096
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 19.999999999999574,
+          "p10": 20.000000000000462,
+          "median": 120,
+          "p90": 219.99999999999974,
+          "max": 1360
+        },
+        "rejections": {
+          "low_energy": 157,
+          "confirmation": 23,
+          "confirmation_onset": 23,
+          "accepted": 148,
+          "periodicity": 70
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 163,
+          "bothVoiced": 76,
+          "matchedUnvoicedWindows": 95,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 15.289197178034751,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 233,
+        "coverage": 0.46975806451612906,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 11.136708652195951,
+        "p90Cents": 46.80745089789423,
+        "octaveDisagreements": 0,
+        "nullTransitions": 22,
+        "longestDetectedRunSeconds": 0.36,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11487300000021605,
+          "p10": 0.11591499999985899,
+          "median": 0.11703700000020945,
+          "p90": 0.13269999999988613,
+          "max": 0.9768239999998514
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 30.00000000000003,
+          "p10": 30.00000000000025,
+          "median": 150.00000000000034,
+          "p90": 330.00000000000006,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 105,
+          "confirmation": 28,
+          "confirmation_onset": 28,
+          "accepted": 80,
+          "periodicity": 52
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 163,
+          "bothVoiced": 77,
+          "matchedUnvoicedWindows": 95,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 15.205823286904836,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 236,
+        "coverage": 0.47580645161290325,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 11.023481882915526,
+        "p90Cents": 46.80745089789423,
+        "octaveDisagreements": 0,
+        "nullTransitions": 22,
+        "longestDetectedRunSeconds": 0.36,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11585500000001048,
+          "p10": 0.11678599999981998,
+          "median": 0.1175869999999577,
+          "p90": 0.13407299999994393,
+          "max": 0.8307439999998678
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 30.00000000000003,
+          "p10": 30.00000000000025,
+          "median": 150.00000000000034,
+          "p90": 330.00000000000006,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 105,
+          "confirmation": 27,
+          "confirmation_onset": 27,
+          "accepted": 80,
+          "periodicity": 52,
+          "recovered": 1
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 163,
+          "bothVoiced": 85,
+          "matchedUnvoicedWindows": 95,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 21.419758743280692,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 496,
+        "unvoicedReference": 284,
+        "acceptedVoiced": 260,
+        "coverage": 0.5241935483870968,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 11.448685963477358,
+        "p90Cents": 47.009678782512026,
+        "octaveDisagreements": 0,
+        "nullTransitions": 24,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11546399999997448,
+          "p10": 0.11652600000002167,
+          "median": 0.11843899999985297,
+          "p90": 0.13351200000010977,
+          "max": 0.64081699999997
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 30.00000000000003,
+          "median": 149.99999999999991,
+          "p90": 330.00000000000006,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 100,
+          "confirmation": 24,
+          "confirmation_onset": 24,
+          "accepted": 88,
+          "periodicity": 52,
+          "recovered": 1
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.000012684244561985915,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 233,
+        "beforeP90Cents": 33.41091939059016,
+        "afterP90Cents": 42.63464800247333
+      }
+    },
+    {
+      "audio": "male",
+      "duration": 8,
+      "pcmSha256": "30cbf4374f23792f2ac95750f4793796f87fd5eb15d181bf128ce90147693a8b",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 247,
+          "bothVoiced": 156,
+          "matchedUnvoicedWindows": 141,
+          "directWhenPraatNull": 1,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 37.015784458118155,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 316,
+        "coverage": 0.6332665330661322,
+        "unvoicedAccepted": 2,
+        "unvoicedRate": 0.0071174377224199285,
+        "medianCents": 9.20098501097258,
+        "p90Cents": 39.38475049439315,
+        "octaveDisagreements": 0,
+        "nullTransitions": 28,
+        "longestDetectedRunSeconds": 0.38,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 398,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11487299999998868,
+          "p10": 0.11568499999998494,
+          "median": 0.11678699999993114,
+          "p90": 0.13278999999988628,
+          "max": 0.8520559999999477
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 19.999999999999574,
+          "p10": 19.999999999999908,
+          "median": 119.99999999999966,
+          "p90": 180.00000000000017,
+          "max": 1360
+        },
+        "rejections": {
+          "low_energy": 45,
+          "periodicity": 168,
+          "confirmation": 22,
+          "confirmation_onset": 22,
+          "accepted": 163
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 164,
+          "bothVoiced": 90,
+          "matchedUnvoicedWindows": 94,
+          "directWhenPraatNull": 1,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 26.919206403122903,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 275,
+        "coverage": 0.5511022044088176,
+        "unvoicedAccepted": 3,
+        "unvoicedRate": 0.010676156583629894,
+        "medianCents": 11.668617896524713,
+        "p90Cents": 47.516654293876634,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1151239999999234,
+          "p10": 0.11617500000011205,
+          "median": 0.11699700000008306,
+          "p90": 0.14047200000004523,
+          "max": 0.6116429999999582
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 29.999999999999915,
+          "median": 120,
+          "p90": 240.00000000000023,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 30,
+          "periodicity": 116,
+          "confirmation": 24,
+          "confirmation_onset": 24,
+          "accepted": 95
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 164,
+          "bothVoiced": 91,
+          "matchedUnvoicedWindows": 94,
+          "directWhenPraatNull": 1,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 26.919206403122903,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 278,
+        "coverage": 0.5571142284569138,
+        "unvoicedAccepted": 3,
+        "unvoicedRate": 0.010676156583629894,
+        "medianCents": 11.611918729536107,
+        "p90Cents": 47.34185847504989,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11541400000010071,
+          "p10": 0.11613600000009683,
+          "median": 0.11710700000003271,
+          "p90": 0.13411200000018653,
+          "max": 0.6607070000000022
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 29.999999999999915,
+          "median": 89.99999999999997,
+          "p90": 240.00000000000023,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 30,
+          "periodicity": 116,
+          "confirmation": 23,
+          "confirmation_onset": 23,
+          "accepted": 95,
+          "recovered": 1
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 164,
+          "bothVoiced": 91,
+          "matchedUnvoicedWindows": 94,
+          "directWhenPraatNull": 1,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 26.919206403122903,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 499,
+        "unvoicedReference": 281,
+        "acceptedVoiced": 278,
+        "coverage": 0.5571142284569138,
+        "unvoicedAccepted": 3,
+        "unvoicedRate": 0.010676156583629894,
+        "medianCents": 11.611918729536107,
+        "p90Cents": 47.34185847504989,
+        "octaveDisagreements": 0,
+        "nullTransitions": 27,
+        "longestDetectedRunSeconds": 0.39,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 265,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11519399999997404,
+          "p10": 0.11665599999992082,
+          "median": 0.11872900000003028,
+          "p90": 0.13706600000000435,
+          "max": 2.1121270000001005
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 29.99999999999936,
+          "p10": 29.999999999999915,
+          "median": 89.99999999999997,
+          "p90": 240.00000000000023,
+          "max": 1380.0000000000002
+        },
+        "rejections": {
+          "low_energy": 30,
+          "periodicity": 116,
+          "confirmation": 23,
+          "confirmation_onset": 23,
+          "accepted": 95,
+          "recovered": 1
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.0006342122283438011,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 261,
+        "beforeP90Cents": 35.53441830725485,
+        "afterP90Cents": 43.54696965835496
+      }
+    },
+    {
+      "audio": "noise-0",
+      "duration": 4,
+      "pcmSha256": "66c0bd41fcb161b2c7778d8ebcb79f53bb343f429f30cadd0ff02ee5f0cdbf0e",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11591500000008637,
+          "p10": 0.11671599999999671,
+          "median": 0.11737700000003315,
+          "p90": 0.13158799999996518,
+          "max": 2.4273729999999887
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11596499999996013,
+          "p10": 0.11629600000014761,
+          "median": 0.11727700000005825,
+          "p90": 0.13193900000010217,
+          "max": 0.4899199999999837
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11646500000006199,
+          "p10": 0.11719699999980548,
+          "median": 0.11768700000015997,
+          "p90": 0.1340419999999085,
+          "max": 0.1974079999999958
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1170759999999973,
+          "p10": 0.11883899999997993,
+          "median": 0.1227449999998953,
+          "p90": 0.13687700000014047,
+          "max": 0.9473590000000058
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.09874158305190606,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "noise-10",
+      "duration": 4,
+      "pcmSha256": "bf4b9613fbcb8e0a4b024284b052da48824e634aac1d44b3d3932dc8def8b8d6",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 20.80655980235584,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.0272731154037125,
+        "p90Cents": 21.248433860813826,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11583399999994981,
+          "p10": 0.11661600000002181,
+          "median": 0.1170159999999214,
+          "p90": 0.13160900000002584,
+          "max": 1.4249099999999544
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 24.416596525659685,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.545516248922872,
+        "p90Cents": 21.077254965205263,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11555500000008578,
+          "p10": 0.11637599999994563,
+          "median": 0.1167960000000221,
+          "p90": 0.1305769999999029,
+          "max": 0.24066300000004048
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 24.416596525659685,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.545516248922872,
+        "p90Cents": 21.077254965205263,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11548399999992398,
+          "p10": 0.11567500000001019,
+          "median": 0.11676600000009785,
+          "p90": 0.13363200000003417,
+          "max": 1.3318000000001575
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 24.416596525659685,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 6.545516248922872,
+        "p90Cents": 21.077254965205263,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11604499999998552,
+          "p10": 0.11640600000009727,
+          "median": 0.1171670000001086,
+          "p90": 0.12944500000003245,
+          "max": 0.2070929999999862
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 21.248433860813826,
+        "afterP90Cents": 21.077254965205263
+      }
+    },
+    {
+      "audio": "noise-20",
+      "duration": 4,
+      "pcmSha256": "8574ea6582df0e08632b6f64d4b3daca20de0576ffdb0701f62319070262eda9",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 3.585435705231986,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6530541070606193,
+        "p90Cents": 3.7194774461703246,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11536399999999958,
+          "p10": 0.11606499999993503,
+          "median": 0.1165760000001228,
+          "p90": 0.13254000000006272,
+          "max": 1.2173670000001948
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 4.001104866775912,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6638729364657017,
+        "p90Cents": 4.001104866775912,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11523399999987305,
+          "p10": 0.11580400000002555,
+          "median": 0.11663599999997132,
+          "p90": 0.1315589999999247,
+          "max": 0.19259099999999307
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 4.001104866775912,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6638729364657017,
+        "p90Cents": 4.001104866775912,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11518299999988812,
+          "p10": 0.11580500000013672,
+          "median": 0.11660600000004706,
+          "p90": 0.13373200000000907,
+          "max": 0.6859749999998712
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 4.001104866775912,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 1.6638729364657017,
+        "p90Cents": 4.001104866775912,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11578400000007605,
+          "p10": 0.11619499999983418,
+          "median": 0.11722699999995712,
+          "p90": 0.14572999999995773,
+          "max": 0.2029059999999845
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 3.7194774461703246,
+        "afterP90Cents": 4.001104866775912
+      }
+    },
+    {
+      "audio": "noise-only",
+      "duration": 4,
+      "pcmSha256": "d04ff4dc10909bb0f084f4b82529abcee5bedd85d87374296ca98d48bfee2865",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 188,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.12051199999996243,
+          "p10": 0.12162299999999959,
+          "median": 0.12269500000002154,
+          "p90": 0.13880999999992127,
+          "max": 0.547586999999794
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.12100199999986216,
+          "p10": 0.1214429999999993,
+          "median": 0.12247499999989486,
+          "p90": 0.13522400000010748,
+          "max": 0.1904069999998228
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.12072299999999814,
+          "p10": 0.12185399999998481,
+          "median": 0.12284500000009757,
+          "p90": 0.1364659999999276,
+          "max": 0.16234499999995933
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1213230000000749,
+          "p10": 0.12387699999999313,
+          "median": 0.12757299999998395,
+          "p90": 0.15782800000010866,
+          "max": 1.3771679999999833
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "periodicity": 132
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.0029484267691357604,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "pauses",
+      "duration": 4,
+      "pcmSha256": "1347bcf7d2998cf01fba2bee8874863def04947d7591b077c042d4c90faa16ae",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 118,
+          "bothVoiced": 115,
+          "matchedUnvoicedWindows": 70,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.002251053332726824,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 230,
+        "coverage": 0.9871244635193133,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.0006999970472440678,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.6,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11477300000001378,
+          "p10": 0.11567500000001019,
+          "median": 0.11653599999999642,
+          "p90": 0.1311080000000402,
+          "max": 0.4376399999998739
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 399.9999999999999,
+          "p10": 399.9999999999999,
+          "median": 400.0000000000001,
+          "p90": 400.00000000000034,
+          "max": 400.00000000000034
+        },
+        "rejections": {
+          "confirmation": 4,
+          "confirmation_onset": 4,
+          "accepted": 118,
+          "periodicity": 4,
+          "low_energy": 72
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 77,
+          "bothVoiced": 74,
+          "matchedUnvoicedWindows": 48,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.002102665039696135,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 222,
+        "coverage": 0.9527896995708155,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.006802721088435374,
+        "medianCents": 0.0006999970472440678,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.6,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11514299999998912,
+          "p10": 0.11590500000011161,
+          "median": 0.11676699999998164,
+          "p90": 0.12932500000010805,
+          "max": 0.1539429999997992
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 419.99999999999994,
+          "p10": 419.99999999999994,
+          "median": 419.99999999999994,
+          "p90": 420.0000000000004,
+          "max": 420.0000000000004
+        },
+        "rejections": {
+          "confirmation": 4,
+          "confirmation_onset": 4,
+          "accepted": 76,
+          "periodicity": 4,
+          "low_energy": 48
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 77,
+          "bothVoiced": 74,
+          "matchedUnvoicedWindows": 48,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.002102665039696135,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 222,
+        "coverage": 0.9527896995708155,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.006802721088435374,
+        "medianCents": 0.0006999970472440678,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.6,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11492300000008981,
+          "p10": 0.11556499999983316,
+          "median": 0.11660600000004706,
+          "p90": 0.13073800000006486,
+          "max": 0.17313100000001214
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 419.99999999999994,
+          "p10": 419.99999999999994,
+          "median": 419.99999999999994,
+          "p90": 420.0000000000004,
+          "max": 420.0000000000004
+        },
+        "rejections": {
+          "confirmation": 4,
+          "confirmation_onset": 4,
+          "accepted": 76,
+          "periodicity": 4,
+          "low_energy": 48
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 77,
+          "bothVoiced": 74,
+          "matchedUnvoicedWindows": 48,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.002102665039696135,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 233,
+        "unvoicedReference": 147,
+        "acceptedVoiced": 222,
+        "coverage": 0.9527896995708155,
+        "unvoicedAccepted": 1,
+        "unvoicedRate": 0.006802721088435374,
+        "medianCents": 0.0006999970472440678,
+        "p90Cents": 0.0027777774220732743,
+        "octaveDisagreements": 0,
+        "nullTransitions": 4,
+        "longestDetectedRunSeconds": 0.6,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11725700000010875,
+          "p10": 0.11790800000017043,
+          "median": 0.11890900000003057,
+          "p90": 0.1335109999999986,
+          "max": 0.28096400000003996
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 419.99999999999994,
+          "p10": 419.99999999999994,
+          "median": 419.99999999999994,
+          "p90": 420.0000000000004,
+          "max": 420.0000000000004
+        },
+        "rejections": {
+          "confirmation": 4,
+          "confirmation_onset": 4,
+          "accepted": 76,
+          "periodicity": 4,
+          "low_energy": 48
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 49,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 222,
+        "beforeP90Cents": 0.0027777774220732743,
+        "afterP90Cents": 0.0027777774220732743
+      }
+    },
+    {
+      "audio": "quiet-tone",
+      "duration": 4,
+      "pcmSha256": "47fffb810e7433c1a851a2414f79910ca310407e1540339cc0eefd4f31989afd",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.020385365022111933,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.015834660847427597,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11548399999992398,
+          "p10": 0.1157349999998587,
+          "median": 0.11640599999964252,
+          "p90": 0.1311479999999392,
+          "max": 0.6276969999998983
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.020385365022111933,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.014642617172625435,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11518299999988812,
+          "p10": 0.11563500000011118,
+          "median": 0.1166760000000977,
+          "p90": 0.1305569999999534,
+          "max": 0.6844230000001517
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.020385365022111933,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.014642617172625435,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11585500000001048,
+          "p10": 0.11620499999980893,
+          "median": 0.11655600000040067,
+          "p90": 0.12910499999998137,
+          "max": 0.15543499999967025
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.020385365022111933,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.014642617172625435,
+        "p90Cents": 0.019786900726901358,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11535400000002483,
+          "p10": 0.11649600000009741,
+          "median": 0.11688700000013341,
+          "p90": 0.12913499999967826,
+          "max": 0.16852400000016132
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 0.019786900726901358,
+        "afterP90Cents": 0.019786900726901358
+      }
+    },
+    {
+      "audio": "rapid",
+      "duration": 4,
+      "pcmSha256": "1fb3b17110f4ff8b4f410d6a4378d6dc8becb6a194582c000bf9228e43851a00",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 13.735706565099099,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 11.954469603009882,
+        "p90Cents": 53.04804432896984,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11552399999982299,
+          "p10": 0.11620499999980893,
+          "median": 0.11651600000004692,
+          "p90": 0.12930499999993117,
+          "max": 0.17259000000012747
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 11.954395763071386,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 25.34657631786579,
+        "p90Cents": 67.90999405633428,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11498299999993833,
+          "p10": 0.11538400000017646,
+          "median": 0.11641600000029939,
+          "p90": 0.1316890000002786,
+          "max": 0.773928000000069
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 11.954395763071386,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 25.34657631786579,
+        "p90Cents": 67.90999405633428,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11674700000003213,
+          "p10": 0.1170759999999973,
+          "median": 0.11810799999966548,
+          "p90": 0.1310880000000907,
+          "max": 0.16172400000004927
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 11.954395763071386,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 25.34657631786579,
+        "p90Cents": 67.90999405633428,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11533400000007532,
+          "p10": 0.11619499999960681,
+          "median": 0.11674600000014834,
+          "p90": 0.12881400000014764,
+          "max": 0.17548500000020795
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 53.04804432896984,
+        "afterP90Cents": 67.90999405633428
+      }
+    },
+    {
+      "audio": "rise",
+      "duration": 4,
+      "pcmSha256": "06be78836a68be13c3617e6a058227f7a4e2c96e3e463659a66b27bfdab2b5d0",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8400298007421256,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 2.2189534358924297,
+        "p90Cents": 4.31013055688908,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11655599999994593,
+          "p10": 0.11711700000023484,
+          "median": 0.11793799999986732,
+          "p90": 0.1307369999999537,
+          "max": 0.14876400000002832
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8399342874362186,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.0515114421917215,
+        "p90Cents": 5.402320460098372,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1152340000003278,
+          "p10": 0.11606600000004619,
+          "median": 0.11667599999964295,
+          "p90": 0.13203899999962232,
+          "max": 0.609248999999636
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8399342874362186,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.0515114421917215,
+        "p90Cents": 5.402320460098372,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11634499999991021,
+          "p10": 0.1174180000002707,
+          "median": 0.11778699999968012,
+          "p90": 0.13170899999977337,
+          "max": 0.1754350000001068
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.8399342874362186,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 3.0515114421917215,
+        "p90Cents": 5.402320460098372,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11548399999992398,
+          "p10": 0.11604499999975815,
+          "median": 0.11661599999979444,
+          "p90": 0.13175799999999072,
+          "max": 0.7360609999996086
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 4.31013055688908,
+        "afterP90Cents": 5.402320460098372
+      }
+    },
+    {
+      "audio": "short-syllables",
+      "duration": 4,
+      "pcmSha256": "6b53c8c8e292d267cf740983c82d84f422920fa81682fdd1a3212c958c8ed2ae",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 112,
+          "bothVoiced": 93,
+          "matchedUnvoicedWindows": 76,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.9193956472754695,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 190,
+        "coverage": 0.9090909090909091,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 0.003579860656956197,
+        "p90Cents": 0.4485461378386813,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.1,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11502399999972113,
+          "p10": 0.11597500000016225,
+          "median": 0.11698699999988094,
+          "p90": 0.12982600000032107,
+          "max": 0.15941000000020722
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 99.99999999999964,
+          "p10": 99.99999999999987,
+          "median": 100.00000000000009,
+          "p90": 100.00000000000009,
+          "max": 100.00000000000009
+        },
+        "rejections": {
+          "confirmation": 20,
+          "confirmation_onset": 20,
+          "accepted": 98,
+          "periodicity": 20,
+          "low_energy": 60
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 68,
+          "bothVoiced": 49,
+          "matchedUnvoicedWindows": 57,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.9189248655318341,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 144,
+        "coverage": 0.6889952153110048,
+        "unvoicedAccepted": 7,
+        "unvoicedRate": 0.04093567251461988,
+        "medianCents": 0.0010527648788043024,
+        "p90Cents": 0.4485461378386813,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.09,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.1149329999998372,
+          "p10": 0.1160450000002129,
+          "median": 0.11685599999964325,
+          "p90": 0.1291649999998299,
+          "max": 0.16229500000008557
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 119.99999999999966,
+          "p10": 119.99999999999966,
+          "median": 120,
+          "p90": 120.00000000000011,
+          "max": 120.00000000000011
+        },
+        "rejections": {
+          "confirmation": 20,
+          "confirmation_onset": 20,
+          "accepted": 52,
+          "low_energy": 40,
+          "periodicity": 20
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 68,
+          "bothVoiced": 56,
+          "matchedUnvoicedWindows": 57,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.9189248655318341,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 165,
+        "coverage": 0.7894736842105263,
+        "unvoicedAccepted": 7,
+        "unvoicedRate": 0.04093567251461988,
+        "medianCents": 0.0017458827798561144,
+        "p90Cents": 0.44811139875074313,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.09,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11541499999975713,
+          "p10": 0.11608599999999569,
+          "median": 0.11707699999988108,
+          "p90": 0.12984599999981583,
+          "max": 0.5129139999999097
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 89.99999999999986,
+          "p10": 89.99999999999986,
+          "median": 119.99999999999989,
+          "p90": 120.00000000000011,
+          "max": 120.00000000000011
+        },
+        "rejections": {
+          "confirmation": 13,
+          "confirmation_onset": 13,
+          "accepted": 40,
+          "low_energy": 40,
+          "periodicity": 20,
+          "recovered": 19
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 68,
+          "bothVoiced": 56,
+          "matchedUnvoicedWindows": 57,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.9189248655318341,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 209,
+        "unvoicedReference": 171,
+        "acceptedVoiced": 165,
+        "coverage": 0.7894736842105263,
+        "unvoicedAccepted": 7,
+        "unvoicedRate": 0.04093567251461988,
+        "medianCents": 0.0017458827798561144,
+        "p90Cents": 0.44811139875074313,
+        "octaveDisagreements": 0,
+        "nullTransitions": 18,
+        "longestDetectedRunSeconds": 0.09,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11663600000019869,
+          "p10": 0.11766699999998309,
+          "median": 0.11851899999965099,
+          "p90": 0.13145799999983865,
+          "max": 0.15000599999984843
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": {
+          "min": 89.99999999999986,
+          "p10": 89.99999999999986,
+          "median": 119.99999999999989,
+          "p90": 120.00000000000011,
+          "max": 120.00000000000011
+        },
+        "rejections": {
+          "confirmation": 13,
+          "confirmation_onset": 13,
+          "accepted": 40,
+          "low_energy": 40,
+          "periodicity": 20,
+          "recovered": 19
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 46,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 165,
+        "beforeP90Cents": 0.4485461378386813,
+        "afterP90Cents": 0.44811139875074313
+      }
+    },
+    {
+      "audio": "silence",
+      "duration": 4,
+      "pcmSha256": "351a8054b23144894668c6a51d5dbba82f56523ef43cc45b6f4d7060a969c31a",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 188,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11464299999988725,
+          "p10": 0.11518399999977191,
+          "median": 0.11636499999985972,
+          "p90": 0.12847299999975803,
+          "max": 0.2452299999999923
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11481299999968542,
+          "p10": 0.11561399999982314,
+          "median": 0.11619500000006155,
+          "p90": 0.1291550000000825,
+          "max": 0.17094700000006924
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11523399999987305,
+          "p10": 0.11590500000011161,
+          "median": 0.11682600000040111,
+          "p90": 0.12848399999984395,
+          "max": 0.1563960000003135
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11665599999969345,
+          "p10": 0.11747700000023542,
+          "median": 0.11863900000025751,
+          "p90": 0.13013599999976577,
+          "max": 0.17361200000004828
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "stable",
+      "duration": 4,
+      "pcmSha256": "12af46692762cda8e4604396fc0b49311b3584d0d01e3841110b2c37e2fa7c1e",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.003075627713579139,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0007151117664071116,
+        "p90Cents": 0.003075627713579139,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11507399999982226,
+          "p10": 0.11566399999992427,
+          "median": 0.11635599999999613,
+          "p90": 0.13017700000000332,
+          "max": 0.7568820000001324
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.003075627713579139,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0010264680107002029,
+        "p90Cents": 0.0030595554171264933,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11609500000031403,
+          "p10": 0.1165259999997943,
+          "median": 0.11745699999983117,
+          "p90": 0.13265999999975975,
+          "max": 0.18789400000014211
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.003075627713579139,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0010264680107002029,
+        "p90Cents": 0.0030595554171264933,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11541400000032809,
+          "p10": 0.11560499999995955,
+          "median": 0.11660600000004706,
+          "p90": 0.12953599999991638,
+          "max": 0.6596859999999651
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.003075627713579139,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.0010264680107002029,
+        "p90Cents": 0.0030595554171264933,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11540400000012596,
+          "p10": 0.11657599999989543,
+          "median": 0.11690600000019913,
+          "p90": 0.13085700000010547,
+          "max": 0.15942999999970198
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 0.003075627713579139,
+        "afterP90Cents": 0.0030595554171264933
+      }
+    },
+    {
+      "audio": "very-quiet-tone",
+      "duration": 4,
+      "pcmSha256": "944eb65792890626e77218702fe051cdadd5b466a9b5569f36030ad17d0e2bd1",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 188,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.4953829302314752,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23791416124787163,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.8000000000000003,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11609599999974307,
+          "p10": 0.11654600000019855,
+          "median": 0.11737700000003315,
+          "p90": 0.1311080000000402,
+          "max": 0.2151850000000195
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 197
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.4953829302314752,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23649548266865864,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11695700000018405,
+          "p10": 0.1174670000000333,
+          "median": 0.11832899999990332,
+          "p90": 0.1319090000001779,
+          "max": 0.16296599999986938
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.4953829302314752,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23649548266865864,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11507299999993847,
+          "p10": 0.11552399999982299,
+          "median": 0.11634600000024875,
+          "p90": 0.1321789999997236,
+          "max": 0.592583999999988
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 0.4953829302314752,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.23649548266865864,
+        "p90Cents": 0.4951511679840619,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11530399999992369,
+          "p10": 0.1155349999999089,
+          "median": 0.11648599999989528,
+          "p90": 0.13027599999986705,
+          "max": 0.1586499999998523
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 380,
+        "beforeP90Cents": 0.4951511679840619,
+        "afterP90Cents": 0.4951511679840619
+      }
+    },
+    {
+      "audio": "weak-background",
+      "duration": 4,
+      "pcmSha256": "ba65cfc6a229c6e945a7ee48299cfd532d5b50d361c65c6e274aa7c7780264f4",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 169,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 19,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 341,
+        "unvoicedReference": 39,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 168,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 15,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11509299999988798,
+          "p10": 0.11536499999965599,
+          "median": 0.11642600000004677,
+          "p90": 0.13047700000015539,
+          "max": 0.6337160000002768
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 112,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 13,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 341,
+        "unvoicedReference": 39,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 111,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 10,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11531400000012582,
+          "p10": 0.11576500000001033,
+          "median": 0.1165659999996933,
+          "p90": 0.13149799999973766,
+          "max": 0.160312000000431
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 112,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 13,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 341,
+        "unvoicedReference": 39,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 111,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 10,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11623499999996056,
+          "p10": 0.11646600000040053,
+          "median": 0.11762700000008408,
+          "p90": 0.1315180000001419,
+          "max": 0.16882500000019718
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 112,
+          "bothVoiced": 111,
+          "matchedUnvoicedWindows": 13,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 2.7777021221677347,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 341,
+        "unvoicedReference": 39,
+        "acceptedVoiced": 337,
+        "coverage": 0.9882697947214076,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": 1.3338446485026967,
+        "p90Cents": 3.0945365155435196,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.36,
+        "knownPeriodic": {
+          "windows": 111,
+          "accepted": 111,
+          "coverage": 1,
+          "p90Cents": 2.1194889456025754,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 10,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11538500000006024,
+          "p10": 0.11591499999985899,
+          "median": 0.11697599999979502,
+          "p90": 0.13273099999969418,
+          "max": 0.6292790000002242
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 16,
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 115
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 15,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "weak-noise-only",
+      "duration": 4,
+      "pcmSha256": "93c406b020891fe126ca351d368ea7ab0947c81e8f16d4f67bf1ffecf6133577",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 188,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 190,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.12032199999976001,
+          "p10": 0.12098299999979645,
+          "median": 0.12213400000018737,
+          "p90": 0.13669600000002902,
+          "max": 0.3245999999999185
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.12041100000033111,
+          "p10": 0.12130399999978181,
+          "median": 0.12231399999973291,
+          "p90": 0.13665599999967526,
+          "max": 0.15726800000038565
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.12143299999979718,
+          "p10": 0.12236399999983405,
+          "median": 0.12322600000015882,
+          "p90": 0.14407700000037948,
+          "max": 0.6416180000001077
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 0,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 125,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 0,
+        "unvoicedReference": 380,
+        "acceptedVoiced": 0,
+        "coverage": null,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": 0,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 0,
+          "accepted": 0,
+          "coverage": null,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 126,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.12191400000028807,
+          "p10": 0.12309599999980492,
+          "median": 0.12718199999972057,
+          "p90": 0.14059199999974226,
+          "max": 0.19157899999981964
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00011815714984666673,
+          "backgroundWindows": 60,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    },
+    {
+      "audio": "weak-periodic",
+      "duration": 4,
+      "pcmSha256": "a4311babdc8dc579a523f23009a2c8d093cd073b499a64accd5abc00cad0635d",
+      "before": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 188,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 190,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 198,
+        "hopMs": 20,
+        "cpuMs": {
+          "min": 0.11497399999961999,
+          "p10": 0.11538399999972171,
+          "median": 0.11637599999994563,
+          "p90": 0.1309070000002066,
+          "max": 0.4712209999997867
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 198
+        },
+        "adaptiveEnergy": null
+      },
+      "cadence30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11558400000012625,
+          "p10": 0.11634499999991021,
+          "median": 0.11701700000003257,
+          "p90": 0.15352200000006633,
+          "max": 0.8694419999997081
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "recovery30": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 0,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": null,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 0,
+        "coverage": 0,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 0,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 0,
+          "coverage": 0,
+          "p90Cents": null,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11530399999992369,
+          "p10": 0.11578499999995984,
+          "median": 0.11677599999984523,
+          "p90": 0.13100799999983792,
+          "max": 0.8427120000001196
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "low_energy": 132
+        },
+        "adaptiveEnergy": null
+      },
+      "after": {
+        "actualFrameAgreement": {
+          "referenceToleranceMs": 5,
+          "excludedEdgeMs": 100,
+          "matchedVoicedWindows": 125,
+          "bothVoiced": 125,
+          "matchedUnvoicedWindows": 0,
+          "directWhenPraatNull": 0,
+          "stableUnvoicedAccepted": 0,
+          "p90Cents": 1.1883839098952904,
+          "octaveDisagreements": 0
+        },
+        "voicedReference": 380,
+        "unvoicedReference": 0,
+        "acceptedVoiced": 380,
+        "coverage": 1,
+        "unvoicedAccepted": 0,
+        "unvoicedRate": null,
+        "medianCents": 0.8654454473873849,
+        "p90Cents": 1.188390514350549,
+        "octaveDisagreements": 0,
+        "nullTransitions": 0,
+        "longestDetectedRunSeconds": 3.78,
+        "knownPeriodic": {
+          "windows": 126,
+          "accepted": 126,
+          "coverage": 1,
+          "p90Cents": 0.0015539896523947623,
+          "octaveErrors": 0
+        },
+        "knownNonperiodic": {
+          "windows": 0,
+          "accepted": 0
+        },
+        "restarts": [],
+        "processedWindows": 132,
+        "hopMs": 30,
+        "cpuMs": {
+          "min": 0.11541399999987334,
+          "p10": 0.11641599999984464,
+          "median": 0.11694600000009814,
+          "p90": 0.13201000000026397,
+          "max": 0.22236599999996542
+        },
+        "windowCenterDelayMs": 21.333333333333332,
+        "recoveries": null,
+        "rejections": {
+          "confirmation": 1,
+          "confirmation_onset": 1,
+          "accepted": 131
+        },
+        "adaptiveEnergy": {
+          "noiseFloorRms": 0.00001,
+          "backgroundWindows": 0,
+          "quietClarity": 0.92,
+          "quietMinimumRms": 0.00005,
+          "noiseRatio": 3
+        }
+      },
+      "sameReferenceTimes": {
+        "count": 0,
+        "beforeP90Cents": null,
+        "afterP90Cents": null
+      }
+    }
+  ]
+}
