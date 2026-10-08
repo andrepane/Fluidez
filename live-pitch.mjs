@@ -1,6 +1,6 @@
 import {BoundedPitchDetector} from './bounded-pitch.mjs';
 import {centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD} from './pitch-data.mjs';
-export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.02,minimumClarity:.85,minimumRms:.0005,retentionSeconds:.06});
+export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.02,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06});
 const distribution=values=>{if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),q=p=>a[Math.round((a.length-1)*p)];return {min:a[0],p10:q(.1),median:q(.5),p90:q(.9),max:a.at(-1)};};
 export class LivePitchEngine{
  constructor(rate,limits,{diagnostic=false,now=()=>performance.now(),config=LIVE_CONFIG}={}){
