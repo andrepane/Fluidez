@@ -67,3 +67,5 @@ body[data-session=stopping] .patient-summary,body[data-session=processing] .pati
 .pitch-surface[data-view=recording] #pitchHover{font-size:12px}.pitch-surface[data-view=recording] .pitch-readout{font-size:12px}.pitch-surface[data-view=recording] .pitch-readout strong{font-size:17px}.pitch-surface[data-view=recording] #pitchChart{height:clamp(210px,38vh,350px);min-height:210px}
 .pitch-spectrum p{font-size:11px}.pitch-workspace{overflow:visible}
 @media(max-width:700px){#pitchSpectrum{height:92px;min-height:0}.pitch-surface[data-view=recording] .pitch-workspace{padding:12px}.pitch-surface[data-view=recording] #pitchChart{height:clamp(190px,34vh,270px);min-height:190px}.pitch-surface[data-view=recording] .pitch-start-controls{bottom:8px}.pitch-surface[data-view=recording] #pitchStop{width:100%}}
+
+.pitch-window-control{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}.pitch-window-control select{width:auto;min-width:76px;padding:6px 10px;border-radius:12px;font-size:12px;background:var(--panel);color:var(--text)}.pitch-window-control[hidden]{display:none}
