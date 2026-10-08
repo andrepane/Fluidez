@@ -24,3 +24,12 @@ export class VisualClock{
  at(now){if(this.arrival===null)return {clock:0,reveal:0};const elapsed=Math.max(0,(now-this.arrival)/1000),candidate=this.audio+Math.min(.12,elapsed),clock=Math.max(this.lastClock,candidate);this.lastClock=clock;return {clock,reveal:Math.max(0,Math.min(this.audio,clock-VISUAL_DELAY))};}
 }
 export function movingWindow(clock,seconds=8){const end=Math.max(seconds,clock+.25);return {begin:end-seconds,end};}
+// Presentation only: evaluate an existing limited curve at the reveal horizon.
+// A null estimate terminates the marker; no extension beyond measured support.
+export function revealedTip(displayed,time){
+ for(const run of contiguousRuns(displayed)){
+  if(time<run[0].time||time>run.at(-1).time)continue;
+  if(run.length===1)return run[0];
+  for(const s of curveSegments(run)){if(time<s.from.time||time>s.to.time)continue;const t=(time-s.from.time)/(s.to.time-s.from.time),u=1-t;return {time,hz:Math.exp(u**3*Math.log(s.from.hz)+3*u*u*t*Math.log(s.c1.hz)+3*u*t*t*Math.log(s.c2.hz)+t**3*Math.log(s.to.hz))};}
+ }return null;
+}
