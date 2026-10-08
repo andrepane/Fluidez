@@ -13,20 +13,20 @@ export function centerFrame(input, output=new Float32Array(input.length)) {
  return {samples:output,rms:Math.sqrt(sum/input.length),clipped:clipped/input.length};
 }
 export class LiveToneTracker {
- constructor(){this.previous=null;this.pending=null;this.lastTime=-1;}
+ constructor({minimumClarity=.95,minimumRms=.002}={}){this.minimumClarity=minimumClarity;this.minimumRms=minimumRms;this.previous=null;this.pending=null;this.lastTime=-1;}
  update(hz,clarity,rms,clipped,time,floor,ceiling){
   if(time-this.lastTime>.25){this.previous=null;this.pending=null;}this.lastTime=time;
-  const reject=state=>{this.pending=null;this.previous=null;return {hz:null,state};};
+  const reject=state=>{this.pending=null;this.previous=null;return {hz:null,state,reason:state==='Entrada al límite digital'?'digital_limit':state==='Señal muy débil o silencio'?'low_energy':state==='Fuera del rango de búsqueda'?'range':'periodicity'};};
   if(clipped>.01)return reject('Entrada al límite digital');
-  if(rms<.002)return reject('Señal muy débil o silencio');
-  if(!Number.isFinite(hz)||clarity<.95)return reject('Tono no estimable');
+  if(rms<this.minimumRms)return reject('Señal muy débil o silencio');
+  if(!Number.isFinite(hz)||hz<=0||clarity<this.minimumClarity)return reject('Tono no estimable');
   if(hz<floor||hz>ceiling)return reject('Fuera del rango de búsqueda');
   const jump=this.previous===null||Math.abs(12*Math.log2(hz/this.previous))>7;
   if(jump){
-   if(this.pending&&Math.abs(12*Math.log2(hz/this.pending))<2){this.previous=hz;this.pending=null;return {hz,state:'Tono estimado'};}
-   this.pending=hz;return {hz:null,state:'Confirmando tono'};
+   if(this.pending&&Math.abs(12*Math.log2(hz/this.pending))<2){this.previous=hz;this.pending=null;return {hz,state:'Tono estimado',reason:'accepted'};}
+   this.pending=hz;return {hz:null,state:'Confirmando tono',reason:'confirmation'};
   }
-  this.previous=hz;this.pending=null;return {hz,state:'Tono estimado'};
+  this.previous=hz;this.pending=null;return {hz,state:'Tono estimado',reason:'accepted'};
  }
 }
 export function plotRange(points,floor,ceiling){const voiced=points.filter(p=>p.hz!==null&&Number.isFinite(p.hz)).map(p=>p.hz);if(!voiced.length)return {low:floor,high:ceiling};return {low:Math.max(floor,Math.min(...voiced)/1.25),high:Math.min(ceiling,Math.max(...voiced)*1.25)};}
