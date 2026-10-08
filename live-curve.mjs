@@ -23,7 +23,7 @@ export class VisualClock{
  accept(audio,now){this.audio=audio;this.arrival=now;}
  at(now){if(this.arrival===null)return {clock:0,reveal:0};const elapsed=Math.max(0,(now-this.arrival)/1000),candidate=this.audio+Math.min(.12,elapsed),clock=Math.max(this.lastClock,candidate);this.lastClock=clock;return {clock,reveal:Math.max(0,Math.min(this.audio,clock-VISUAL_DELAY))};}
 }
-export const LIVE_WINDOW_SECONDS=3;
+export const LIVE_WINDOW_SECONDS=5;
 export function movingWindow(clock,seconds=LIVE_WINDOW_SECONDS){const end=Math.max(seconds,clock+.25);return {begin:end-seconds,end};}
 // Presentation only: evaluate an existing limited curve at the reveal horizon.
 // A null estimate terminates the marker; no extension beyond measured support.
