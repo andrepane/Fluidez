@@ -1,13 +1,14 @@
+import {LivePitchEngine} from './live-pitch.mjs';
 import {contiguousRuns,curveSegments,VisualClock,movingWindow,VISUAL_DELAY} from './live-curve.mjs';
 import {visualPoints,referencePoints,AdaptiveScale,comparisonExtent} from './prosody.mjs';
-import {PitchDetector} from './vendor/pitchy-4.1.0.mjs';
-import {MAX_SECONDS,validLimits,summarize,wav16,validateFinal,centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD,plotRange,timeAtX,nearestPoint} from './pitch-data.mjs';
+import {MAX_SECONDS,validLimits,summarize,wav16,validateFinal,plotRange,timeAtX,nearestPoint} from './pitch-data.mjs';
 const $=id=>document.getElementById(id);
 const clock=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const advice={'Frases':'Pronuncia la frase con una voz cómoda.','Lectura':'Lee con naturalidad y observa cómo cambia tu tono.','Habla espontánea':'Habla libremente y observa la melodía de tu voz.'};
+let liveEngine,lastDiagnosticPaint=0;
 let stream,context,capture,silent,autoStop,aborter,flushResolve;
 let points=[],chunks=[],blob,audioURL,prepared,busy=false,recording=false,rate=48000,duration=0;
-let limits={floor:75,ceiling:600},task='Habla espontánea',detector,tracker,rolling,centered,fill=0,sourceKind='none',lastPlotTime=0,captureComplete=false;
+let limits={floor:75,ceiling:600},task='Habla espontánea',sourceKind='none',lastPlotTime=0,captureComplete=false;
 let replaceTarget=null;
 let attempts=[null,null],selected=0,chartSource='',exerciseText='',mode='free',guide={low:130,high:250,duration:4};
 const adaptive=new AdaptiveScale();
@@ -40,10 +41,11 @@ function ready(){
  $('pitchAudio').pause();points=[];duration=0;prepared=null;blob=null;sourceKind='none';chartSource='';
  view('setup');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Preparado';$('pitchBadge').textContent='Práctica libre';$('pitchInstruction').textContent='Empieza a hablar cuando quieras.';$('pitchWorkspaceLabel').textContent='Tu curva de entonación';$('pitchHover').textContent='Últimos 8 segundos durante la práctica · estimación provisional';processing(null);status('Preparado para grabar.');configurationChanged();controls();draw();
 }
+function paintDiagnostic(){if(!liveEngine?.diagnostic)return;$('pitchDiagnosticReport').textContent=JSON.stringify(liveEngine.report(),null,2);}
 function status(text){$('pitchStatus').textContent=text;}
 function view(value){$('pitchSurface').dataset.view=value;}
 function controls(){
- for(const id of ['pitchRecord','pitchUpload','pitchFloor','pitchCeiling','pitchTask','pitchHome','pitchAgain','pitchMode','pitchText','pitchTextVisible','pitchGuideLow','pitchGuideHigh','pitchGuideDuration'])$(id).disabled=busy;
+ for(const id of ['pitchRecord','pitchUpload','pitchFloor','pitchCeiling','pitchTask','pitchHome','pitchAgain','pitchMode','pitchText','pitchTextVisible','pitchGuideLow','pitchGuideHigh','pitchGuideDuration','pitchDiagnose'])$(id).disabled=busy;
  for(let i=0;i<2;i++){$('pitchAttempt'+i).disabled=busy||!attempts[i];$('pitchReplace'+i).disabled=busy;$('pitchReview'+i).disabled=busy||!attempts[i];}
  const full=attempts.every(Boolean)&&replaceTarget===null;$('pitchCapacity').hidden=!full;$('pitchRecord').disabled=busy||full;$('pitchUpload').disabled=busy||full;
  $('pitchStop').disabled=!recording;$('pitchRetry').disabled=busy||!prepared;
@@ -91,6 +93,7 @@ function draw(){
  if(recording&&!$('pitchRenderSmooth').checked&&points.at(-1)?.hz!==null&&points.at(-1)){const p=points.at(-1);ctx.beginPath();ctx.arc(x(p.time),y(p.hz),5,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();}
  if(!recording&&!readyView&&$('pitchAudio').currentTime>0){const px=x($('pitchAudio').currentTime);ctx.strokeStyle=text;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,h-bottom);ctx.stroke();ctx.setLineDash([]);}
  ctx.restore();
+ if(recording&&liveEngine?.diagnostic)liveEngine.noteRender(points.filter(p=>p.hz!==null&&p.time>=begin&&p.time<=Math.min(end,visual.reveal)).length);
  if(readyView||!visible.some(a=>a.points.some(p=>p.hz!==null))){ctx.fillStyle=text;ctx.textAlign='center';ctx.fillText(recording?'Esperando un tono estimable…':readyView?'Pulsa Empezar práctica y habla':'Sin F0 estimable en los intentos visibles',left+(w-left-right)/2,top+(h-top-bottom)/2);ctx.textAlign='left';}
 }
 function summary(source){
@@ -150,21 +153,16 @@ function captured(message){
  const data=message.data,samples=new Float32Array(data.audio);
  if(samples.length){
   chunks.push(samples);duration=data.endFrame/rate;visualClock.accept(duration,performance.now());
-  if(samples.length>=rolling.length){rolling.set(samples.subarray(samples.length-rolling.length));fill=rolling.length;}
-  else{rolling.copyWithin(0,samples.length);rolling.set(samples,rolling.length-samples.length);fill=Math.min(rolling.length,fill+samples.length);}
-  if(fill===rolling.length){
-   const frame=centerFrame(rolling,centered),[hz,clarity]=detector.findPitch(frame.samples,rate);
-   // Center-of-window timestamp, on the same clock as the saved WAV.
-   const time=duration-rolling.length/(2*rate),value=tracker.update(hz,clarity,frame.rms,frame.clipped,time,limits.floor,limits.ceiling);
-   if(time>lastPlotTime){points.push({time,hz:value.hz});lastPlotTime=time;}
-   if(recording){
-    const stale=context.currentTime-data.audioTime>.25;
-    $('pitchValue').textContent=stale||value.hz===null?'—':`${Math.round(value.hz)} Hz`;
-    $('pitchLiveState').textContent=stale?'Esperando datos recientes':value.state;
-    $('pitchToneMarker').hidden=stale||value.hz===null;
-    if(value.hz!==null)$('pitchToneMarker').style.top=`${100*(1-Math.log2(value.hz/limits.floor)/Math.log2(limits.ceiling/limits.floor))}%`;
-   }
+  const estimates=liveEngine.push(samples,data.endFrame,Math.max(0,(context.currentTime-data.audioTime)*1000));
+  for(const p of estimates)if(p.time>lastPlotTime){points.push({time:p.time,hz:p.hz});lastPlotTime=p.time;}
+  const value=estimates.at(-1);
+  if(value&&recording){
+   const stale=context.currentTime-data.audioTime>.25;
+   $('pitchValue').textContent=stale||value.hz===null?'—':`${Math.round(value.hz)} Hz`;
+   $('pitchLiveState').textContent=stale?'Esperando datos recientes':value.state;
+   $('pitchToneMarker').hidden=stale||value.hz===null;
   }
+  if(liveEngine.diagnostic&&performance.now()-lastDiagnosticPaint>=500){paintDiagnostic();lastDiagnosticPaint=performance.now();}
   if(recording){$('pitchTimer').textContent=clock(duration);scheduleDraw();}
  }
  if(data.done){captureComplete=true;if(flushResolve){flushResolve();flushResolve=null;}else if(recording)void stop();}
@@ -180,8 +178,7 @@ async function start(){
   await context.audioWorklet.addModule('./pitch-capture.worklet.js');rate=context.sampleRate;
   capture=new AudioWorkletNode(context,'fluidez-pitch-capture',{processorOptions:{frameSize:Math.round(rate*.06),maxFrames:Math.floor(rate*(MAX_SECONDS-1))},numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});
   silent=context.createGain();silent.gain.value=0;capture.connect(silent);silent.connect(context.destination);
-  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();detector=PitchDetector.forFloat32Array(4096);detector.clarityThreshold=CANDIDATE_THRESHOLD;
-  tracker=new LiveToneTracker();rolling=new Float32Array(4096);centered=new Float32Array(4096);fill=0;lastPlotTime=-1;
+  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();liveEngine=new LivePitchEngine(rate,limits,{diagnostic:$('pitchDiagnose').checked});lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
   points=[];chunks=[];duration=0;visualClock.reset();prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
   $('pitchAudio').pause();$('pitchAudio').removeAttribute('src');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Escuchando';$('pitchToneMarker').hidden=true;
   $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent='Directo · últimos 8 segundos';$('pitchBadge').textContent='Estimación en directo';
@@ -197,7 +194,7 @@ async function stop(){
  try{
   if(!captureComplete)await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{flushResolve=null;reject(Error('No se confirmó el final de la captura.'));},2000);flushResolve=()=>{clearTimeout(timer);resolve();};capture.port.postMessage('flush');});
  }catch{incomplete=true;}
- cleanupCapture();$('pitchValue').textContent='—';$('pitchLiveState').textContent='Grabación terminada';$('pitchToneMarker').hidden=true;
+ paintDiagnostic();cleanupCapture();$('pitchValue').textContent='—';$('pitchLiveState').textContent='Grabación terminada';$('pitchToneMarker').hidden=true;
  const length=chunks.reduce((n,c)=>n+c.length,0);if(!length){busy=false;document.body.dataset.session='done';view('setup');controls();status('No se capturó audio. Vuelve a intentarlo.');return;}
  const raw=new Float32Array(length);let offset=0;for(const c of chunks){raw.set(c,offset);offset+=c.length;}chunks=[];
  duration=length/rate;setAudio(new Blob([wav16(raw,rate)],{type:'audio/wav'}));
@@ -219,6 +216,7 @@ function hover(event){
  $('pitchHover').textContent=`${time.toFixed(2)} s · ${p&&Math.abs(p.time-time)<.12&&p.hz!==null?`${Math.round(p.hz)} Hz`:'sin estimación en ese momento'}`;
  return time;
 }
+$('pitchDiagnose').addEventListener('change',()=>{$('pitchDiagnostic').hidden=!$('pitchDiagnose').checked;});
 $('pitchRecord').addEventListener('click',start);$('pitchStop').addEventListener('click',stop);$('pitchUpload').addEventListener('change',upload);
 $('pitchRetry').addEventListener('click',()=>{if(!busy&&prepared)return finalAnalysis();});
 $('pitchAgain').addEventListener('click',()=>{replaceTarget=null;ready();});
@@ -229,7 +227,7 @@ function configurationChanged(){
  guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};
  try{referencePoints(mode,guide.low,guide.high,guide.duration);exercise();draw();}catch(e){status(e.message);}
 }
-for(const id of ['pitchTask','pitchText','pitchTextVisible','pitchMode','pitchGuideLow','pitchGuideHigh','pitchGuideDuration'])$(id).addEventListener('change',configurationChanged);
+for(const id of ['pitchTask','pitchText','pitchTextVisible','pitchMode','pitchGuideLow','pitchGuideHigh','pitchGuideDuration','pitchDiagnose'])$(id).addEventListener('change',configurationChanged);
 for(let i=0;i<2;i++)$('pitchReview'+i).addEventListener('click',()=>selectAttempt(i));
 for(let i=0;i<2;i++)$('pitchReplace'+i).addEventListener('click',()=>{if(!busy){replaceTarget=i;ready();status('Preparado: la próxima muestra sustituirá el intento '+(i+1)+'.');}});
  for(let i=0;i<2;i++){$('pitchAttempt'+i).addEventListener('click',()=>selectAttempt(i));$('pitchShow'+i).addEventListener('change',draw);}
