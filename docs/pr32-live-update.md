@@ -1,3 +1,5 @@
+> Histórico de la prueba a 30 ms. La actualización posterior usa 10 ms en captura, F0 y STFT; los resultados numéricos de este documento corresponden exclusivamente a 30 ms y no describen el rendimiento actual.
+
 # PR #32: cadencia, zoom y recuperación de F0
 
 ## Auditoría y configuración
