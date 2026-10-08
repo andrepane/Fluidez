@@ -33,3 +33,6 @@ SVG is a deterministic illustration from identical points with an unvoiced gap, 
 
 ## Manual preview check
 Record ordinary voiced speech, changes and pauses. Check interrupted curves, stable axes and smooth scroll after 8 s. Toggle trace style on the same points, resize the browser, hide/reopen tab, stop/listen/compare attempts. Check import/final and speed workflow remain unchanged. Preview should retain existing FLUIDEZ_VOICE_ENABLED configuration; no new key/variable.
+
+## Detection correction on the same PR
+The later user request explicitly authorizes improving detection. The renderer above remains, but its input now comes from LivePitchEngine: 2048-sample trailing causal windows every 20 ms. AudioWorklet/WAV delivery stays approximately 60 ms; each delivered block can produce three historical, correctly timestamped windows. No future samples are used. Frame center delay is now 21.3 ms at 48 kHz /23.2 ms at 44.1 kHz, so the nominal extra reveal wait for the unchanged 100 ms visual horizon becomes roughly 78.7/76.8 ms, plus scheduling jitter. Earlier 4096-window latency calculations describe the old detector only. Actual microphone latency remains unmeasured. See live-f0-detection.md for measured coverage, errors and limitations.
