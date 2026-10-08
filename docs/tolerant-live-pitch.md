@@ -1,3 +1,5 @@
+> Archivo de la primera iteración de la PR #32 (20 ms). La configuración actual y sus pruebas están en [pr32-live-update.md](pr32-live-update.md). Los datos de esta primera iteración se conservan como referencia histórica.
+
 # Entonación: ventana de 5 segundos y detección más tolerante
 
 ## Comportamiento
