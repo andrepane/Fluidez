@@ -4,9 +4,9 @@
 Adapted existing pitch controller, PCM AudioWorklet capture, playback/download, mono resampling and memory-only Praat endpoint. Static ES modules, no build pipeline or new runtime dependency. Speed/Deepgram/Whisper, backend and vocal-quality prototype remain unchanged. Only F0 contour is measured: this is not a complete prosody evaluation or a demonstrated treatment for stuttering.
 
 ## Patient flow
-Select Frases, Lectura or Habla espontánea. Write text for the first two tasks. Choose Libre, Ascendente, Descendente, Estable or Variación prosódica. Guide bounds/duration and detector limits live in professional settings. Guides are separate illustrative curves, labelled as references, without scores or normative claims. Record, observe the last 8 seconds, stop, listen, repeat into the other slot. Imported audio goes directly to final analysis, with no fabricated live curve.
+The graph and primary record button appear immediately; default is Habla espontánea / Libre. Activity and guide options are in a collapsed panel below the graph. Optional “Mostrar texto” has a separate editor and visibility checkbox: hiding the reading card preserves its text, and every activity works without text. Select Frases or Lectura only if wanted. Choose Libre, Ascendente, Descendente, Estable or Variación prosódica. Guide bounds/duration and detector limits live in professional settings. Guides are dashed illustrative overlays in the main graph, labelled as references, without scores or normative claims. Record, observe the last 8 seconds, stop, listen, repeat into the other slot. Imported audio goes directly to final analysis, with no fabricated live curve.
 
-Two attempts remain in this tab's memory. Green/violet curves share real elapsed-time and frequency axes, with no warping or alignment. Durations and provisional/final origins are identified. Toggle visibility, select an attempt to listen and click its timeline. A shorter attempt ends earlier. Replacing a slot is announced before starting; download audio to preserve it. Not persistent storage.
+Two attempts remain in this tab's memory. Green/violet curves share real elapsed-time and frequency axes, with no warping or alignment. Durations and provisional/final origins are identified. Toggle visibility, select an attempt to listen and click its timeline. A shorter attempt ends earlier. Slots are automatic: first attempt 1, then attempt 2. A third recording/import is blocked until an explicit “Sustituir intento 1/2” action; listen/download before replacement. Repeating resets the visible graph/timer/status to prepared without deleting saved attempts. Not persistent storage.
 
 ## Direct detector and display
 Pitchy 4.1.0; 4096-sample centered windows at actual AudioContext rate, approximately every 60 ms, same capture clock as WAV. Existing clarity, energy, digital clipping and two-candidate jump checks remain. These can reject irregular voices and cannot guarantee elimination of octave errors. No clinical accuracy claim.
@@ -23,7 +23,7 @@ Professional metrics: raw median, P10/P90 (sorted-index rounding), duration and 
 Backend operates in memory without saving audio, no Firebase/analytics added. Existing server feature flag, limits, instance-only throttling and timeout unchanged. Browser decoding support varies for imported codecs. Maximum upload 20 MB, maximum sample 120 s. Servers may be cold or unavailable; retain local audio/provisional curve and allow retry.
 
 ## Reproducible verification
-`node --test tests/*.test.mjs`: 80 passed, 0 failed.
+`node --test tests/*.test.mjs`: 84 passed, 0 failed.
 `python -m unittest discover -s tests -p 'test_voice*.py'`: 11 passed, 0 failed.
 Tests include stable harmonics, ascending/descending F0, multiple changes, interspersed silence, public real human voice (fixture license in tests/fixtures), malformed/truncated data, capture flush/sample clocks, playback seeking, two attempts, immutable smoothing/gaps and guide shapes. 119-second synthetic Praat test: 11,893 windows, about 0.09 s on this development host (not Vercel timing).
 
@@ -38,3 +38,6 @@ Not performed: real microphone test, human F0 correctness review, mobile/mid-ran
 6. Try speed module to check navigation and existing workflow.
 
 Future PRs: human contour validation, optional calibrated reference recordings, microphone latency/performance measurements and sustained-vowel quality module. No automatic diagnostic interpretation.
+
+## PR 26 UX correction
+Same branch and PR, no main changes. Workspace remains in DOM at the same position in setup/record/results; removed obsolete CSS that hid/reordered it. Collapsed options and optional text editor are structurally placed below controls. References are dashed, labelled overlays using actual guide seconds/Hz; recorded F0 retains its original clock. Initial graph contains axes and an instruction, no fake data. Ready state clears stale final-analysis messages without deleting prior attempts. 84 JS + 11 Python passed locally. No separate frontend build command exists; syntax checks and Vercel deployment are the applicable checks. Previous Preview was login-protected; revised visual/microphone review remains pending until accessible.
