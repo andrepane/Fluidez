@@ -42,3 +42,29 @@ class VoiceTests(unittest.TestCase):
         self.assertLess(np.median(errors),1)
         self.assertTrue(all(0<=p['periodicity']<=1 for p in glide['points']))
         self.assertEqual(glide['signal']['clippedFraction'],0)
+
+    def test_descending_and_multiple_changes(self):
+        t=np.arange(32000)/16000
+        result=analyze_wav(wav(.3*np.sin(2*np.pi*(280*t-35*t*t))))
+        self.assertLess(np.median([abs(p['hz']-(280-70*p['time'])) for p in result['points'] if p['hz']]),1)
+        values=np.concatenate([.3*np.sin(2*np.pi*hz*np.arange(8000)/16000) for hz in (150,220,180,300)])
+        result=analyze_wav(wav(values))
+        for i,hz in enumerate((150,220,180,300)):
+            found=[p['hz'] for p in result['points'] if i*.5+.1<p['time']<(i+1)*.5-.1 and p['hz']]
+            self.assertLess(abs(np.median(found)-hz),1)
+    def test_public_human_voice_file(self):
+        import base64
+        from pathlib import Path
+        raw=base64.b64decode((Path(__file__).parent/'fixtures/public-speech.wav.b64').read_text())
+        result=analyze_wav(raw)
+        self.assertTrue(any(p['hz'] is not None for p in result['points']))
+        self.assertTrue(any(p['hz'] is None for p in result['points']))
+        self.assertTrue(all(0<=p['time']<=result['duration'] for p in result['points']))
+    def test_long_recording_bounded(self):
+        import time
+        t=np.arange(119*16000)/16000
+        signal=.3*np.sin(2*np.pi*200*t);signal[(t%5)>4]=0
+        start=time.perf_counter();result=analyze_wav(wav(signal));elapsed=time.perf_counter()-start
+        self.assertLess(len(result['points']),12000)
+        self.assertTrue(all(p['hz'] is None for p in result['points'] if 4.2<p['time']%5<4.8))
+        print(f'119-second Praat test: {elapsed:.3f} seconds; {len(result["points"])} windows')
