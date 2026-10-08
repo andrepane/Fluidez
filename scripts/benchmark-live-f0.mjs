@@ -1,3 +1,4 @@
+import {fileURLToPath} from 'node:url';
 import {readFileSync,readdirSync,writeFileSync} from 'node:fs';
 import {performance} from 'node:perf_hooks';
 import {PitchDetector} from '../vendor/pitchy-4.1.0.mjs';
@@ -26,10 +27,10 @@ export function compare(points,reference,hop,duration){
  }
  return {voicedReference:voiced,unvoicedReference:unvoiced,acceptedVoiced,coverage:voiced?acceptedVoiced/voiced:null,unvoicedAccepted,unvoicedRate:unvoiced?unvoicedAccepted/unvoiced:null,medianCents:quantile(cents,.5),p90Cents:quantile(cents,.9),octaveDisagreements:octaves,common};
 }
-if(process.argv[2]){
+if(process.argv[1]===fileURLToPath(import.meta.url)&&process.argv[2]){
  const directory=process.argv[2],rows=[];
  for(const file of readdirSync(directory).filter(f=>f.endsWith('.json')&&f!=='comparison.json')){const name=file.slice(0,-5),ref=JSON.parse(readFileSync(directory+'/'+file)),buffer=readFileSync(directory+'/'+name+'.f32'),samples=new Float32Array(buffer.buffer,buffer.byteOffset,buffer.length/4),limits={floor:75,ceiling:600};
-  const t0=performance.now(),old=baseline(samples,ref.rate,limits),t1=performance.now(),next=incremental(samples,ref.rate,limits,true),t2=performance.now(),current=incremental(samples,ref.rate,limits,false,{...LIVE_CONFIG,retentionSeconds:0});
+  const t0=performance.now(),old=baseline(samples,ref.rate,limits),t1=performance.now(),next=incremental(samples,ref.rate,limits,true),t2=performance.now(),current=incremental(samples,ref.rate,limits,false,{...LIVE_CONFIG,minimumClarity:.85,retentionSeconds:0});
   const a=compare(old,ref.points,.06,ref.duration),b=compare(next.points,ref.points,.02,ref.duration),paired=[];
   for(const p of a.common){const q=b.common.find(q=>Math.abs(q.time-p.time)<1e-6);if(q)paired.push({old:p.cents,next:q.cents});}
   rows.push({audio:name,duration:ref.duration,previousMain:compare(current.points,ref.points,.02,ref.duration),before:{...a,cpuMs:t1-t0},after:{...b,cpuMs:t2-t1},sameAcceptedTimes:{count:paired.length,beforeMedianCents:quantile(paired.map(p=>p.old),.5),afterMedianCents:quantile(paired.map(p=>p.next),.5)},diagnostic:next.diagnostic});
