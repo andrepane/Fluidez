@@ -1,0 +1,765 @@
+{
+  "config": {
+    "size": 2048,
+    "hopSeconds": 0.005,
+    "minimumClarity": 0.8,
+    "minimumRms": 0.0005,
+    "retentionSeconds": 0.06,
+    "adaptiveEnergy": true,
+    "quietMinimumRms": 5e-05,
+    "quietClarity": 0.92,
+    "noiseRatio": 3,
+    "recoverySeconds": 0.15,
+    "recoveryClarity": 0.92,
+    "confirmationSeconds": 0.03,
+    "jumpConfirmationSeconds": 0.04,
+    "filteredEvidence": true
+  },
+  "referenceRange": {
+    "floor": 75,
+    "ceiling": 600
+  },
+  "rows": [
+    {
+      "audio": "fall",
+      "pcmSha256": "731b7740ba87c25736fb2c520b5eb0634ea7a23422e400dc59c27356fea090c8",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.8740999878825179,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 235.29010300000002,
+        "cpu": {
+          "min": 0.22554999999999836,
+          "p10": 0.22685300000000552,
+          "median": 0.2340030000000013,
+          "p90": 0.3359269999999981,
+          "max": 10.888993
+        },
+        "actualFrameP90Cents": 1.766206570422982,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 2.69295787665759,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 117.27800599999995,
+        "cpu": {
+          "min": 0.12219399999997904,
+          "p10": 0.12230399999998554,
+          "median": 0.12319600000000719,
+          "p90": 0.15783800000002657,
+          "max": 4.210380999999984
+        },
+        "actualFrameP90Cents": 2.464933285388206,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "female-quiet",
+      "pcmSha256": "a9e59a72bb77780ddffb6f164116fa6f7a21df26d090372420e6b2ad1b88526f",
+      "duration": 8,
+      "current": {
+        "coverage": 0.6535269709543569,
+        "p90Cents": 33.446117277977116,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 1592,
+        "elapsedMs": 420.49188,
+        "cpu": {
+          "min": 0.22677199999998265,
+          "p10": 0.22806400000001759,
+          "median": 0.23362299999996594,
+          "p90": 0.30474900000001526,
+          "max": 0.7188039999999773
+        },
+        "actualFrameP90Cents": 30.472981484631614,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.5684647302904564,
+        "p90Cents": 47.70582329094319,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 1592,
+        "elapsedMs": 242.23959000000013,
+        "cpu": {
+          "min": 0.12716199999999844,
+          "p10": 0.1273319999999103,
+          "median": 0.13224900000000162,
+          "p90": 0.17927000000008775,
+          "max": 0.6490790000000288
+        },
+        "actualFrameP90Cents": 30.9242029919427,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "female",
+      "pcmSha256": "0f4b4a64de9253f38c78665ce81f6182638bbe81657e97f29bcf1e83b93db7a4",
+      "duration": 8,
+      "current": {
+        "coverage": 0.7323651452282157,
+        "p90Cents": 37.28358312962555,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 3,
+        "processedWindows": 1592,
+        "elapsedMs": 403.669177,
+        "cpu": {
+          "min": 0.22525000000018736,
+          "p10": 0.22697199999993245,
+          "median": 0.23277099999995698,
+          "p90": 0.2633769999999913,
+          "max": 1.8443509999999605
+        },
+        "actualFrameP90Cents": 32.95950982284408,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.6473029045643154,
+        "p90Cents": 52.987858866925336,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 1,
+        "processedWindows": 1592,
+        "elapsedMs": 221.46872200000007,
+        "cpu": {
+          "min": 0.12704200000007404,
+          "p10": 0.12738200000012512,
+          "median": 0.13199899999995068,
+          "p90": 0.14632000000005974,
+          "max": 0.48377899999991314
+        },
+        "actualFrameP90Cents": 33.73797129040647,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "harmonic",
+      "pcmSha256": "bbb37af99e49917bb84ab305e5d5ba64cb3d97f445a9faac278a25380b129198",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 4.345140744587042e-05,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 192.68099200000006,
+        "cpu": {
+          "min": 0.2255600000000868,
+          "p10": 0.2265420000001086,
+          "median": 0.2277639999999792,
+          "p90": 0.25264100000003964,
+          "max": 0.7521240000000944
+        },
+        "actualFrameP90Cents": 4.4954612616219604e-05,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 1906.7044631466476,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 110.80879800000002,
+        "cpu": {
+          "min": 0.12712200000009943,
+          "p10": 0.1273519999999735,
+          "median": 0.12767299999995885,
+          "p90": 0.14377700000000004,
+          "max": 1.204526999999871
+        },
+        "actualFrameP90Cents": 1910.2318236722615,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "intensity",
+      "pcmSha256": "89d8d062de69550070bda7223ee62d5022f6d3b9d1ac1fff3afccb9565811965",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.44487389197673005,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 190.9172520000002,
+        "cpu": {
+          "min": 0.22507900000027803,
+          "p10": 0.2264509999999973,
+          "median": 0.2273630000004232,
+          "p90": 0.24641199999996388,
+          "max": 0.7213179999998829
+        },
+        "actualFrameP90Cents": 0.3882304107138123,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 0.5660400444773591,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 107.18361099999993,
+        "cpu": {
+          "min": 0.12194399999998495,
+          "p10": 0.1222339999999349,
+          "median": 0.1276319999997213,
+          "p90": 0.14281499999970038,
+          "max": 0.40601199999991877
+        },
+        "actualFrameP90Cents": 0.5660400444773591,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "male-quiet",
+      "pcmSha256": "85ace2945512b1f4e8c833a5a7e58ea3ee75c6571643e72a7da5451e9755c057",
+      "duration": 8,
+      "current": {
+        "coverage": 0.5846774193548387,
+        "p90Cents": 28.816615126901564,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 1,
+        "processedWindows": 1592,
+        "elapsedMs": 389.3837309999999,
+        "cpu": {
+          "min": 0.22532000000001062,
+          "p10": 0.22708200000033685,
+          "median": 0.2318399999999201,
+          "p90": 0.2508179999999811,
+          "max": 1.2147319999999127
+        },
+        "actualFrameP90Cents": 27.356739745457382,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.4153225806451613,
+        "p90Cents": 27.16874735616396,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 1,
+        "processedWindows": 1592,
+        "elapsedMs": 223.07343199999968,
+        "cpu": {
+          "min": 0.12720200000012483,
+          "p10": 0.1274820000003274,
+          "median": 0.1321499999999105,
+          "p90": 0.14609000000018568,
+          "max": 0.5164589999999407
+        },
+        "actualFrameP90Cents": 23.415209565056735,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "male",
+      "pcmSha256": "30cbf4374f23792f2ac95750f4793796f87fd5eb15d181bf128ce90147693a8b",
+      "duration": 8,
+      "current": {
+        "coverage": 0.6112224448897795,
+        "p90Cents": 29.75378259690218,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 1,
+        "processedWindows": 1592,
+        "elapsedMs": 392.3956840000001,
+        "cpu": {
+          "min": 0.22520900000017718,
+          "p10": 0.22677199999998265,
+          "median": 0.23244100000010803,
+          "p90": 0.25657700000010664,
+          "max": 1.1573859999998604
+        },
+        "actualFrameP90Cents": 29.203310668540823,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.47695390781563124,
+        "p90Cents": 30.1313505297708,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 1,
+        "processedWindows": 1592,
+        "elapsedMs": 224.6967279999999,
+        "cpu": {
+          "min": 0.12710199999992255,
+          "p10": 0.12771299999985786,
+          "median": 0.132680000000164,
+          "p90": 0.1479130000002442,
+          "max": 0.6352780000001985
+        },
+        "actualFrameP90Cents": 28.21353028785903,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "noise-0",
+      "pcmSha256": "66c0bd41fcb161b2c7778d8ebcb79f53bb343f429f30cadd0ff02ee5f0cdbf0e",
+      "duration": 4,
+      "current": {
+        "coverage": 0,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 194.05674500000032,
+        "cpu": {
+          "min": 0.2274929999998676,
+          "p10": 0.23244999999997162,
+          "median": 0.23402299999997922,
+          "p90": 0.2506780000003346,
+          "max": 0.8254249999999956
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 112.03757000000041,
+        "cpu": {
+          "min": 0.1276319999997213,
+          "p10": 0.13198899999997593,
+          "median": 0.13288999999986117,
+          "p90": 0.14949599999999919,
+          "max": 0.5881070000000364
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "noise-10",
+      "pcmSha256": "bf4b9613fbcb8e0a4b024284b052da48824e634aac1d44b3d3932dc8def8b8d6",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 16.390142786395778,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 193.43286399999988,
+        "cpu": {
+          "min": 0.22507900000027803,
+          "p10": 0.2267119999996794,
+          "median": 0.22809499999993932,
+          "p90": 0.2466620000000148,
+          "max": 1.4134909999997944
+        },
+        "actualFrameP90Cents": 16.39485334683666,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 13.20837453591192,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 107.66632699999991,
+        "cpu": {
+          "min": 0.12177400000018679,
+          "p10": 0.1271420000002763,
+          "median": 0.127411999999822,
+          "p90": 0.14257499999985157,
+          "max": 0.5948870000001989
+        },
+        "actualFrameP90Cents": 13.45069065681453,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "noise-20",
+      "pcmSha256": "8574ea6582df0e08632b6f64d4b3daca20de0576ffdb0701f62319070262eda9",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 4.001104866775912,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 197.92767400000048,
+        "cpu": {
+          "min": 0.22483900000042922,
+          "p10": 0.22619099999974424,
+          "median": 0.2278440000000046,
+          "p90": 0.26895500000046013,
+          "max": 0.9734479999997347
+        },
+        "actualFrameP90Cents": 3.8342398192205445,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 2.14731734239805,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 107.36695599999985,
+        "cpu": {
+          "min": 0.12679099999968457,
+          "p10": 0.12721200000032695,
+          "median": 0.12744299999940267,
+          "p90": 0.14286600000014005,
+          "max": 0.5360890000001746
+        },
+        "actualFrameP90Cents": 2.1999509444199536,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "noise-only",
+      "pcmSha256": "d04ff4dc10909bb0f084f4b82529abcee5bedd85d87374296ca98d48bfee2865",
+      "duration": 4,
+      "current": {
+        "coverage": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 199.44497199999932,
+        "cpu": {
+          "min": 0.23226099999919825,
+          "p10": 0.23684700000012526,
+          "median": 0.23890099999971426,
+          "p90": 0.25702799999999115,
+          "max": 0.7546080000001893
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 112.7278409999999,
+        "cpu": {
+          "min": 0.1277330000002621,
+          "p10": 0.13177900000027876,
+          "median": 0.13267999999970925,
+          "p90": 0.14698200000020734,
+          "max": 0.6329139999998006
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "pauses",
+      "pcmSha256": "1347bcf7d2998cf01fba2bee8874863def04947d7591b077c042d4c90faa16ae",
+      "duration": 4,
+      "current": {
+        "coverage": 0.9613733905579399,
+        "p90Cents": 0.002102665039696135,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 191.9262520000002,
+        "cpu": {
+          "min": 0.22622100000080536,
+          "p10": 0.22678199999973003,
+          "median": 0.22854499999994005,
+          "p90": 0.2450990000006641,
+          "max": 0.4499980000000505
+        },
+        "actualFrameP90Cents": 0.002251053332726824,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.9356223175965666,
+        "p90Cents": 0.12263777231802314,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 115.05631300000005,
+        "cpu": {
+          "min": 0.12698200000068027,
+          "p10": 0.12735299999985727,
+          "median": 0.12936499999977968,
+          "p90": 0.14485899999999674,
+          "max": 2.192696999999498
+        },
+        "actualFrameP90Cents": 0.12247685947669226,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "quiet-tone",
+      "pcmSha256": "47fffb810e7433c1a851a2414f79910ca310407e1540339cc0eefd4f31989afd",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.020385365022111933,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 194.30319700000018,
+        "cpu": {
+          "min": 0.22528000000056636,
+          "p10": 0.22593099999994593,
+          "median": 0.22739300000012008,
+          "p90": 0.25163900000006834,
+          "max": 2.4520579999998517
+        },
+        "actualFrameP90Cents": 0.020385365022111933,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 0.14168415369498918,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 107.0056910000003,
+        "cpu": {
+          "min": 0.1270620000004783,
+          "p10": 0.12730199999987235,
+          "median": 0.12752200000068115,
+          "p90": 0.1422950000005585,
+          "max": 0.719955999999911
+        },
+        "actualFrameP90Cents": 0.14168415369498918,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "rapid",
+      "pcmSha256": "1fb3b17110f4ff8b4f410d6a4378d6dc8becb6a194582c000bf9228e43851a00",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 11.954395760289458,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 188.35979299999963,
+        "cpu": {
+          "min": 0.22494899999946938,
+          "p10": 0.22650100000009843,
+          "median": 0.22744299999976647,
+          "p90": 0.24377800000002026,
+          "max": 0.8532970000005662
+        },
+        "actualFrameP90Cents": 22.496889572269684,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 36.85638127346383,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 107.48792800000047,
+        "cpu": {
+          "min": 0.12694099999953323,
+          "p10": 0.12712199999987206,
+          "median": 0.12745300000005955,
+          "p90": 0.14187399999991612,
+          "max": 0.728157999999894
+        },
+        "actualFrameP90Cents": 31.794642293475192,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "rise",
+      "pcmSha256": "06be78836a68be13c3617e6a058227f7a4e2c96e3e463659a66b27bfdab2b5d0",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.8297010919915903,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 188.25362200000018,
+        "cpu": {
+          "min": 0.22429800000008981,
+          "p10": 0.22586100000080478,
+          "median": 0.22713199999998324,
+          "p90": 0.2432969999999841,
+          "max": 0.7918650000001435
+        },
+        "actualFrameP90Cents": 1.7785946846129324,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 2.52880198000174,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 109.18302500000027,
+        "cpu": {
+          "min": 0.1270409999997355,
+          "p10": 0.12727200000063021,
+          "median": 0.1275020000002769,
+          "p90": 0.14276499999959924,
+          "max": 1.3200809999998455
+        },
+        "actualFrameP90Cents": 2.299946514138626,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "short-syllables",
+      "pcmSha256": "6b53c8c8e292d267cf740983c82d84f422920fa81682fdd1a3212c958c8ed2ae",
+      "duration": 4,
+      "current": {
+        "coverage": 0.8181818181818182,
+        "p90Cents": 0.9189248655318341,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 191.77466300000015,
+        "cpu": {
+          "min": 0.2268420000000333,
+          "p10": 0.22813399999995454,
+          "median": 0.2303379999993922,
+          "p90": 0.24861499999951775,
+          "max": 0.7075580000000627
+        },
+        "actualFrameP90Cents": 1.977784743339376,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 0.8181818181818182,
+        "p90Cents": 6.5284992741821,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 109.30465899999945,
+        "cpu": {
+          "min": 0.12698100000034174,
+          "p10": 0.12725200000022596,
+          "median": 0.13194900000053167,
+          "p90": 0.14544999999998254,
+          "max": 0.6438809999999648
+        },
+        "actualFrameP90Cents": 4.959331316790965,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "silence",
+      "pcmSha256": "351a8054b23144894668c6a51d5dbba82f56523ef43cc45b6f4d7060a969c31a",
+      "duration": 4,
+      "current": {
+        "coverage": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 186.82762300000013,
+        "cpu": {
+          "min": 0.22481900000002497,
+          "p10": 0.22588100000029954,
+          "median": 0.22702300000037212,
+          "p90": 0.24323700000059034,
+          "max": 0.4180500000002212
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": null,
+        "p90Cents": null,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 109.02952300000015,
+        "cpu": {
+          "min": 0.12815299999965646,
+          "p10": 0.1289839999999458,
+          "median": 0.12960600000042177,
+          "p90": 0.14429800000016257,
+          "max": 0.375105999999505
+        },
+        "actualFrameP90Cents": null,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "stable",
+      "pcmSha256": "12af46692762cda8e4604396fc0b49311b3584d0d01e3841110b2c37e2fa7c1e",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.003075627713579139,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 189.20907400000033,
+        "cpu": {
+          "min": 0.22557099999994534,
+          "p10": 0.22672199999942677,
+          "median": 0.22783299999991868,
+          "p90": 0.24421799999981886,
+          "max": 0.7911229999999705
+        },
+        "actualFrameP90Cents": 0.0027224552977382355,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 0.12424208882875687,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 108.11191899999994,
+        "cpu": {
+          "min": 0.12703200000032666,
+          "p10": 0.12726199999997334,
+          "median": 0.12744199999997363,
+          "p90": 0.14260600000034174,
+          "max": 0.6984940000002098
+        },
+        "actualFrameP90Cents": 0.12493875993133265,
+        "stableUnvoicedAccepted": 0
+      }
+    },
+    {
+      "audio": "very-quiet-tone",
+      "pcmSha256": "944eb65792890626e77218702fe051cdadd5b466a9b5569f36030ad17d0e2bd1",
+      "duration": 4,
+      "current": {
+        "coverage": 1,
+        "p90Cents": 0.4953829302314752,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 193.65691199999947,
+        "cpu": {
+          "min": 0.22464899999977206,
+          "p10": 0.22605099999964295,
+          "median": 0.22732300000006944,
+          "p90": 0.25876100000004953,
+          "max": 1.5281039999999848
+        },
+        "actualFrameP90Cents": 0.4953829302314752,
+        "stableUnvoicedAccepted": 0
+      },
+      "yin": {
+        "coverage": 1,
+        "p90Cents": 0.4189677017692246,
+        "octaveDisagreements": 0,
+        "unvoicedAccepted": 0,
+        "processedWindows": 792,
+        "elapsedMs": 113.01537499999995,
+        "cpu": {
+          "min": 0.12685099999998783,
+          "p10": 0.12717199999951845,
+          "median": 0.127411999999822,
+          "p90": 0.15858900000057474,
+          "max": 1.3200809999998455
+        },
+        "actualFrameP90Cents": 0.4069600963955886,
+        "stableUnvoicedAccepted": 0
+      }
+    }
+  ]
+}
