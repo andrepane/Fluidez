@@ -8,7 +8,8 @@ import {MAX_SECONDS,validLimits,summarize,wav16,validateFinal,plotRange,timeAtX,
 const $=id=>document.getElementById(id);
 const clock=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const advice={'Frases':'Pronuncia la frase con una voz cómoda.','Lectura':'Lee con naturalidad y observa cómo cambia tu tono.','Habla espontánea':'Habla libremente y observa la melodía de tu voz.'};
-let liveEngine,lastDiagnosticPaint=0;
+let liveEngine,lastDiagnosticPaint=0,activeEngine='current';
+const engineLabel=()=>activeEngine==='yin'?'B · YIN local':'A · McLeod/NSDF';
 let latestAgeMs=Infinity;
 let windowSeconds=LIVE_WINDOW_SECONDS;
 let spectral=null,raster=null;
@@ -22,13 +23,13 @@ const visualClock=new VisualClock();
 let scheduled=false,lastAnimationKey=null;
 function scheduleDraw(){if(scheduled)return;scheduled=true;window.requestAnimationFrame(()=>{scheduled=false;const key=`${visualClock.at(performance.now()).clock}:${points.length}`;if(!recording||key!==lastAnimationKey){draw();lastAnimationKey=key;}if(recording&&!document.hidden)scheduleDraw();});}
 function saveAttempt(){
- attempts[selected]={spectral,points,duration,blob,prepared,limits:{...limits},task,sourceKind,chartSource,exerciseText,mode,guide:{...guide}};
+ attempts[selected]={activeEngine,spectral,points,duration,blob,prepared,limits:{...limits},task,sourceKind,chartSource,exerciseText,mode,guide:{...guide}};
  for(let i=0;i<2;i++)$('pitchAttempt'+i).disabled=busy||!attempts[i];
  $('pitchComparison').textContent=attempts.map((a,i)=>a?`Intento ${i+1}: ${a.duration.toFixed(1)} s · ${a.sourceKind==='final'?'Praat final':'provisional / pendiente'}`:'').filter(Boolean).join(' · ')+'. Mismo tiempo real desde el inicio, sin alinear ni estirar las curvas.';
 }
 function selectAttempt(i){
  if(busy||!attempts[i])return;
- selected=i;const a=attempts[i];({points,duration,prepared,limits,task,sourceKind,chartSource,exerciseText,mode,guide,spectral}=a);raster=spectral?new SpectralRaster(spectral):null;
+ selected=i;const a=attempts[i];({points,duration,prepared,limits,task,sourceKind,chartSource,exerciseText,mode,guide,spectral}=a);activeEngine=a.activeEngine||'current';$('pitchEngine').value=activeEngine;raster=spectral?new SpectralRaster(spectral):null;
  $('pitchTask').value=task;$('pitchText').value=exerciseText;$('pitchMode').value=mode;$('pitchFloor').value=String(limits.floor);$('pitchCeiling').value=String(limits.ceiling);$('pitchGuideLow').value=String(guide.low);$('pitchGuideHigh').value=String(guide.high);$('pitchGuideDuration').value=String(guide.duration);setAudio(a.blob);adaptive.reset();summary(chartSource);status('Escuchando intento '+(i+1)+'. '+(sourceKind==='final'?'Análisis final disponible.':'Estimación provisional / pendiente de análisis.'));controls();$('pitchAudio').play().catch(()=>status('Pulsa reproducir para escuchar.'));
 }
 function exercise(){
@@ -51,7 +52,7 @@ function paintDiagnostic(){if(!liveEngine?.diagnostic)return;$('pitchDiagnosticR
 function status(text){$('pitchStatus').textContent=text;}
 function view(value){$('pitchSurface').dataset.view=value;$('pitchWindowControl').hidden=value==='results';}
 function controls(){
- for(const id of ['pitchRecord','pitchUpload','pitchFloor','pitchCeiling','pitchTask','pitchHome','pitchAgain','pitchMode','pitchText','pitchTextVisible','pitchGuideLow','pitchGuideHigh','pitchGuideDuration','pitchDiagnose'])$(id).disabled=busy;
+ for(const id of ['pitchRecord','pitchUpload','pitchFloor','pitchCeiling','pitchTask','pitchHome','pitchAgain','pitchMode','pitchText','pitchTextVisible','pitchGuideLow','pitchGuideHigh','pitchGuideDuration','pitchDiagnose','pitchEngine'])$(id).disabled=busy;
  for(let i=0;i<2;i++){$('pitchAttempt'+i).disabled=busy||!attempts[i];$('pitchReplace'+i).disabled=busy;$('pitchReview'+i).disabled=busy||!attempts[i];}
  const full=attempts.every(Boolean)&&replaceTarget===null;$('pitchCapacity').hidden=!full;$('pitchRecord').disabled=busy||full;$('pitchUpload').disabled=busy||full;
  $('pitchStop').disabled=!recording;$('pitchRetry').disabled=busy||!prepared;
@@ -212,11 +213,11 @@ async function start(){
   await context.audioWorklet.addModule('./pitch-capture.worklet.js');rate=context.sampleRate;
   capture=new AudioWorkletNode(context,'fluidez-pitch-capture',{processorOptions:{frameSize:Math.round(rate*LIVE_CONFIG.hopSeconds),maxFrames:Math.floor(rate*(MAX_SECONDS-1))},numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});
   silent=context.createGain();silent.gain.value=0;capture.connect(silent);silent.connect(context.destination);
-  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();liveEngine=new LiveAnalysisClient({onresult:analyzed,onerror:directError});await liveEngine.init(rate,limits,{diagnostic:$('pitchDiagnose').checked});latestAgeMs=Infinity;lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
+  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();activeEngine=$('pitchEngine').value==='yin'?'yin':'current';liveEngine=new LiveAnalysisClient({onresult:analyzed,onerror:directError});await liveEngine.init(rate,limits,{diagnostic:$('pitchDiagnose').checked,engine:activeEngine});latestAgeMs=Infinity;lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
   spectral={rate,config:SPECTRAL_CONFIG,hop:Math.round(rate*SPECTRAL_CONFIG.hopSeconds),columns:[]};raster=new SpectralRaster(spectral);points=[];chunks=[];duration=0;visualClock.reset();prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
   $('pitchAudio').pause();$('pitchAudio').removeAttribute('src');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Escuchando';$('pitchToneMarker').hidden=true;
   $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent=`Directo · últimos ${windowSeconds} segundos`;$('pitchBadge').textContent='Estimación en directo';
-  $('pitchChartSource').textContent='Provisional · McLeod/NSDF · procesamiento local separado';$('pitchHover').textContent='Observa cómo sube y baja tu tono. Los huecos no significan que lo estés haciendo mal.';
+  $('pitchChartSource').textContent=`Provisional · ${engineLabel()} · procesamiento local separado`;$('pitchHover').textContent='Observa cómo sube y baja tu tono. Los huecos no significan que lo estés haciendo mal.';
   recording=true;document.body.dataset.session='recording';view('recording');$('pitchWorkspace').scrollIntoView?.({block:'start',behavior:'smooth'});context.createMediaStreamSource(stream).connect(capture);
   status('Grabando WAV en tu dispositivo. El marcador es una estimación; no indica normalidad.');
   autoStop=setTimeout(stop,(MAX_SECONDS-1)*1000);controls();draw();
@@ -232,7 +233,7 @@ async function stop(){
  const length=chunks.reduce((n,c)=>n+c.length,0);if(!length){busy=false;document.body.dataset.session='done';view('setup');controls();status('No se capturó audio. Vuelve a intentarlo.');return;}
  const raw=new Float32Array(length);let offset=0;for(const c of chunks){raw.set(c,offset);offset+=c.length;}chunks=[];
  duration=length/rate;setAudio(new Blob([wav16(raw,rate)],{type:'audio/wav'}));
- summary('Resumen provisional · McLeod/NSDF en directo · pendiente de Praat');
+ summary(`Resumen provisional · ${engineLabel()} en directo · pendiente de Praat`);
  if(incomplete){busy=false;document.body.dataset.session='done';controls();status('No se confirmó el final de la captura. Conservamos un WAV que podría estar incompleto; no se envía automáticamente a Praat.');return;}
  processing('Preparando tu muestra…');
  try{const ready=await prepare(blob);prepared=ready.wav;await finalAnalysis();}
