@@ -1,3 +1,4 @@
+import {YinPitchDetector} from './yin-pitch.mjs';
 import {PitchEvidenceFilter} from './pitch-evidence-filter.mjs';
 import {AdaptiveEnergyGate} from './adaptive-energy.mjs';
 import {BoundedPitchDetector} from './bounded-pitch.mjs';
@@ -5,10 +6,10 @@ import {centerFrame,LiveToneTracker,CANDIDATE_THRESHOLD} from './pitch-data.mjs'
 export const LIVE_CONFIG=Object.freeze({size:2048,hopSeconds:.005,minimumClarity:.80,minimumRms:.0005,retentionSeconds:.06,adaptiveEnergy:true,quietMinimumRms:.00005,quietClarity:.92,noiseRatio:3,recoverySeconds:.15,recoveryClarity:.92,confirmationSeconds:.03,jumpConfirmationSeconds:.04,filteredEvidence:true});
 const distribution=values=>{if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),q=p=>a[Math.round((a.length-1)*p)];return {min:a[0],p10:q(.1),median:q(.5),p90:q(.9),max:a.at(-1)};};
 export class LivePitchEngine{
- constructor(rate,limits,{diagnostic=false,now=()=>performance.now(),config=LIVE_CONFIG}={}){
-  this.rate=rate;this.limits=limits;this.config=config;this.now=now;this.diagnostic=diagnostic;
+ constructor(rate,limits,{diagnostic=false,now=()=>performance.now(),config=LIVE_CONFIG,engine='current'}={}){
+  if(!['current','yin'].includes(engine))throw Error('Motor de directo desconocido');this.engine=engine;this.rate=rate;this.limits=limits;this.config=config;this.now=now;this.diagnostic=diagnostic;
   this.ring=new Float32Array(config.size);this.frame=new Float32Array(config.size);this.centered=new Float32Array(config.size);
-  this.detector=new BoundedPitchDetector(config.size);this.filteredDetector=config.filteredEvidence?new BoundedPitchDetector(config.size):null;this.evidenceFilter=config.filteredEvidence?new PitchEvidenceFilter(config.size,rate):null;
+  this.detector=engine==='yin'?new YinPitchDetector(config.size):new BoundedPitchDetector(config.size);this.filteredDetector=config.filteredEvidence&&engine==='current'?new BoundedPitchDetector(config.size):null;this.evidenceFilter=config.filteredEvidence&&engine==='current'?new PitchEvidenceFilter(config.size,rate):null;
   this.energy=config.adaptiveEnergy?new AdaptiveEnergyGate(config):null;this.tracker=new LiveToneTracker(config);this.hop=Math.round(rate*config.hopSeconds);this.total=0;this.fill=0;this.at=0;
   this.blocks=0;this.receivedSamples=0;this.windows=0;this.candidates=0;this.accepted=0;this.lastTime=null;this.reasons={};this.series={rms:[],clarity:[],intervalSeconds:[],cpuMs:[],deliveryAgeMs:[],recoveryMs:[]};this.events=[];this.captureGaps=0;this.rendered=0;this.renderFrames=0;
  }
@@ -38,5 +39,5 @@ export class LivePitchEngine{
   return output;
  }
  noteRender(count){this.rendered=count;this.renderFrames++;}
- report(){return {enabled:this.diagnostic,rate:this.rate,config:this.config,detector:"bounded McLeod/NSDF",searchRange:this.limits,candidateThreshold:CANDIDATE_THRESHOLD,adaptiveEnergy:this.energy?.report()??null,hopMs:this.hop/this.rate*1000,captureBlocks:this.blocks,receivedSamples:this.receivedSamples,windows:this.windows,candidates:this.candidates,accepted:this.accepted,rejections:this.reasons,captureGaps:this.captureGaps,renderFrames:this.renderFrames,acceptedPointsVisible:this.rendered,windowCenterDelayMs:this.config.size/this.rate*500,series:Object.fromEntries(Object.entries(this.series).map(([k,v])=>[k,distribution(v)])),recent:this.events};}
+ report(){return {enabled:this.diagnostic,rate:this.rate,config:this.config,engine:this.engine,detector:this.engine==='yin'?'YIN local experimental':"bounded McLeod/NSDF",searchRange:this.limits,candidateThreshold:CANDIDATE_THRESHOLD,adaptiveEnergy:this.energy?.report()??null,hopMs:this.hop/this.rate*1000,captureBlocks:this.blocks,receivedSamples:this.receivedSamples,windows:this.windows,candidates:this.candidates,accepted:this.accepted,rejections:this.reasons,captureGaps:this.captureGaps,renderFrames:this.renderFrames,acceptedPointsVisible:this.rendered,windowCenterDelayMs:this.config.size/this.rate*500,series:Object.fromEntries(Object.entries(this.series).map(([k,v])=>[k,distribution(v)])),recent:this.events};}
 }
