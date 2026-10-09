@@ -1,0 +1,15 @@
+# Escala y trazo de entonación (solo presentación)
+
+La escala anterior ya era logarítmica. El problema en directo era usar los límites completos del detector (50–1000 Hz). Esta PR separa rango de búsqueda y rango visual: no cambia detector, cadencia, puerta energética, pausas, WAV, Praat ni ejercicios.
+
+En directo se toma la mediana de los valores iniciales como referencia (0 st). La escala usa percentiles 10/90 iniciales, con margen de cuatro semitonos y amplitud mínima de 12 st. Se ajusta durante el inicio y se fija con al menos 20 puntos y 1,5 s entre el primero y último tono aceptado (tiempo transcurrido, no 1,5 s de fonación continua). No se recalibra con cada frase ni al cambiar el zoom. Si el último tono sale de escala, un aviso lo indica; la curva queda recortada en el área visible, sin sustituir ni eliminar medidas. Reiniciar práctica reinicia la escala. Esta ventana de calibración puede no representar todo el rango de una persona; no es un baremo vocal ni diagnóstico. Ajustes más sofisticados quedan pendientes.
+
+Eje vertical en semitonos relativos a la referencia indicada en Hz, con marcas cada 3/6/12 st según amplitud. Misma variación proporcional en voz grave/aguda ocupa igual altura para un rango visual equivalente. No se amplifica sin límite el ruido de una vocal casi plana, gracias al mínimo de 12 st.
+
+En resultados la escala usa TODAS las F0 detectadas, incluidos extremos, más las guías existentes. Se calcula con ambos intentos disponibles y se mantiene al ocultar uno, con una mediana común y el mismo eje temporal. No normaliza cada voz por separado. Referencia final puede diferir de la referencia inicial del directo; ambas se explicitan. El cálculo final se almacena en caché durante reproducción para no ordenar todas las muestras en cada frame.
+
+Trazo de 3 px con extremos redondeados, cuadrícula discreta, fondo suave y referencia cero algo más visible. El trazo curvo existente, limitado entre sus extremos, se aplica también a Praat. Los puntos aislados se representan con círculos pequeños. La opción de trazo recto se conserva. Se usan los mismos segmentos contiguos: nulls y huecos separan trazos. No se interpolan regiones sin estimación. Se conserva el suavizado visual opcional existente solo en directo; no se altera el análisis. Reloj/desplazamiento y retardo visual permanecen iguales.
+
+Pruebas: invariancia de geometría proporcional grave/agudo, congelación del eje y reinicio, extremos de ambos intentos incluidos, entrada inválida sin modificación, flujo directo/Praat con eje nuevo y WAV intacto, pruebas de segmentos/huecos existentes. 182 JS y 12 Python pasan localmente; sintaxis comprobada. Las pruebas de interfaz usan DOM/canvas instrumentados, no validación visual con micrófono real en navegador.
+
+Prueba manual: grabar frase, observar ajuste inicial y eje estable; cambiar ventana temporal; introducir tono fuera de escala y comprobar aviso; finalizar y escuchar; grabar segundo intento y ocultar/mostrar curvas (ejes comunes); comparar trazo curvo/recto. Pendiente confirmar estética en navegador real y dispositivos móviles. No se afirma mejora de precisión ni detección.
