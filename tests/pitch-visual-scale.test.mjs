@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {visualRange,StablePitchScale,semitones,visualTicks} from '../pitch-visual-scale.mjs';
+const points=(base=100)=>Array.from({length:401},(_,i)=>({time:i*.005,hz:base*2**(Math.sin(i/20)*2/12)}));
+test('same relative modulation has identical semitone geometry for low/high voice',()=>{const a=visualRange(points(100)),b=visualRange(points(400));assert.ok(Math.abs(semitones(a.high,a.low)-12)<1e-8);assert.ok(Math.abs(semitones(b.high,b.low)-12)<1e-8);for(let i=0;i<401;i++)assert.ok(Math.abs(semitones(points(100)[i].hz,a.low)/semitones(a.high,a.low)-semitones(points(400)[i].hz,b.low)/semitones(b.high,b.low))<1e-8);});
+test('live calibration locks and later voice/nulls/outliers cannot move axis',()=>{const s=new StablePitchScale(),p=points(),copy=JSON.stringify(p);s.observe(p,{floor:50,ceiling:1000});assert.equal(s.locked,true);const r={...s.get()};s.observe([{time:3,hz:800},{time:4,hz:null}],{floor:50,ceiling:1000});assert.deepEqual(s.get(),r);assert.equal(JSON.stringify(p),copy);s.reset();assert.equal(s.locked,false);assert.equal(s.get({floor:50,ceiling:1000}).calibrated,false);});
+test('final common scale includes both attempts and every measured extreme',()=>{const a=points(100),b=points(400),r=visualRange([...a,...b,{time:3,hz:900}]);assert.ok(r.low<Math.min(...a.map(p=>p.hz)));assert.ok(r.high>900);assert.ok(visualTicks(r).some(t=>t.st===0));assert.ok(visualTicks(r).every(t=>t.hz>=r.low&&t.hz<=r.high));});
+test('empty and invalid values have finite display limits without changing data',()=>{const p=[{time:0,hz:null},{time:.1,hz:NaN}],r=visualRange(p);assert.equal(r.calibrated,false);assert.ok(Number.isFinite(r.reference));assert.deepEqual(visualRange([]),r);});
