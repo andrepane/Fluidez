@@ -1,5 +1,5 @@
 // Local causal STFT of the original mono PCM. No F0 or voice classification.
-export const SPECTRAL_CONFIG=Object.freeze({size:2048,hopSeconds:.01,bands:128,maxHz:8000,minDb:-90,maxDb:-20,maxSeconds:120});
+export const SPECTRAL_CONFIG=Object.freeze({size:2048,hopSeconds:.005,bands:128,maxHz:8000,minDb:-90,maxDb:-20,maxSeconds:120});
 export class SpectralEngine{
  constructor(rate,config=SPECTRAL_CONFIG,{retain=true}={}){
   this.retain=retain;this.columnCount=0;this.rate=rate;this.config=config;this.hop=Math.round(rate*config.hopSeconds);this.total=0;this.fill=0;this.write=0;this.gaps=0;this.columns=[];this.cpuMs=0;

@@ -27,7 +27,7 @@ for(const sex of ['male','female'])test('real connected reading '+sex+' preserve
  const baseline=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length),e=feed(x,48000),after=new LivePitchEngine(48000,{floor:75,ceiling:600}).push(x,x.length);assert.deepEqual(x,copy);assert.deepEqual(after,baseline);assert.ok(e.columns.some((c,i)=>baseline[i].hz===null&&Math.max(...c.values)>0));assert.ok(e.columns.length>260);
 });
 test('120-second storage bounded; raster appends only new columns and shared view clips',()=>{
- const e=feed(signal(48000,120,t=>.01*Math.sin(2*Math.PI*1000*t)),48000);assert.ok(e.columns.length<=12000);assert.ok(e.report().bytes<1600000);let writes=0,draw;
+ const e=feed(signal(48000,120,t=>.01*Math.sin(2*Math.PI*1000*t)),48000);assert.ok(e.columns.length<=24000);assert.ok(e.report().bytes<3200000);let writes=0,draw;
  const ctx={fillRect(){},createImageData(w,h){return {data:new Uint8ClampedArray(w*h*4)};},putImageData(){writes++;}},r=new SpectralRaster(e,()=>({getContext:()=>ctx}));r.update();assert.equal(writes,e.columns.length);r.update();assert.equal(writes,e.columns.length);
  const clock=new VisualClock();clock.accept(120,1000);const visual=clock.at(1000),range=movingWindow(visual.clock),view={left:60,top:8,width:700,height:100,...range,reveal:visual.reveal};r.draw({save(){},beginPath(){},rect(){},clip(){},restore(){},drawImage(...args){draw=args;}},view);assert.ok(draw);assert.ok(draw[5]+draw[7]<=760);assert.equal(writes,e.columns.length);
  console.log('Spectral benchmark 120s:',JSON.stringify(e.report()));
