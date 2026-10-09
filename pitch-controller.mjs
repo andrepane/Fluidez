@@ -1,3 +1,4 @@
+import {StablePitchScale,visualRange,visualTicks} from './pitch-visual-scale.mjs';
 import {comparePitchCurves} from './pitch-comparison.mjs';
 import {SPECTRAL_CONFIG,SpectralRaster} from './spectrogram.mjs';
 import {LIVE_CONFIG} from './live-pitch.mjs';
@@ -18,6 +19,9 @@ let limits={floor:50,ceiling:1000},task='Habla espontánea',sourceKind='none',la
 let replaceTarget=null;
 let attempts=[null,null],selected=0,chartSource='',exerciseText='',mode='free',guide={low:130,high:250,duration:4};
 const adaptive=new AdaptiveScale();
+const displayScale=new StablePitchScale();
+let finalScaleCache=null;
+function finalDisplayRange(visible,reference){const sources=visible.map(a=>a.points),key=[limits.floor,limits.ceiling,mode,guide.low,guide.high,guide.duration].join(':');if(!finalScaleCache||finalScaleCache.key!==key||sources.length!==finalScaleCache.sources.length||sources.some((a,i)=>a!==finalScaleCache.sources[i]||a.length!==finalScaleCache.lengths[i]))finalScaleCache={key,sources,lengths:sources.map(a=>a.length),range:visualRange([...sources.flat(),...reference],limits)};return finalScaleCache.range;}
 const visualClock=new VisualClock();
 let scheduled=false,lastAnimationKey=null;
 function scheduleDraw(){if(scheduled)return;scheduled=true;window.requestAnimationFrame(()=>{scheduled=false;const key=`${visualClock.at(performance.now()).clock}:${points.length}`;if(!recording||key!==lastAnimationKey){draw();lastAnimationKey=key;}if(recording&&!document.hidden)scheduleDraw();});}
@@ -29,7 +33,7 @@ function saveAttempt(){
 function selectAttempt(i){
  if(busy||!attempts[i])return;
  selected=i;const a=attempts[i];({points,duration,prepared,limits,task,sourceKind,chartSource,exerciseText,mode,guide,spectral}=a);raster=spectral?new SpectralRaster(spectral):null;
- $('pitchTask').value=task;$('pitchText').value=exerciseText;$('pitchMode').value=mode;$('pitchFloor').value=String(limits.floor);$('pitchCeiling').value=String(limits.ceiling);$('pitchGuideLow').value=String(guide.low);$('pitchGuideHigh').value=String(guide.high);$('pitchGuideDuration').value=String(guide.duration);setAudio(a.blob);adaptive.reset();summary(chartSource);status('Escuchando intento '+(i+1)+'. '+(sourceKind==='final'?'Análisis final disponible.':'Estimación provisional / pendiente de análisis.'));controls();$('pitchAudio').play().catch(()=>status('Pulsa reproducir para escuchar.'));
+ $('pitchTask').value=task;$('pitchText').value=exerciseText;$('pitchMode').value=mode;$('pitchFloor').value=String(limits.floor);$('pitchCeiling').value=String(limits.ceiling);$('pitchGuideLow').value=String(guide.low);$('pitchGuideHigh').value=String(guide.high);$('pitchGuideDuration').value=String(guide.duration);setAudio(a.blob);adaptive.reset();displayScale.reset();summary(chartSource);status('Escuchando intento '+(i+1)+'. '+(sourceKind==='final'?'Análisis final disponible.':'Estimación provisional / pendiente de análisis.'));controls();$('pitchAudio').play().catch(()=>status('Pulsa reproducir para escuchar.'));
 }
 function exercise(){
  $('pitchPrompt').textContent=exerciseText;
@@ -71,32 +75,23 @@ function draw(){
  const visual=visualClock.at(performance.now()),windowRange=movingWindow(visual.clock,windowSeconds);
  const end=readyView?windowSeconds:recording?windowRange.end:comparisonExtent(attempts.some(Boolean)?attempts:[{duration}]),begin=recording?windowRange.begin:0,span=end-begin;
  const reference=referencePoints(mode,guide.low,guide.high,guide.duration);
- const range=recording?{low:limits.floor,high:limits.ceiling}:plotRange([...visible.flatMap(a=>a.points),...reference],Math.min(limits.floor,...attempts.filter(Boolean).map(a=>a.limits.floor)),Math.max(limits.ceiling,...attempts.filter(Boolean).map(a=>a.limits.ceiling)));
+ const range=recording?displayScale.get(limits):finalDisplayRange(attempts.some(Boolean)?attempts.filter(Boolean):visible,reference);
+ $('pitchAxisNote').textContent=range.calibrated?`Escala visual en semitonos · 0 st = ${Math.round(range.reference)} Hz · ${recording?(displayScale.locked?'escala fija':'ajustando escala inicial'):'misma escala para los intentos visibles'}`:'La escala visual se ajustará al empezar a hablar.';
+ const outside=recording&&points.at(-1)?.hz&&(points.at(-1).hz<range.low||points.at(-1).hz>range.high);if(outside)$('pitchAxisNote').textContent+=' · Tono fuera de la escala visible';
  const x=t=>left+(t-begin)/span*(w-left-right),y=f=>h-bottom-Math.log2(f/range.low)/Math.log2(range.high/range.low)*(h-top-bottom);
  ctx.clearRect(0,0,w,h);ctx.font='12px system-ui';ctx.fillStyle=text;
- for(let i=0;i<=4;i++){
-  const f=range.low*(range.high/range.low)**(i/4),py=y(f);
-  ctx.strokeStyle=border;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(w-right,py);ctx.stroke();ctx.fillText(`${Math.round(f)} Hz`,4,py+4);
-
- }
+ for(const tick of visualTicks(range)){const py=y(tick.hz);ctx.strokeStyle=border;ctx.globalAlpha=tick.st===0?.7:.35;ctx.lineWidth=tick.st===0?1.2:1;ctx.beginPath();ctx.moveTo(left,py);ctx.lineTo(w-right,py);ctx.stroke();ctx.globalAlpha=1;ctx.fillText(tick.label,4,py+4);}
  if(!$('pitchHybrid').checked)drawTimeAxis(ctx,begin,end,left,w-left-right,h-9);
  ctx.save();ctx.beginPath();ctx.rect(left,top,w-left-right,h-top-bottom+6);ctx.clip();
  if(reference.length){ctx.strokeStyle='#8a6ba6';ctx.lineWidth=1.5;ctx.setLineDash([7,6]);ctx.beginPath();reference.forEach((p,i)=>{if(i)ctx.lineTo(x(p.time),y(p.hz));else ctx.moveTo(x(p.time),y(p.hz));});ctx.stroke();ctx.setLineDash([]);}
  let liveDisplayed=[];
  for(const a of visible){
- ctx.strokeStyle=!recording&&a===attempts[1]?'#8a6ba6':accent;ctx.globalAlpha=recording?.65:1;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();let previous=null;
+ ctx.strokeStyle=!recording&&a===attempts[1]?'#8a6ba6':accent;ctx.globalAlpha=1;ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();let previous=null;
  const displayed=visualPoints(a.points.filter(p=>p.time>=begin-.12&&p.time<=end),recording&&$('pitchSmooth').checked);if(recording)liveDisplayed=displayed;
- if(recording&&$('pitchRenderSmooth').checked){
- ctx.save();ctx.beginPath();ctx.rect(left,top,Math.max(0,x(visual.reveal)-left),h-top-bottom);ctx.clip();ctx.beginPath();
- for(const run of contiguousRuns(displayed)){ctx.moveTo(x(run[0].time),y(run[0].hz));for(const segment of curveSegments(run))ctx.bezierCurveTo(x(segment.c1.time),y(segment.c1.hz),x(segment.c2.time),y(segment.c2.hz),x(segment.to.time),y(segment.to.hz));}
- ctx.stroke();ctx.restore();continue;
- }
- for(const p of displayed){
-  if(p.hz===null){previous=null;continue;}
-  if(previous&&p.time-previous.time<.12)ctx.lineTo(x(p.time),y(p.hz));else ctx.moveTo(x(p.time),y(p.hz));
-  previous=p;
- }
- ctx.stroke();
+ const curved=$('pitchRenderSmooth').checked;
+ ctx.save();ctx.beginPath();ctx.rect(left,top,recording&&curved?Math.max(0,x(visual.reveal)-left):w-left-right,h-top-bottom);ctx.clip();ctx.beginPath();
+ for(const run of contiguousRuns(displayed)){ctx.moveTo(x(run[0].time),y(run[0].hz));if(curved){for(const segment of curveSegments(run))ctx.bezierCurveTo(x(segment.c1.time),y(segment.c1.hz),x(segment.c2.time),y(segment.c2.hz),x(segment.to.time),y(segment.to.hz));}else for(const p of run.slice(1))ctx.lineTo(x(p.time),y(p.hz));}
+ ctx.stroke();ctx.fillStyle=ctx.strokeStyle;for(const run of contiguousRuns(displayed))if(run.length===1){ctx.beginPath();ctx.arc(x(run[0].time),y(run[0].hz),2.7,0,Math.PI*2);ctx.fill();}ctx.restore();
  }
  ctx.globalAlpha=1;
  if(recording){
@@ -185,6 +180,7 @@ function readConfiguration(){
  return {limits:candidate,slot:nextSlot(),task:$('pitchTask').value||'Habla espontánea'};
 }
 function analyzed(data){
+ displayScale.observe(data.points,limits);
  for(const p of data.points)if(p.time>lastPlotTime){points.push({time:p.time,hz:p.hz});lastPlotTime=p.time;}
  spectral.columns.push(...data.columns);latestAgeMs=data.ageMs;
  const value=data.points.at(-1);
@@ -212,7 +208,7 @@ async function start(){
   await context.audioWorklet.addModule('./pitch-capture.worklet.js');rate=context.sampleRate;
   capture=new AudioWorkletNode(context,'fluidez-pitch-capture',{processorOptions:{frameSize:Math.round(rate*LIVE_CONFIG.hopSeconds),maxFrames:Math.floor(rate*(MAX_SECONDS-1))},numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});
   silent=context.createGain();silent.gain.value=0;capture.connect(silent);silent.connect(context.destination);
-  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();liveEngine=new LiveAnalysisClient({onresult:analyzed,onerror:directError});await liveEngine.init(rate,limits,{diagnostic:$('pitchDiagnose').checked});latestAgeMs=Infinity;lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
+  limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();displayScale.reset();exercise();liveEngine=new LiveAnalysisClient({onresult:analyzed,onerror:directError});await liveEngine.init(rate,limits,{diagnostic:$('pitchDiagnose').checked});latestAgeMs=Infinity;lastDiagnosticPaint=0;lastPlotTime=-1;paintDiagnostic();
   spectral={rate,config:SPECTRAL_CONFIG,hop:Math.round(rate*SPECTRAL_CONFIG.hopSeconds),columns:[]};raster=new SpectralRaster(spectral);points=[];chunks=[];duration=0;visualClock.reset();prepared=null;sourceKind='live';captureComplete=false;capture.port.onmessage=captured;
   $('pitchAudio').pause();$('pitchAudio').removeAttribute('src');$('pitchResults').hidden=true;$('pitchTimer').textContent='00:00';$('pitchValue').textContent='—';$('pitchLiveState').textContent='Escuchando';$('pitchToneMarker').hidden=true;
   $('pitchInstruction').textContent=advice[task];$('pitchWorkspaceLabel').textContent=`Directo · últimos ${windowSeconds} segundos`;$('pitchBadge').textContent='Estimación en directo';
@@ -242,7 +238,7 @@ async function upload(event){
  const file=event.target.files[0];event.target.value='';if(!file||busy)return;
  if(file.size>20*1024*1024){status('El archivo supera el límite de 20 MB.');return;}
  busy=true;controls();document.body.dataset.session='processing';processing('Preparando el audio…');
- try{const configuration=readConfiguration(),ready=await prepare(file);limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();exercise();prepared=ready.wav;duration=ready.duration;spectral=null;raster=null;points=[];sourceKind='import';setAudio(file);summary('Audio importado · pendiente de Praat · sin estimación en directo');await finalAnalysis();}
+ try{const configuration=readConfiguration(),ready=await prepare(file);limits=configuration.limits;task=configuration.task;selected=configuration.slot;replaceTarget=null;exerciseText=$('pitchText').value.trim();mode=$('pitchMode').value;guide={low:Number($('pitchGuideLow').value),high:Number($('pitchGuideHigh').value),duration:Number($('pitchGuideDuration').value)};adaptive.reset();displayScale.reset();exercise();prepared=ready.wav;duration=ready.duration;spectral=null;raster=null;points=[];sourceKind='import';setAudio(file);summary('Audio importado · pendiente de Praat · sin estimación en directo');await finalAnalysis();}
  catch(e){status(e.message);busy=false;document.body.dataset.session='done';processing(null);controls();}
 }
 function hover(event){
