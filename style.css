@@ -69,3 +69,6 @@ body[data-session=stopping] .patient-summary,body[data-session=processing] .pati
 @media(max-width:700px){#pitchSpectrum{height:92px;min-height:0}.pitch-surface[data-view=recording] .pitch-workspace{padding:12px}.pitch-surface[data-view=recording] #pitchChart{height:clamp(190px,34vh,270px);min-height:190px}.pitch-surface[data-view=recording] .pitch-start-controls{bottom:8px}.pitch-surface[data-view=recording] #pitchStop{width:100%}}
 
 .pitch-window-control{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}.pitch-window-control select{width:auto;min-width:76px;padding:6px 10px;border-radius:12px;font-size:12px;background:var(--panel);color:var(--text)}.pitch-window-control[hidden]{display:none}
+/* Display-only pitch styling shared by live and Praat results. */
+#pitchAxisNote{font-size:11px;line-height:1.5;margin:8px 0 10px;color:var(--muted)}
+.pitch-plot canvas#pitchChart{background:linear-gradient(180deg,rgba(35,117,101,.035),transparent 72%);border-radius:12px}
